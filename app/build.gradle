@@ -19,15 +19,8 @@ android {
     }
 }
 
-repositories {
-    maven {
-        url 'http://raw.github.com/wada811/Android-Material-Design-Colors/master/repository/'
-    }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.wada811:android-material-design-colors:2.0.0'
 }

@@ -9,9 +9,10 @@
         android:id="@+id/toolbar"
         android:layout_alignParentTop="true"
         android:minHeight="?attr/actionBarSize"
-        android:background="@color/color_primary"
+        android:background="@color/primary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="4dp">
     </android.support.v7.widget.Toolbar>
 
     <TextView
