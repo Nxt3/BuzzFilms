@@ -1,11 +1,13 @@
 package com.nullpointexecutioners.buzzfilms;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,6 +38,10 @@ public class LoginActivity extends AppCompatActivity {
             // Login works - proceed to application
             Snackbar.make(findViewById(android.R.id.content), "Success!", Snackbar.LENGTH_LONG).show();
 
+            // Start LoginActivity.class
+            // Send to register activity for now
+            Intent myIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(myIntent);
         } else {
             Snackbar.make(findViewById(android.R.id.content), "Incorrect login", Snackbar.LENGTH_LONG).show();
         }
