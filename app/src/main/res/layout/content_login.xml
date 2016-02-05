@@ -28,6 +28,7 @@
         android:layout_marginBottom="238dp" />
 
     <Button
+        android:onClick="onLoginClick"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="150dp"
         android:layout_height="wrap_content"

@@ -11,22 +11,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.nullpointexecutioners.buzzfilms.WelcomeActivity"
     tools:showIn="@layout/activity_welcome"
-    android:background="#EEB211">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_alignParentTop="true"
-        android:minHeight="?attr/actionBarSize"
-        android:background="@color/primary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="4dp">
-    </android.support.v7.widget.Toolbar>
+    android:background="@color/accent">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/title_activity_login"
         android:id="@+id/btnLogin"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
@@ -35,7 +25,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register"
+        android:text="@string/title_activity_register"
         android:id="@+id/btnRegister"
         android:layout_below="@+id/btnLogin"
         android:layout_alignEnd="@+id/btnLogin"

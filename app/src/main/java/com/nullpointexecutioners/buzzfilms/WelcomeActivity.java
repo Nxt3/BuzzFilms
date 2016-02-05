@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Button;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -25,8 +26,4 @@ public class WelcomeActivity extends AppCompatActivity {
             toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         }
     }
-
-
-
-
 }
