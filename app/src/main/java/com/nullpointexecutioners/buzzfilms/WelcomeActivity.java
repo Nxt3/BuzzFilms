@@ -16,10 +16,6 @@ public class WelcomeActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(getColor(R.color.primary_dark));
         
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // TODO: change the toolbar title color non-programmatically?
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             // TODO: change the toolbar title color non-programmatically?
