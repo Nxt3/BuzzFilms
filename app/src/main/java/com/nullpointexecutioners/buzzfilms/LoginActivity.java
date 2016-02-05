@@ -1,5 +1,6 @@
 package com.nullpointexecutioners.buzzfilms;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +21,6 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle(R.string.title_activity_login);
             // TODO: change the toolbar title color non-programmatically?
             toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         }
@@ -36,6 +36,10 @@ public class LoginActivity extends AppCompatActivity {
             // Login works - proceed to application
             Snackbar.make(findViewById(android.R.id.content), "Success!", Snackbar.LENGTH_LONG).show();
 
+            // Start LoginActivity.class
+            // Send to register activity for now
+            Intent myIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(myIntent);
         } else {
             Snackbar.make(findViewById(android.R.id.content), "Incorrect login", Snackbar.LENGTH_LONG).show();
         }
