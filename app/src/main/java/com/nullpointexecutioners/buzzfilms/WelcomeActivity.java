@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Toast;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -14,13 +12,18 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        getWindow().setStatusBarColor(getColor(R.color.primary_dark));
+        
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-<<<<<<< Updated upstream
         // TODO: change the toolbar title color non-programmatically?
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-=======
->>>>>>> Stashed changes
+
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            // TODO: change the toolbar title color non-programmatically?
+            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        }
     }
 
 
