@@ -35,10 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         if (username.equals("user") && password.equals("pass")) {
             // Login works - proceed to application
             Snackbar.make(findViewById(android.R.id.content), "Success!", Snackbar.LENGTH_LONG).show();
-
-            // Start LoginActivity.class
-            // Send to register activity for now
-            Intent myIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(myIntent);
         } else {
             Snackbar.make(findViewById(android.R.id.content), "Incorrect login", Snackbar.LENGTH_LONG).show();
