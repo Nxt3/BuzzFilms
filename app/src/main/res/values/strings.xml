@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Buzz Films</string>
-    <string name="title_activity_welcome">Welcome</string>
+    <string name="app_logo_desc">Buzz Films logo</string>
+    <string name="title_activity_welcome">Welcome to Buzz Films</string>
     <string name="title_activity_login">Login</string>
     <string name="title_activity_register">Register</string>
     <string name="title_activity_main">Dashboard</string>
