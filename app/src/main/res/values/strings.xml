@@ -10,4 +10,6 @@
     <string name="password_hint">password</string>
     <string name="cancel">Cancel</string>
     <string name="logout_text">Logout</string>
+
+    <string name="transition_name_logo">transition:LOGO</string>
 </resources>

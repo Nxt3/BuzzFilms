@@ -25,7 +25,8 @@ public class LoginActivity extends AppCompatActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             // TODO: change the toolbar title color non-programmatically?
-            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_dark));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
 //        Lets the user press the "Enter" button on the keyboard instead of having to press the "Login" button

@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             // TODO: change the toolbar title color non-programmatically?
-            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_dark));
         }
     }
 
