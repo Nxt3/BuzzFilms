@@ -2,6 +2,7 @@ package com.nullpointexecutioners.buzzfilms;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,15 +27,21 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         Button loginButton = (Button) findViewById(R.id.btnLogin);
+        Button registerButton = (Button) findViewById(R.id.btnRegister);
 
         // Capture button clicks
         loginButton.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
-
                 // Start LoginActivity.class
                 Intent myIntent = new Intent(WelcomeActivity.this,
                         LoginActivity.class);
                 startActivity(myIntent);
+            }
+        });
+        registerButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View arg0) {
+//                placeholder for register button--not yet...
+                Snackbar.make(findViewById(android.R.id.content), "Not yet ;)", Snackbar.LENGTH_LONG).show();
             }
         });
     }
