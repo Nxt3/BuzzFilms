@@ -4,6 +4,19 @@
     android:layout_height="match_parent"
     tools:context="com.nullpointexecutioners.buzzfilms.LoginActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_light"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="35sp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/app_name"
+        android:id="@+id/login_text"
+        android:layout_marginBottom="94dp"
+        android:layout_above="@+id/textInputLayout_username"
+        android:layout_alignEnd="@+id/textInputLayout_username" />
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,17 +77,4 @@
         android:onClick="onReturnClick"
         android:layout_alignTop="@+id/login_button"
         android:layout_toStartOf="@+id/login_button" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/primary_light"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="35sp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/app_name"
-        android:id="@+id/login_text"
-        android:layout_above="@+id/textInputLayout_username"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="90dp" />
 </RelativeLayout>
