@@ -36,29 +36,26 @@
         android:layout_height="wrap_content"
         android:text="@string/title_activity_login"
         android:id="@+id/login_button"
-        android:layout_marginTop="86dp"
-        android:layout_alignTop="@+id/login_password"
+        android:layout_marginTop="103dp"
+        android:layout_below="@+id/login_username"
         android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back to menu"
+        android:text="@string/cancel"
         android:id="@+id/btnReturn"
+        android:onClick="onReturnClick"
         android:layout_below="@+id/login_button"
-        android:layout_marginTop="28dp"
-        android:layout_alignEnd="@+id/login_button"
         android:layout_alignStart="@+id/login_button"
-        android:onClick="onReturnClick" />
+        android:layout_alignEnd="@+id/login_button" />
 
-    <TextView
+    <ImageView
+        android:src="@drawable/buzzfilms_splash_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Login to Buzz Films"
-        android:id="@+id/textView3"
+        android:id="@+id/buzzfilms_login_logo"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="88dp" />
-
+        android:layout_marginTop="29dp" />
 </RelativeLayout>

@@ -14,13 +14,13 @@
 
     <ImageView
         android:contentDescription="@string/app_logo_desc"
-        android:src="@drawable/buzzfilms_splash_icon"
+        android:src="@drawable/buzzfilms_splash_logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
+        android:layout_marginTop="79dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="44dp" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="192dp"
@@ -29,8 +29,9 @@
         android:id="@+id/btnLogin"
         android:elevation="2dp"
         android:layout_gravity="center_vertical"
-        android:layout_above="@+id/btnRegister"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp" />
 
     <Button
         android:layout_width="192dp"
@@ -39,16 +40,7 @@
         android:id="@+id/btnRegister"
         android:elevation="2dp"
         android:layout_gravity="center_vertical"
-        android:layout_above="@+id/imageView2"
+        android:layout_below="@+id/imageView"
         android:layout_alignStart="@+id/btnLogin"
-        android:layout_marginBottom="53dp" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:src="@drawable/buzzfilms_splash_text"
-        android:tint="@color/white"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/btnRegister" />
-</>
+        android:layout_marginTop="104dp" />
+</RelativeLayout>
