@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.nullpointexecutioners.buzzfilms.LoginActivity">
+    tools:context="com.nullpointexecutioners.buzzfilms.WelcomeActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -17,6 +17,6 @@
         app:theme="@style/AppTheme">
     </android.support.v7.widget.Toolbar>
 
-    <include layout="@layout/content_login" />
+    <include layout="@layout/content_welcome" />
 
 </android.support.design.widget.CoordinatorLayout>
