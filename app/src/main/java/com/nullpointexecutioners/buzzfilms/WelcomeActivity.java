@@ -31,6 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
                 // Start LoginActivity.class
+                // TODO: instead of calling a new activity--maybe move this into a popup dialog?
                 Intent myIntent = new Intent(WelcomeActivity.this,
                         LoginActivity.class);
                 startActivity(myIntent);
