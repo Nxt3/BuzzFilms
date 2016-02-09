@@ -2,32 +2,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nullpointexecutioners.buzzfilms.LoginFragment">
+    tools:context="com.nullpointexecutioners.buzzfilms.LoginActivity">
 
-    <EditText
-        android:layout_width="300dp"
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="@string/username_hint"
-        android:ems="10"
-        android:id="@+id/login_username"
-        android:layout_gravity="center"
-        android:layout_above="@+id/login_password"
-        android:layout_alignStart="@+id/login_password" />
+        android:id="@+id/textInputLayout_username"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/login_button"
+        android:layout_alignStart="@+id/cancel_button">
 
-    <EditText
-        android:layout_width="300dp"
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="@string/username_hint"
+            android:ems="10"
+            android:id="@+id/login_username"
+            android:layout_gravity="center"
+            android:layout_centerVertical="true" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/login_password"
-        android:layout_gravity="center"
-        android:hint="@string/password_hint"
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="238dp" />
+        android:id="@+id/textInputLayout_password"
+        android:layout_below="@+id/textInputLayout_username"
+        android:layout_alignStart="@+id/textInputLayout_username"
+        android:layout_alignEnd="@+id/textInputLayout_username">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/login_password"
+            android:layout_gravity="center"
+            android:hint="@string/password_hint"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:layout_centerHorizontal="true" />
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:onClick="onLoginClick"
@@ -36,26 +51,30 @@
         android:layout_height="wrap_content"
         android:text="@string/title_activity_login"
         android:id="@+id/login_button"
-        android:layout_marginTop="103dp"
-        android:layout_below="@+id/login_username"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginEnd="54dp"
+        android:layout_marginTop="78dp"
+        android:layout_below="@+id/textInputLayout_username"
+        android:layout_alignParentEnd="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="@string/cancel"
-        android:id="@+id/btnReturn"
+        android:id="@+id/cancel_button"
         android:onClick="onReturnClick"
-        android:layout_below="@+id/login_button"
-        android:layout_alignStart="@+id/login_button"
-        android:layout_alignEnd="@+id/login_button" />
+        android:layout_alignTop="@+id/login_button"
+        android:layout_toStartOf="@+id/login_button" />
 
-    <ImageView
-        android:src="@drawable/buzzfilms_splash_logo"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/buzzfilms_login_logo"
-        android:layout_alignParentTop="true"
+        android:textColor="@color/primary_light"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="35sp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/app_name"
+        android:id="@+id/login_text"
+        android:layout_above="@+id/textInputLayout_username"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="29dp" />
+        android:layout_marginBottom="90dp" />
 </RelativeLayout>

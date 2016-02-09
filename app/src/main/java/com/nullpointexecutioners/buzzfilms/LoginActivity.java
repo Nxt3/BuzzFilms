@@ -24,9 +24,14 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            // TODO: change the toolbar title color non-programmatically?
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
             toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_dark));
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
         }
 
 //        Lets the user press the "Enter" button on the keyboard instead of having to press the "Login" button
