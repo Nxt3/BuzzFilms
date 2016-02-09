@@ -3,6 +3,7 @@ package com.nullpointexecutioners.buzzfilms;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -62,12 +63,32 @@ public class LoginActivity extends AppCompatActivity {
             Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(loginIntent);
         } else {
-            Snackbar.make(findViewById(android.R.id.content), "Incorrect login", Snackbar.LENGTH_LONG).show();
+           makeSnackbar(v, "Incorrect login", Snackbar.LENGTH_LONG, getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
         }
     }
 
+    /*User doesn't want to login anymore*/
     public void onReturnClick(View v) {
-        Intent loginIntent = new Intent(LoginActivity.this, WelcomeActivity.class);
-        startActivity(loginIntent);
+        /*go back one screen; same thing as pressing the back button in Android*/
+        onBackPressed();
+    }
+
+    /**
+     * Helper method for creating custom Snackbars
+     * @param layout view to place the Snackbar in
+     * @param text what you want the Snackbar to say
+     * @param duration how long you want the Snackbar to appear for
+     * @param backgroundColor color you want the Snackbar's background to be
+     * @param textColor color you want the Snackbar's text to be
+     * @return the custom made Snackbar
+     */
+    @NonNull
+    public static Snackbar makeSnackbar(@NonNull View layout, @NonNull CharSequence  text, int duration, int backgroundColor, int textColor/*, int actionTextColor*/){
+        Snackbar snackBarView = Snackbar.make(layout, text, duration);
+        snackBarView.getView().setBackgroundColor(backgroundColor);
+        //snackBarView.setActionTextColor(actionTextColor);
+        TextView tv = (TextView) snackBarView.getView().findViewById(android.support.design.R.id.snackbar_text);
+        tv.setTextColor(textColor);
+        return snackBarView;
     }
 }
