@@ -1,0 +1,20 @@
+diff a/app/src/main/java/com/nullpointexecutioners/buzzfilms/MainActivity.java b/app/src/main/java/com/nullpointexecutioners/buzzfilms/MainActivity.java	(rejected hunks)
+@@ -12,6 +12,18 @@
+          setContentView(R.layout.activity_main);
+          Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+          setSupportActionBar(toolbar);
+++<<<<<<< Updated upstream
+++=======
++ <<<<<<< HEAD
++ 
++     }
++ 
++     public void onLogoutClick(View v) {
++         Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);
++         startActivity(myIntent);
++ =======
++ >>>>>>> 305459b066c5f6195f3fc886b60d0b8b6825f1d4
+++>>>>>>> Stashed changes
+      }
+  
+  }

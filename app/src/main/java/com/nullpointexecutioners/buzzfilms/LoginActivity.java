@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
             toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         }
 
-//        Let's the user press the "Enter" button on the keyboard instead of having to press the "Login" button
+//        Lets the user press the "Enter" button on the keyboard instead of having to press the "Login" button
         final EditText loginPassword = (EditText) findViewById(R.id.login_password);
         loginPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -61,5 +61,10 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Snackbar.make(findViewById(android.R.id.content), "Incorrect login", Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    public void onReturnClick(View v) {
+        Intent loginIntent = new Intent(LoginActivity.this, WelcomeActivity.class);
+        startActivity(loginIntent);
     }
 }
