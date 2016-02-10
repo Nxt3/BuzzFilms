@@ -10,6 +10,9 @@
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
     <string name="login_dialog_title">Login to Buzz Films</string>
+    <string name="ok">Okay</string>
+    <string name="login_failed_title">Login failed</string>
+    <string name="login_failed_content">Please try logging in again.</string>
     <string name="cancel">Cancel</string>
     <string name="logout_text">Logout</string>
 </resources>

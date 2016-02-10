@@ -44,7 +44,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnLogin)
     public void showLoginDialog() {
-        MaterialDialog dialog = new MaterialDialog.Builder(WelcomeActivity.this)
+        MaterialDialog loginDialog = new MaterialDialog.Builder(WelcomeActivity.this)
                 .title(getString(R.string.login_dialog_title))
                 .customView(R.layout.login_dialog, true)
                 .theme(Theme.DARK)
@@ -52,9 +52,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 .negativeText(getString(R.string.cancel))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        final EditText loginUsernameInput =  (EditText) dialog.getCustomView().findViewById(R.id.login_username);
-                        final EditText loginPasswordInput = (EditText) dialog.getCustomView().findViewById(R.id.login_password);
+                    public void onClick(@NonNull final MaterialDialog loginDialog, @NonNull DialogAction which) {
+                        final EditText loginUsernameInput =  (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
+                        final EditText loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
                         String username = loginUsernameInput.getText().toString();
                         String password = loginPasswordInput.getText().toString();
 
@@ -68,20 +68,32 @@ public class WelcomeActivity extends AppCompatActivity {
                             Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(loginIntent);
                         } else {
-                            //TODO, generate another dialog stating the login was unsuccessful
+                            loginDialog.dismiss(); //Dismiss the current
+                            new MaterialDialog.Builder(WelcomeActivity.this)
+                                    .title(R.string.login_failed_title)
+                                    .content(R.string.login_failed_content)
+                                    .positiveText(R.string.ok)
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            loginDialog.show();
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss(); //close the dialog since they pressed "Cancel"
+                        dialog.dismiss(); //close the loginDialog since they pressed "Cancel"
                     }
                 }).build();
 
-        final View loginAction;
-        loginAction = dialog.getActionButton(DialogAction.POSITIVE);
-        final EditText loginPasswordInput = (EditText) dialog.getCustomView().findViewById(R.id.login_password);
+        final View loginAction = loginDialog.getActionButton(DialogAction.POSITIVE);
+//        TODO, figure out how to check if text it input in both fields and monitor both
+//        final EditText loginUsernameInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
+        final EditText loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
         //noinspection ConstantConditions
         loginPasswordInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -95,7 +107,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
-        dialog.show();
+        loginDialog.show();
         loginAction.setEnabled(false); //disabled by default
     }
 
