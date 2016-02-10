@@ -14,7 +14,6 @@
         android:contentDescription="@string/app_logo_desc"
         android:src="@drawable/buzzfilms_splash_logo"
         android:id="@+id/buzzfilms_welcome_logo"
-        android:transitionName="@string/transition_name_logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="107dp"
