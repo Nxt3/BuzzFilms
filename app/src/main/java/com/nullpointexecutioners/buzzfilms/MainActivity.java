@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -14,12 +16,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        printUsers();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             // TODO: change the toolbar title color non-programmatically?
             toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.primary_text_dark));
         }
+    }
+
+    private void printUsers() {
+        for (Map.Entry<String, User> entry : WelcomeActivity.accounts.entrySet()) {
+            System.out.println(entry.getKey()+" : " + entry.getValue());
+        }
+        System.out.println("Size: " + WelcomeActivity.accounts.size());
     }
 
     public void onLogoutClick(View v) {

@@ -28,7 +28,7 @@ import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private Map<String, User> accounts = new HashMap<String, User>();
+    public static Map<String, User> accounts = new HashMap<String, User>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
