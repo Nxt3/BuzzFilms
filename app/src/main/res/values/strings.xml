@@ -15,4 +15,5 @@
     <string name="login_failed_content">Please try logging in again.</string>
     <string name="cancel">Cancel</string>
     <string name="logout_text">Logout</string>
+    <string name="need_to_register">Don\'t have an account? Create one</string>
 </resources>

@@ -28,7 +28,7 @@ public class WelcomeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         /*Handle the Register button*/
-        findViewById(R.id.btnRegister).setOnClickListener(new OnClickListener() {
+        findViewById(R.id.register_button).setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
 //                placeholder for register button--not yet...
                 Snackbar.make(findViewById(android.R.id.content), "Not yet ;)", Snackbar.LENGTH_LONG).show();
@@ -53,22 +53,26 @@ public class WelcomeActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull final MaterialDialog loginDialog, @NonNull DialogAction which) {
-                        final EditText loginUsernameInput =  (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
-                        final EditText loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
-                        String username = loginUsernameInput.getText().toString();
-                        String password = loginPasswordInput.getText().toString();
-
+                        final EditText loginUsernameInput;
+                        final EditText loginPasswordInput;
+                        String username = "", password = "";
+                        if (loginDialog.getCustomView() != null) {
+                            loginUsernameInput =  (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
+                            loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
+                            username = loginUsernameInput.getText().toString();
+                            password = loginPasswordInput.getText().toString();
+                        }
                         /*Check and see if the Login fields are blank*/
                         boolean emptyFields = true;
                         if (username.length() != 0 && password.length() != 0) {
                             emptyFields = false;
                         }
                         if (username.equals("user") && password.equals("pass") && !emptyFields) {
-                            // Login works - proceed to application
+                            // Login works - proceed to MainActivity
                             Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(loginIntent);
                         } else {
-                            loginDialog.dismiss(); //Dismiss the current
+                            loginDialog.dismiss(); //Dismiss the login dialog to show the failure dialog
                             new MaterialDialog.Builder(WelcomeActivity.this)
                                     .title(R.string.login_failed_title)
                                     .content(R.string.login_failed_content)
@@ -78,8 +82,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                             loginDialog.show();
                                         }
-                                    })
-                                    .show();
+                                    }).show();
                         }
                     }
                 })
@@ -91,22 +94,29 @@ public class WelcomeActivity extends AppCompatActivity {
                 }).build();
 
         final View loginAction = loginDialog.getActionButton(DialogAction.POSITIVE);
-//        TODO, figure out how to check if text it input in both fields and monitor both
-//        final EditText loginUsernameInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
-        final EditText loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
-        //noinspection ConstantConditions
-        loginPasswordInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                loginAction.setEnabled(s.toString().trim().length() > 0);
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        final EditText loginUsernameInput;
+        final EditText loginPasswordInput;
+        if (loginDialog.getCustomView() != null) {
+            loginUsernameInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
+            loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
+
+            /*TextWatcher lets us monitor the Username and Password fields for input*/
+            TextWatcher watcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    loginAction.setEnabled(s.toString().trim().length() > 0);
+                }
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            };
+            /*We want to watch both EditText fields for input*/
+            loginUsernameInput.addTextChangedListener(watcher);
+            loginPasswordInput.addTextChangedListener(watcher);
+        }
         loginDialog.show();
         loginAction.setEnabled(false); //disabled by default
     }
