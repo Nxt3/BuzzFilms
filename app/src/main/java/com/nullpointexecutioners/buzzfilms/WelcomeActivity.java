@@ -21,13 +21,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private HashMap<String, User> accounts = new HashMap<String, User>();
+    private Map<String, User> accounts = new HashMap<String, User>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +85,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_button)
     public void authenticateLogin() {
-
-
         final EditText loginUsernameInput = (EditText) findViewById(R.id.login_username);
         final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
         String username = loginUsernameInput.getText().toString();
@@ -217,9 +216,10 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void printUsers() {
-        for(Object user:accounts.keySet()) {
-            System.out.println(user);
+        for (Map.Entry<String, User> entry : accounts.entrySet()) {
+            System.out.println(entry.getKey()+" : " + entry.getValue());
         }
+        System.out.println("Size: " + accounts.size());
     }
 
     /**
