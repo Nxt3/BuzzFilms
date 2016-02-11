@@ -150,6 +150,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             if (!accounts.containsKey(username)) {
                                 // Call the method to actually register the user after all checks
                                 registerUser(name, email, username, password);
+                                printUsers();
                                 // Proceed to application
                                 Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                                 startActivity(registerIntent);
@@ -213,6 +214,12 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         registerDialog.show();
         registerAction.setEnabled(false); //disabled by default
+    }
+
+    private void printUsers() {
+        for(Object user:accounts.keySet()) {
+            System.out.println(user);
+        }
     }
 
     /**
