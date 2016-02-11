@@ -5,17 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.nullpointexecutioners.buzzfilms.WelcomeActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_alignParentTop="true"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="4dp"
-        android:theme="@style/AppTheme">
-    </android.support.v7.widget.Toolbar>
-
     <include layout="@layout/content_welcome" />
 
 </android.support.design.widget.CoordinatorLayout>
