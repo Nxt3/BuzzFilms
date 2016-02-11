@@ -19,6 +19,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
+import org.w3c.dom.Text;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -148,7 +150,15 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    registerAction.setEnabled(s.toString().trim().length() > 0);
+                    if (registerNameInput.getText().toString().length() > 0
+                            && registerEmailInput.getText().toString().length() > 0
+                            && registerUsernameInput.getText().toString().length() > 0
+                            && registerPasswordInput.getText().toString().length() > 0) {
+                        registerAction.setEnabled(true);
+                    } else {
+                        //If we delete text after we've already filled everything in--we need to disable the button again
+                        registerAction.setEnabled(false);
+                    }
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
