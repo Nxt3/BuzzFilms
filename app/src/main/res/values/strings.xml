@@ -3,17 +3,19 @@
     <string name="app_logo_desc">Buzz Films logo</string>
     <string name="app_text_desc">Buzz Films text</string>
     <string name="title_activity_welcome">Buzz Films</string>
-    <string name="title_activity_login">Login</string>
-    <string name="title_activity_register">Register</string>
     <string name="title_activity_main">Dashboard</string>
 
+    <string name="login">Login</string>
+    <string name="invalid_login">Invalid login. Please try again</string>
+
+    <string name="register">Register</string>
+    <string name="register_dialog_title">Create an account</string>
+    <string name="cancel">Cancel</string>
+    <string name="need_to_register">Don\'t have an account? Create one</string>
+    <string name="name_hint">name</string>
+    <string name="email_hint">email</string>
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
-    <string name="login_dialog_title">Login to Buzz Films</string>
-    <string name="ok">Okay</string>
-    <string name="login_failed_title">Login failed</string>
-    <string name="login_failed_content">Please try logging in again.</string>
-    <string name="cancel">Cancel</string>
+
     <string name="logout_text">Logout</string>
-    <string name="need_to_register">Don\'t have an account? Create one</string>
 </resources>

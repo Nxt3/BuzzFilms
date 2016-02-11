@@ -1,5 +1,6 @@
 package com.nullpointexecutioners.buzzfilms;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,8 +8,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -25,15 +28,23 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        ButterKnife.bind(this);
 
-        /*Handle the Register button*/
-        findViewById(R.id.register_button).setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-//                placeholder for register button--not yet...
-                Snackbar.make(findViewById(android.R.id.content), "Not yet ;)", Snackbar.LENGTH_LONG).show();
+        /*We want to also allow the user to press the Done button on the keyboard*/
+        final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
+        loginPasswordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    authenticateLogin();
+//                    Hide virtual keyboard after "Done" action
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    return true;
+                }
+                return false;
             }
         });
+        ButterKnife.bind(this);
     }
 
     @Override
@@ -42,83 +53,115 @@ public class WelcomeActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
-    @OnClick(R.id.btnLogin)
-    public void showLoginDialog() {
-        MaterialDialog loginDialog = new MaterialDialog.Builder(WelcomeActivity.this)
-                .title(getString(R.string.login_dialog_title))
-                .customView(R.layout.login_dialog, true)
+    @OnClick(R.id.login_button)
+    public void authenticateLogin() {
+        final EditText loginUsernameInput = (EditText) findViewById(R.id.login_username);
+        final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
+        String username = loginUsernameInput.getText().toString();
+        String password = loginPasswordInput.getText().toString();
+
+        /*Check and see if the Login fields are blank*/
+        boolean emptyFields = true;
+        if (username.length() != 0 && password.length() != 0) {
+            emptyFields = false;
+        }
+        if (username.equals("user") && password.equals("pass") && !emptyFields) {
+            // Login works - proceed to application
+            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+            startActivity(loginIntent);
+        } else {
+            makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    @OnClick(R.id.register_button)
+    public void showRegisterDialog() {
+        final MaterialDialog registerDialog = new MaterialDialog.Builder(WelcomeActivity.this)
+                .title(getString(R.string.register_dialog_title))
+                .customView(R.layout.register_dialog, true)
                 .theme(Theme.DARK)
-                .positiveText(getString(R.string.title_activity_login))
+                .positiveText(getString(R.string.register))
                 .negativeText(getString(R.string.cancel))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull final MaterialDialog loginDialog, @NonNull DialogAction which) {
-                        final EditText loginUsernameInput;
-                        final EditText loginPasswordInput;
-                        String username = "", password = "";
-                        if (loginDialog.getCustomView() != null) {
-                            loginUsernameInput =  (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
-                            loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
-                            username = loginUsernameInput.getText().toString();
-                            password = loginPasswordInput.getText().toString();
+                    public void onClick(@NonNull final MaterialDialog registerDialog, @NonNull DialogAction which) {
+                        final EditText registerNameInput;
+                        final EditText registerEmailInput;
+                        final EditText registerUsernameInput;
+                        final EditText registerPasswordInput;
+                        String name = "", email = "", username = "", password = "";
+                        if (registerDialog.getCustomView() != null) {
+                            registerNameInput =  (EditText) registerDialog.getCustomView().findViewById(R.id.register_name);
+                            registerEmailInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_email);
+                            registerUsernameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_username);
+                            registerPasswordInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_password);
+                            name = registerNameInput.getText().toString();
+                            email = registerEmailInput.getText().toString();
+                            username = registerUsernameInput.getText().toString();
+                            password = registerPasswordInput.getText().toString();
                         }
                         /*Check and see if the Login fields are blank*/
                         boolean emptyFields = true;
-                        if (username.length() != 0 && password.length() != 0) {
+                        if (name.length() != 0 && email.length() != 0 && username.length() != 0
+                                && password.length() != 0) {
                             emptyFields = false;
                         }
-                        if (username.equals("user") && password.equals("pass") && !emptyFields) {
-                            // Login works - proceed to MainActivity
-                            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                            startActivity(loginIntent);
+                        //TODO, search the database for an existing user; if no match is found, allow this user to be added to the DB
+                        if (!emptyFields) {
+                            // Register worked - proceed to MainActivity
+                            Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                            startActivity(registerIntent);
                         } else {
-                            loginDialog.dismiss(); //Dismiss the login dialog to show the failure dialog
-                            new MaterialDialog.Builder(WelcomeActivity.this)
-                                    .title(R.string.login_failed_title)
-                                    .content(R.string.login_failed_content)
-                                    .positiveText(R.string.ok)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            loginDialog.show();
-                                        }
-                                    }).show();
+                            //TODO, Inform the user that the email address or username is already in use
+                            //TODO, invalidate the input field that holds the pre-existing info.
                         }
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss(); //close the loginDialog since they pressed "Cancel"
+                    public void onClick(@NonNull MaterialDialog registerDialog, @NonNull DialogAction which) {
+                        registerDialog.dismiss(); //close the registerDialog since they pressed "Cancel"
                     }
                 }).build();
 
-        final View loginAction = loginDialog.getActionButton(DialogAction.POSITIVE);
-        final EditText loginUsernameInput;
-        final EditText loginPasswordInput;
-        if (loginDialog.getCustomView() != null) {
-            loginUsernameInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_username);
-            loginPasswordInput = (EditText) loginDialog.getCustomView().findViewById(R.id.login_password);
+        final View registerAction = registerDialog.getActionButton(DialogAction.POSITIVE);
+        final EditText registerNameInput;
+        final EditText registerEmailInput;
+        final EditText registerUsernameInput;
+        final EditText registerPasswordInput;
+        if (registerDialog.getCustomView() != null) {
+            registerNameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_name);
+            registerEmailInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_email);
+            registerUsernameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_username);
+            registerPasswordInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_password);
 
-            /*TextWatcher lets us monitor the Username and Password fields for input*/
+            /*
+             * TextWatcher lets us monitor the input fields while registering;
+             * This make sure we don't allow the user to register with empty fields
+             */
             TextWatcher watcher = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    loginAction.setEnabled(s.toString().trim().length() > 0);
+                    registerAction.setEnabled(s.toString().trim().length() > 0);
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
                 }
             };
-            /*We want to watch both EditText fields for input*/
-            loginUsernameInput.addTextChangedListener(watcher);
-            loginPasswordInput.addTextChangedListener(watcher);
+            /*We want to watch all EditText fields for input*/
+            registerNameInput.addTextChangedListener(watcher);
+            registerEmailInput.addTextChangedListener(watcher);
+            registerUsernameInput.addTextChangedListener(watcher);
+            registerPasswordInput.addTextChangedListener(watcher);
         }
-        loginDialog.show();
-        loginAction.setEnabled(false); //disabled by default
+        registerDialog.show();
+        registerAction.setEnabled(false); //disabled by default
     }
 
     /**
@@ -131,7 +174,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * @return the custom made Snackbar
      */
     @NonNull
-    public static Snackbar makeSnackbar(@NonNull View layout, @NonNull CharSequence  text, int duration, int backgroundColor, int textColor/*, int actionTextColor*/){
+    public static Snackbar makeSnackbar(@NonNull View layout, @NonNull CharSequence  text, int duration, int backgroundColor, int textColor/*, int actionTextColor*/) {
         Snackbar snackBarView = Snackbar.make(layout, text, duration);
         snackBarView.getView().setBackgroundColor(backgroundColor);
         //snackBarView.setActionTextColor(actionTextColor);
