@@ -20,10 +20,14 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
+import java.util.HashMap;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    private HashMap<String, User> accounts = new HashMap<String, User>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_button)
     public void authenticateLogin() {
+
+
         final EditText loginUsernameInput = (EditText) findViewById(R.id.login_username);
         final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
         String username = loginUsernameInput.getText().toString();
@@ -102,6 +108,10 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    public void registerUser(String name, String email, String username, String password) {
+        accounts.put(username, new User(username, password, name, email));
+    }
+
     @OnClick(R.id.register_button)
     public void showRegisterDialog() {
         final MaterialDialog registerDialog = new MaterialDialog.Builder(WelcomeActivity.this)
@@ -119,7 +129,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         final EditText registerPasswordInput;
                         String name = "", email = "", username = "", password = "";
                         if (registerDialog.getCustomView() != null) {
-                            registerNameInput =  (EditText) registerDialog.getCustomView().findViewById(R.id.register_name);
+                            registerNameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_name);
                             registerEmailInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_email);
                             registerUsernameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_username);
                             registerPasswordInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_password);
@@ -134,15 +144,23 @@ public class WelcomeActivity extends AppCompatActivity {
                                 && password.length() != 0) {
                             emptyFields = false;
                         }
-                        //TODO, search the database for an existing user; if no match is found, allow this user to be added to the DB
+                        //TODO: search the database for an existing user; if no match is found, allow this user to be added to the DB
+
                         if (!emptyFields) {
-                            // Register worked - proceed to MainActivity
-                            Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                            startActivity(registerIntent);
+                            if (!accounts.containsKey(username)) {
+                                // Call the method to actually register the user after all checks
+                                registerUser(name, email, username, password);
+                                // Proceed to application
+                                Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                startActivity(registerIntent);
+                            }
                         } else {
-                            //TODO, Inform the user that the email address or username is already in use
+                            //Inform the user that the email address or username is already in use
+                            makeSnackbar(findViewById(android.R.id.content), "Username already exists", Snackbar.LENGTH_LONG,
+                                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
                             //TODO, invalidate the input field that holds the pre-existing info.
                         }
+
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
