@@ -66,7 +66,7 @@
         android:id="@+id/login_button"
         android:layout_width="192dp"
         android:layout_height="wrap_content"
-        android:text="@string/title_activity_register"
+        android:text="@string/title_activity_login"
         android:elevation="2dp"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="74dp"
