@@ -12,14 +12,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-
-import org.w3c.dom.Text;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -31,8 +30,32 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        /*We want to also allow the user to press the Done button on the keyboard*/
+        final Button loginButton = (Button) findViewById(R.id.login_button);
+        loginButton.setEnabled(false); //disabled by default
+        final EditText loginUsernameInput = (EditText) findViewById(R.id.login_username);
         final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
+
+        TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (loginUsernameInput.getText().length() > 0
+                        && loginPasswordInput.getText().length() > 0) {
+                    loginButton.setEnabled(true);
+                } else {
+                    loginButton.setEnabled(false);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
+        loginUsernameInput.addTextChangedListener(watcher);
+        loginPasswordInput.addTextChangedListener(watcher);
+
+        /*We want to also allow the user to press the Done button on the keyboard*/
         loginPasswordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
