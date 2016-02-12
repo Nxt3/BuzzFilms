@@ -148,7 +148,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         if (!accounts.containsKey(username) && !emptyFields) {
                             // Call the method to actually register the user after all checks
                             registerUser(name, email, username, password);
-                            printUsers();
+//                            printUsers();
                             // Proceed to application
                             Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(registerIntent);
@@ -211,12 +211,12 @@ public class WelcomeActivity extends AppCompatActivity {
         registerAction.setEnabled(false); //disabled by default
     }
 
-    private void printUsers() {
-        for (Map.Entry<String, User> entry : accounts.entrySet()) {
-            System.out.println(entry.getKey()+" : " + entry.getValue());
-        }
-        System.out.println("Size: " + accounts.size());
-    }
+//    private void printUsers() {
+//        for (Map.Entry<String, User> entry : accounts.entrySet()) {
+//            System.out.println(entry.getKey()+" : " + entry.getValue());
+//        }
+//        System.out.println("Size: " + accounts.size());
+//    }
 
     /**
      * Helper method for creating custom Snackbars
