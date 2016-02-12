@@ -14,6 +14,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import butterknife.Bind;
@@ -44,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.drawer_header_yellow)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(profileDrawerIcon)
+                        new ProfileDrawerItem()
+                                .withName("Mike Penz")
+                                .withEmail("mikepenz@gmail.com")
+                                .withIcon(profileDrawerIcon)
                 ).withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
@@ -61,7 +65,14 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile),
                         new SecondaryDrawerItem().withName(settings)
-                ).build();
+                ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        Intent myIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                        startActivity(myIntent);
+                        return true;
+                    }
+                }).build();
     }
 
     @Override
