@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 .withAccountHeader(drawerHeader)
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withSelectedItem(-1)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE),
@@ -112,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void onLogoutClick(View v) {
         Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+        //make sure we can't press the back button to get back to the MaiActivity!
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }
