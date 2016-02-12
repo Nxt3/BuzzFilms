@@ -16,10 +16,10 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
-import butterknife.BindInt;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 
@@ -27,12 +27,16 @@ public class MainActivity extends AppCompatActivity {
 
     /*I love ButterKnife <3*/
     @Bind(R.id.toolbar) Toolbar toolbar;
+    private Drawer navDrawer;
     @BindDrawable(R.drawable.rare_pepe_avatar)
     Drawable profileDrawerIcon;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.settings) String settings;
     @BindString(R.string.title_activity_main) String dashboard;
-    @BindInt(R.color.accent) int accent;
+
+    final private int DASHBOARD = 1;
+    final private int PROFILE = 2;
+    final private int SETTINGS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,46 +49,59 @@ public class MainActivity extends AppCompatActivity {
         // Create the AccountHeader
         final AccountHeader drawerHeader = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(accent)
+                .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
                                 .withName("Mike Penz")
                                 .withEmail("mikepenz@gmail.com")
                                 .withIcon(profileDrawerIcon)
-                ).build();
-
+                ).withSelectionListEnabledForSingleProfile(false)
+                .build();
 
         //create the drawer and remember the `Drawer` result object
-        final Drawer navdrawer = new DrawerBuilder()
+        navDrawer = new DrawerBuilder()
                 .withAccountHeader(drawerHeader)
                 .withActivity(this)
                 .withToolbar(toolbar)
+                .withSelectedItem(-1)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard),
-                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person),
-                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings)
+                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
+                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE),
+                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS)
                 ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem != null) {
+                        if (drawerItem != null && drawerItem instanceof Nameable) {
                             Intent intent = null;
-                            final int dashboardID = 1;
-                            final int profileID = 2;
-                            final int settingsID = 3;
 
-                            if (drawerItem.getIdentifier() == profileID) {
-                                intent = new Intent(MainActivity.this, ProfileActivity.class);
-                            } else if (drawerItem.getIdentifier() == settingsID) {
-                                intent = null;
-                            }
-
-                            if (intent == null) {
-                                MainActivity.this.startActivity(intent);
+                            switch(drawerItem.getIdentifier()) {
+                                case DASHBOARD:
+                                    return false;
+                                case PROFILE:
+                                    intent = new Intent(MainActivity.this, ProfileActivity.class);
+                                    startActivity(intent);
+                                    return true;
+                                case SETTINGS:
+                                    //TODO, handle Settings
+                                    return false;
                             }
                         }
-                        return true;
+                        return false;
                     }
                 }).build();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        navDrawer.setSelection(navDrawer.getDrawerItem(DASHBOARD));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        navDrawer.setSelection(navDrawer.getDrawerItem(DASHBOARD));
+        navDrawer.closeDrawer();
     }
 
     @Override
@@ -94,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onLogoutClick(View v) {
-        Intent myIntent = new Intent(MainActivity.this, WelcomeActivity.class);
-        startActivity(myIntent);
+        Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+        startActivity(intent);
     }
 }

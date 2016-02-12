@@ -24,7 +24,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/DrawerTheme" />
+            android:theme="@style/DrawerTheme_Dark" />
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_main"
