@@ -14,6 +14,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,8 +53,15 @@ public class MainActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Profile"),
-                        new SecondaryDrawerItem().withName("Settings")
-                ).build();
+                        new SecondaryDrawerItem().withName("Settings"))
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        Intent myIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                        startActivity(myIntent);
+                        return true;
+                    }
+                }).build();
     }
 
     public void onLogoutClick(View v) {
