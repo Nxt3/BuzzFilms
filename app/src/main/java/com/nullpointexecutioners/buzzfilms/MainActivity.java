@@ -11,7 +11,6 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -43,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
                         return false;
                     }
-                })
-                .build();
+                }).build();
 
 
         //create the drawer and remember the `Drawer` result object
@@ -55,12 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Profile"),
                         new SecondaryDrawerItem().withName("Settings")
-                )
-                .build();
-
-
-
-
+                ).build();
     }
 
     public void onLogoutClick(View v) {
