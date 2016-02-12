@@ -15,7 +15,6 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     Drawable profileDrawerIcon;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.settings) String settings;
-    @BindString(R.string.title_activity_main) String mainActivityTitle;
+    @BindString(R.string.title_activity_main) String dashboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        toolbar.setTitle(mainActivityTitle);
+        toolbar.setTitle(dashboard);
 
         // Create the AccountHeader
         AccountHeader drawerHeader = new AccountHeaderBuilder()
@@ -49,12 +48,7 @@ public class MainActivity extends AppCompatActivity {
                                 .withName("Mike Penz")
                                 .withEmail("mikepenz@gmail.com")
                                 .withIcon(profileDrawerIcon)
-                ).withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                }).build();
+                ).build();
 
 
         //create the drawer and remember the `Drawer` result object
@@ -63,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(profile),
+                        new PrimaryDrawerItem().withName(dashboard),
+                        new SecondaryDrawerItem().withName(profile),
                         new SecondaryDrawerItem().withName(settings)
                 ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
