@@ -95,7 +95,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (username.length() != 0 && password.length() != 0) {
             emptyFields = false;
         }
-        if (username.equals("user") && password.equals("pass") && !emptyFields) {
+        if (accounts.containsKey(username) && password.equals(accounts.get(username).getPassword()) && !emptyFields) {
             // Login works - proceed to application
             Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
             startActivity(loginIntent);
