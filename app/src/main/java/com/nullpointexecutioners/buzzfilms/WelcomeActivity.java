@@ -23,22 +23,24 @@ import com.afollestad.materialdialogs.Theme;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     public static Map<String, User> accounts = new HashMap<String, User>();
+    @Bind(R.id.login_button) Button loginButton;
+    @Bind(R.id.login_username) EditText loginUsernameInput;
+    @Bind(R.id.login_password) EditText loginPasswordInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        ButterKnife.bind(this);
 
-        final Button loginButton = (Button) findViewById(R.id.login_button);
         loginButton.setEnabled(false); //disabled by default
-        final EditText loginUsernameInput = (EditText) findViewById(R.id.login_username);
-        final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
 
         TextWatcher watcher = new TextWatcher() {
             @Override
@@ -74,7 +76,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 return false;
             }
         });
-        ButterKnife.bind(this);
     }
 
     @Override
@@ -85,8 +86,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_button)
     public void authenticateLogin() {
-        final EditText loginUsernameInput = (EditText) findViewById(R.id.login_username);
-        final EditText loginPasswordInput = (EditText) findViewById(R.id.login_password);
         String username = loginUsernameInput.getText().toString();
         String password = loginPasswordInput.getText().toString();
 
@@ -107,6 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    /*Add the registered user to our HashMap*/
     public void registerUser(String name, String email, String username, String password) {
         accounts.put(username, new User(username, password, name, email));
     }
@@ -128,10 +128,10 @@ public class WelcomeActivity extends AppCompatActivity {
                         final EditText registerPasswordInput;
                         String name = "", email = "", username = "", password = "";
                         if (registerDialog.getCustomView() != null) {
-                            registerNameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_name);
-                            registerEmailInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_email);
-                            registerUsernameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_username);
-                            registerPasswordInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_password);
+                            registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
+                            registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
+                            registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
+                            registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
                             name = registerNameInput.getText().toString();
                             email = registerEmailInput.getText().toString();
                             username = registerUsernameInput.getText().toString();
@@ -172,10 +172,10 @@ public class WelcomeActivity extends AppCompatActivity {
         final EditText registerUsernameInput;
         final EditText registerPasswordInput;
         if (registerDialog.getCustomView() != null) {
-            registerNameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_name);
-            registerEmailInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_email);
-            registerUsernameInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_username);
-            registerPasswordInput = (EditText) registerDialog.getCustomView().findViewById(R.id.register_password);
+            registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
+            registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
+            registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
+            registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
 
             /*
              * TextWatcher lets us monitor the input fields while registering;
