@@ -28,7 +28,7 @@ import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    public static Map<String, User> accounts = new HashMap<String, User>();
+    public Map<String, User> accounts = new HashMap<String, User>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,22 +145,18 @@ public class WelcomeActivity extends AppCompatActivity {
                         }
                         //TODO: search the database for an existing user; if no match is found, allow this user to be added to the DB
 
-                        if (!emptyFields) {
-                            if (!accounts.containsKey(username)) {
-                                // Call the method to actually register the user after all checks
-                                registerUser(name, email, username, password);
-                                printUsers();
-                                // Proceed to application
-                                Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                                startActivity(registerIntent);
-                            }
+                        if (!accounts.containsKey(username) && !emptyFields) {
+                            // Call the method to actually register the user after all checks
+                            registerUser(name, email, username, password);
+                            printUsers();
+                            // Proceed to application
+                            Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                            startActivity(registerIntent);
                         } else {
                             //Inform the user that the email address or username is already in use
                             makeSnackbar(findViewById(android.R.id.content), "Username already exists", Snackbar.LENGTH_LONG,
                                     getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-                            //TODO, invalidate the input field that holds the pre-existing info.
                         }
-
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
