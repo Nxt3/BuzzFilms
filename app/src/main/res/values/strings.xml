@@ -18,4 +18,6 @@
     <string name="password_hint">password</string>
 
     <string name="logout_text">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
 </resources>
