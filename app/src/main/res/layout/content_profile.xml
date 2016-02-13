@@ -7,8 +7,7 @@
     android:layout_marginTop="@dimen/activity_horizontal_margin"
     android:padding="@dimen/activity_horizontal_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_profile"
-    android:id="@+id/scrolling_profile">
+    tools:showIn="@layout/activity_profile">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,9 +34,9 @@
             <com.mikepenz.iconics.view.IconicsImageView
                 android:id="@+id/majorItem"
                 app:iiv_icon="gmd-school"
-                app:iiv_color="@color/primarytext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                app:iiv_color="@color/icons_dark"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin" />
 
             <TextView
@@ -48,7 +47,7 @@
                 android:layout_toEndOf="@id/majorItem"
                 android:text="(123) 456-7890"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#212121" />
+                android:textColor="@color/secondary_text_dark" />
 
             <TextView
                 android:layout_width="wrap_content"

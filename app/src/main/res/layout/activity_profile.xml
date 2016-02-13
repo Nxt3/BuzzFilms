@@ -34,6 +34,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:elevation="4dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -46,9 +47,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_mode_edit"
-        android:background="@color/accent"
+        android:elevation="6dp"
         android:layout_margin="@dimen/fab_margin"
+        app:pressedTranslationZ="12dp"
         app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end" />
+        app:rippleColor="@color/icons_dark"
+        app:layout_anchorGravity="bottom|end"
+        android:clickable="true" />
 
 </android.support.design.widget.CoordinatorLayout>
