@@ -100,7 +100,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (accounts.containsKey(username)) {
             attemptedUser = accounts.get(username);
             if (attemptedUser.getPassword().equals(password) && !emptyFields) {
-                currentUser = attemptedUser;
+                DataHolder.setCurrentUser(attemptedUser);
                 // Login works - proceed to application
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
