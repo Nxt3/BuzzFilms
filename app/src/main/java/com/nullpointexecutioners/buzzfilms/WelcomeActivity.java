@@ -30,6 +30,7 @@ import butterknife.OnClick;
 public class WelcomeActivity extends AppCompatActivity {
 
     public static Map<String, User> accounts = new HashMap<String, User>();
+    public static User currentUser;
     @Bind(R.id.login_button) Button loginButton;
     @Bind(R.id.login_username) EditText loginUsernameInput;
     @Bind(R.id.login_password) EditText loginPasswordInput;
@@ -88,22 +89,28 @@ public class WelcomeActivity extends AppCompatActivity {
     public void authenticateLogin() {
         String username = loginUsernameInput.getText().toString();
         String password = loginPasswordInput.getText().toString();
+        User attemptedUser;
 
         /*Check and see if the Login fields are blank*/
         boolean emptyFields = true;
         if (username.length() != 0 && password.length() != 0) {
             emptyFields = false;
         }
-        if (accounts.containsKey(username) && password.equals(accounts.get(username).getPassword()) && !emptyFields) {
-            // Login works - proceed to application
-            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-            startActivity(loginIntent);
-        } else {
-            makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        // We only want to lookup in the Map once
+        if (accounts.containsKey(username)) {
+            attemptedUser = accounts.get(username);
+            if (attemptedUser.getPassword().equals(password) && !emptyFields) {
+                currentUser = attemptedUser;
+                // Login works - proceed to application
+                Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                startActivity(loginIntent);
+            }
         }
+        // We didn't proceed to Welcome, so we must have an invalid login
+        makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     /*Add the registered user to our HashMap*/
