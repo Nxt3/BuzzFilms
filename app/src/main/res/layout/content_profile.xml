@@ -17,8 +17,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
@@ -55,8 +53,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
@@ -93,8 +89,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
@@ -131,8 +125,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
