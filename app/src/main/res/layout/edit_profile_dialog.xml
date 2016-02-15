@@ -24,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/majorDropdown"
-        android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown" />
 
     <android.support.design.widget.TextInputLayout
