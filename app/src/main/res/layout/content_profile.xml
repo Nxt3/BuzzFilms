@@ -22,6 +22,44 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
+                android:id="@+id/nameIcon"
+                app:iiv_icon="gmd-person-outline"
+                app:iiv_color="@color/icons_dark"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+            <TextView
+                android:id="@+id/currentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_toEndOf="@id/nameIcon"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/primary_text_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/currentName"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/nameIcon"
+                android:text="@string/name_hint"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/secondary_text_dark" />
+        </RelativeLayout>
+
+        <include layout="@layout/item_divider" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <com.mikepenz.iconics.view.IconicsImageView
                 android:id="@+id/majorIcon"
                 app:iiv_icon="gmd-school"
                 app:iiv_color="@color/icons_dark"
@@ -35,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_toEndOf="@id/majorIcon"
-                android:text="(123) 456-7890"
+                android:text="Computer Science"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/primary_text_dark" />
 
@@ -49,116 +87,83 @@
                 android:text="@string/major"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/secondary_text_dark" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:padding="@dimen/activity_horizontal_margin">
-
-                <com.mikepenz.iconics.view.IconicsImageView
-                    android:id="@+id/nameIcon"
-                    app:iiv_icon="gmd-person-outline"
-                    app:iiv_color="@color/icons_dark"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-                <TextView
-                    android:id="@+id/currentName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_toEndOf="@id/nameIcon"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text_dark" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/currentName"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@id/nameIcon"
-                    android:text="@string/name"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/secondary_text_dark" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:padding="@dimen/activity_horizontal_margin">
-
-                <com.mikepenz.iconics.view.IconicsImageView
-                    android:id="@+id/emailIcon"
-                    app:iiv_icon="gmd-email"
-                    app:iiv_color="@color/icons_dark"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-                <TextView
-                    android:id="@+id/currentEmail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_toEndOf="@id/emailIcon"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text_dark" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/currentEmail"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@id/emailIcon"
-                    android:text="@string/name"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/secondary_text_dark" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:padding="@dimen/activity_horizontal_margin">
-
-                <com.mikepenz.iconics.view.IconicsImageView
-                    android:id="@+id/interestsIcon"
-                    app:iiv_icon="gmd-description"
-                    app:iiv_color="@color/icons_dark"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-                <TextView
-                    android:id="@+id/currentInterests"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_toEndOf="@id/interestsIcon"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text_dark" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/currentInterests"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@id/interestsIcon"
-                    android:text="@string/name"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/secondary_text_dark" />
-            </RelativeLayout>
         </RelativeLayout>
 
+        <include layout="@layout/item_divider" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:id="@+id/emailIcon"
+                app:iiv_icon="gmd-email"
+                app:iiv_color="@color/icons_dark"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+            <TextView
+                android:id="@+id/currentEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_toEndOf="@id/emailIcon"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/primary_text_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/currentEmail"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/emailIcon"
+                android:text="@string/email_hint"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/secondary_text_dark" />
+        </RelativeLayout>
+
+        <include layout="@layout/item_divider" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:id="@+id/interestsIcon"
+                app:iiv_icon="gmd-description"
+                app:iiv_color="@color/icons_dark"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+            <TextView
+                android:id="@+id/currentInterests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_toEndOf="@id/interestsIcon"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/primary_text_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/currentInterests"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/interestsIcon"
+                android:text="@string/interests"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/secondary_text_dark" />
+        </RelativeLayout>
 
         <!--<RelativeLayout-->
         <!--android:layout_width="match_parent"-->
