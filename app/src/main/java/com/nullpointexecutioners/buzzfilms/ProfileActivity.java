@@ -4,8 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -14,12 +12,15 @@ import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ProfileActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.currentName)
     TextView currentName;
+    @Bind(R.id.currentEmail)
+    TextView currentEmail;
     @BindDrawable(R.drawable.ic_arrow_back)
     Drawable backArrow;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
@@ -34,8 +35,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        //Set the current name field
+        //Set the current user's attributes
         currentName.setText(DataHolder.getCurrentUser().getName());
+        currentEmail.setText(DataHolder.getCurrentUser().getEmail());
 
         toolbar.setTitle(DataHolder.getCurrentUser().getName());
         toolbar.setNavigationIcon(backArrow);
@@ -48,24 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.profile_settings, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.profile_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    @OnClick(R.id.profile_fab)
+    public void editProfile() {
+        //TODO, handle editing the profile
     }
 }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginTop="@dimen/activity_horizontal_margin"
     android:padding="@dimen/activity_horizontal_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -45,7 +45,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/nameIcon"
-                android:text="@string/name_hint"
+                android:text="@string/name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/secondary_text_dark" />
         </RelativeLayout>
@@ -122,7 +122,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/emailIcon"
-                android:text="@string/email_hint"
+                android:text="@string/email"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/secondary_text_dark" />
         </RelativeLayout>
