@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName("Mike Penz")
-                                .withEmail("mikepenz@gmail.com")
+                                .withName(DataHolder.getCurrentUser().getUsername())
+                                .withEmail(DataHolder.getCurrentUser().getEmail())
                                 .withIcon(profileDrawerIcon)
                 ).withSelectionListEnabledForSingleProfile(false)
                 .build();
