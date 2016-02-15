@@ -2,6 +2,7 @@ package com.nullpointexecutioners.buzzfilms;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -96,6 +97,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (username.length() != 0 && password.length() != 0) {
             emptyFields = false;
         }
+
         // We only want to lookup in the Map once
         if (accounts.containsKey(username)) {
             attemptedUser = accounts.get(username);
@@ -105,7 +107,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
             }
-        }
         // We didn't proceed to Welcome, so we must have an invalid login
         makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
                 getColor(R.color.accent), getColor(R.color.primary_text_light)).show();

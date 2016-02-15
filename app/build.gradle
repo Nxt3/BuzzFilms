@@ -33,4 +33,5 @@ dependencies {
     }
     compile 'com.mikepenz:iconics-core:2.5.5@aar' //Library for using Google's Material Design icons in font form!
     compile 'com.mikepenz:google-material-typeface:2.2.0.1.original@aar'  //Google Material Icons in font form
+//    compile 'com.melnykov:floatingactionbutton:1.3.0' //FloatingActionButton library
 }
