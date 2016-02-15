@@ -67,9 +67,9 @@ public class ProfileActivity extends AppCompatActivity {
         editProfileDialog.show();
 
         if (editProfileDialog.getCustomView() != null) {
-            EditText editName = (EditText) editProfileDialog.getCustomView().findViewById(R.id.edit_name);
-            EditText editEmail = (EditText) editProfileDialog.getCustomView().findViewById(R.id.edit_email);
-            Spinner majorDropdown = (Spinner) editProfileDialog.getCustomView().findViewById(R.id.majorDropdown);
+            EditText editName = ButterKnife.findById(editProfileDialog, R.id.edit_name);
+            EditText editEmail = ButterKnife.findById(editProfileDialog, R.id.edit_email);
+            Spinner majorDropdown = ButterKnife.findById(editProfileDialog, R.id.majorDropdown);
             editName.setText(DataHolder.getCurrentUser().getName());
             editEmail.setText(DataHolder.getCurrentUser().getEmail());
 //            majorDropdown.setSelection(); //TODO, make it so the current major is selected

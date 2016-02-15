@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -34,6 +35,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @Bind(R.id.login_button) Button loginButton;
     @Bind(R.id.login_username) EditText loginUsernameInput;
     @Bind(R.id.login_password) EditText loginPasswordInput;
+    @BindString(R.string.register_dialog_title) String registerDialogTitle;
+    @BindString(R.string.register) String register;
+    @BindString(R.string.cancel) String cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,11 +121,11 @@ public class WelcomeActivity extends AppCompatActivity {
     @OnClick(R.id.register_button)
     public void showRegisterDialog() {
         final MaterialDialog registerDialog = new MaterialDialog.Builder(WelcomeActivity.this)
-                .title(getString(R.string.register_dialog_title))
+                .title(registerDialogTitle)
                 .customView(R.layout.register_dialog, true)
                 .theme(Theme.DARK)
-                .positiveText(getString(R.string.register))
-                .negativeText(getString(R.string.cancel))
+                .positiveText(register)
+                .negativeText(cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull final MaterialDialog registerDialog, @NonNull DialogAction which) {
