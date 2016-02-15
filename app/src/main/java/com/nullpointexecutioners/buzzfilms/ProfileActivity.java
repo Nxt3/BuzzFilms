@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -64,10 +65,14 @@ public class ProfileActivity extends AppCompatActivity {
                 .negativeText(cancel)
                 .build();
         editProfileDialog.show();
+
         if (editProfileDialog.getCustomView() != null) {
             EditText editName = (EditText) editProfileDialog.getCustomView().findViewById(R.id.edit_name);
+            EditText editEmail = (EditText) editProfileDialog.getCustomView().findViewById(R.id.edit_email);
+            Spinner majorDropdown = (Spinner) editProfileDialog.getCustomView().findViewById(R.id.majorDropdown);
             editName.setText(DataHolder.getCurrentUser().getName());
-
+            editEmail.setText(DataHolder.getCurrentUser().getEmail());
+//            majorDropdown.setSelection(); //TODO, make it so the current major is selected
         }
     }
 }
