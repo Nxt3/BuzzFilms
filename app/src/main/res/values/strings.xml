@@ -25,4 +25,6 @@
     <string name="interests">Interests</string>
     <string name="email">Email</string>
     <string name="edit">Edit</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save">Save</string>
 </resources>

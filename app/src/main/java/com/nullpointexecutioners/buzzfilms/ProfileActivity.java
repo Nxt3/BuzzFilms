@@ -6,7 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -23,8 +27,8 @@ public class ProfileActivity extends AppCompatActivity {
     TextView currentEmail;
     @BindDrawable(R.drawable.ic_arrow_back)
     Drawable backArrow;
-    @BindString(R.string.register_dialog_title) String registerDialogTitle;
-    @BindString(R.string.register) String register;
+    @BindString(R.string.edit_profile) String editProfileDialogTitle;
+    @BindString(R.string.save) String save;
     @BindString(R.string.cancel) String cancel;
 
     @Override
@@ -52,6 +56,18 @@ public class ProfileActivity extends AppCompatActivity {
 
     @OnClick(R.id.profile_fab)
     public void editProfile() {
-        //TODO, handle editing the profile
+        final MaterialDialog editProfileDialog = new MaterialDialog.Builder(ProfileActivity.this)
+                .title(editProfileDialogTitle)
+                .customView(R.layout.edit_profile_dialog, true)
+                .theme(Theme.DARK)
+                .positiveText(save)
+                .negativeText(cancel)
+                .build();
+        editProfileDialog.show();
+        if (editProfileDialog.getCustomView() != null) {
+            EditText editName = (EditText) editProfileDialog.getCustomView().findViewById(R.id.edit_name);
+            editName.setText(DataHolder.getCurrentUser().getName());
+
+        }
     }
 }
