@@ -2,6 +2,7 @@ package com.nullpointexecutioners.buzzfilms;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
@@ -21,16 +23,20 @@ import butterknife.OnClick;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
     @Bind(R.id.currentName)
     TextView currentName;
     @Bind(R.id.currentEmail)
     TextView currentEmail;
     @BindDrawable(R.drawable.ic_arrow_back)
     Drawable backArrow;
-    @BindString(R.string.edit_profile) String editProfileDialogTitle;
-    @BindString(R.string.save) String save;
-    @BindString(R.string.cancel) String cancel;
+    @BindString(R.string.edit_profile)
+    String editProfileDialogTitle;
+    @BindString(R.string.save)
+    String save;
+    @BindString(R.string.cancel)
+    String cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,12 @@ public class ProfileActivity extends AppCompatActivity {
                 .theme(Theme.DARK)
                 .positiveText(save)
                 .negativeText(cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //Save edited data back to the current user
+                    }
+                })
                 .build();
         editProfileDialog.show();
 

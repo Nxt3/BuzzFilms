@@ -1,9 +1,5 @@
 package com.nullpointexecutioners.buzzfilms;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Matthew on 2/11/2016.
  * This is the user class.
@@ -72,6 +68,5 @@ public class User {
     public void setInterests(String interests) {
         this.interests = interests;
     }
-
 
 }
