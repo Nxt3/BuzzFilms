@@ -107,11 +107,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
             }
-        // We didn't proceed to Welcome, so we must have an invalid login
-        makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            // We didn't proceed to Welcome, so we must have an invalid login
+            makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     /*Add the registered user to our HashMap*/
