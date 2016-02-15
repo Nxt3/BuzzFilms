@@ -2,7 +2,6 @@ package com.nullpointexecutioners.buzzfilms;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -107,12 +106,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
             }
-            // We didn't proceed to Welcome, so we must have an invalid login
-            makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+        // We didn't proceed to Welcome, so we must have an invalid login
+        makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     /*Add the registered user to our HashMap*/
@@ -157,7 +156,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         if (!accounts.containsKey(username) && !emptyFields) {
                             // Call the method to actually register the user after all checks
                             registerUser(name, email, username, password);
-//                            printUsers();
+                            DataHolder.setCurrentUser(accounts.get(username));
                             // Proceed to application
                             Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(registerIntent);
