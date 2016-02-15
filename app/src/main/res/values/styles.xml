@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="MaterialTheme">
         <!-- We're using the Toolbar as the ActionBar replacement-->
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>

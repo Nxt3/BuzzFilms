@@ -7,7 +7,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textInputLayout_name">
+        android:id="@+id/textInputLayout_edit_name">
 
         <EditText
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textInputLayout_register_email">
+        android:id="@+id/textInputLayout_edit_email">
 
         <EditText
             android:layout_width="match_parent"
@@ -45,14 +45,14 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textInputLayout_register_password">
+        android:id="@+id/textInputLayout_edit_password">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/register_password"
+            android:id="@+id/edit_password"
             android:layout_gravity="center"
             android:hint="@string/password_hint"
             android:imeOptions="actionDone"
