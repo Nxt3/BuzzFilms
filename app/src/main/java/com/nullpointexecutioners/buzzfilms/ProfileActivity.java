@@ -46,7 +46,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         toolbar.setTitle(DataHolder.getCurrentUser().getName());
         toolbar.setNavigationIcon(backArrow);
-        toolbar.showOverflowMenu();
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
