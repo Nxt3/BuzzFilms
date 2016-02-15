@@ -46,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar.setTitle(dashboard);
 
+        // For the sake of debugging...
+        WelcomeActivity.registerUser("Nate Gantt", "nateg@gatech.edu", "nxt3", "pass");
+        User tempUser = WelcomeActivity.accounts.get("nxt3");
+        DataHolder.setCurrentUser(tempUser);
+
         // Create the AccountHeader
         final AccountHeader drawerHeader = new AccountHeaderBuilder()
                 .withActivity(this)

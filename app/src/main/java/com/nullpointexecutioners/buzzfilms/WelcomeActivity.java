@@ -114,11 +114,6 @@ public class WelcomeActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    /*Add the registered user to our HashMap*/
-    public void registerUser(String name, String email, String username, String password) {
-        accounts.put(username, new User(username, password, name, email));
-    }
-
     @OnClick(R.id.register_button)
     public void showRegisterDialog() {
         final MaterialDialog registerDialog = new MaterialDialog.Builder(WelcomeActivity.this)
@@ -217,6 +212,11 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         registerDialog.show();
         registerAction.setEnabled(false); //disabled by default
+    }
+
+    /*Add the registered user to our HashMap*/
+    public static void registerUser(String name, String email, String username, String password) {
+        accounts.put(username, new User(username, password, name, email));
     }
 
 //    private void printUsers() {
