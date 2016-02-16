@@ -25,9 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/logout_text"
-        android:id="@+id/btnLogout"
+        android:id="@+id/logout_button"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onLogoutClick" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

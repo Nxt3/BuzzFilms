@@ -22,6 +22,7 @@ import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -113,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
-    public void onLogoutClick(View v) {
+    @OnClick(R.id.logout_button)
+    public void onLogoutClick() {
         Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
         //make sure we can't press the back button to get back to the MaiActivity!
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
