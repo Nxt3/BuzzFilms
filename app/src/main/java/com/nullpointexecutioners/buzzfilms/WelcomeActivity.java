@@ -109,6 +109,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 // Login works - proceed to application
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
+                finish(); //We're done with logging in
             }
         }
         // We didn't proceed to Welcome, so we must have an invalid login
@@ -159,6 +160,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             // Proceed to application
                             Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(registerIntent);
+                            finish();
                         } else {
                             //Inform the user that the email address or username is already in use
                             makeSnackbar(findViewById(android.R.id.content), "Username already exists", Snackbar.LENGTH_LONG,
