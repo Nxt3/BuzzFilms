@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="MaterialTheme">
         <!-- We're using the Toolbar as the ActionBar replacement-->
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -18,9 +18,14 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
+    
+    <style name="DrawerTheme_Dark" parent="MaterialDrawerTheme.TranslucentStatus">
+        <item name="material_drawer_header_selection_text">@color/primary_text_light</item>
+    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    
 </resources>

@@ -24,15 +24,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     public static Map<String, User> accounts = new HashMap<String, User>();
+    public static User currentUser;
     @Bind(R.id.login_button) Button loginButton;
     @Bind(R.id.login_username) EditText loginUsernameInput;
     @Bind(R.id.login_password) EditText loginPasswordInput;
+    @BindString(R.string.register_dialog_title) String registerDialogTitle;
+    @BindString(R.string.register) String register;
+    @BindString(R.string.cancel) String cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,37 +93,39 @@ public class WelcomeActivity extends AppCompatActivity {
     public void authenticateLogin() {
         String username = loginUsernameInput.getText().toString();
         String password = loginPasswordInput.getText().toString();
+        User attemptedUser;
 
         /*Check and see if the Login fields are blank*/
         boolean emptyFields = true;
         if (username.length() != 0 && password.length() != 0) {
             emptyFields = false;
         }
-        if (accounts.containsKey(username) && password.equals(accounts.get(username).getPassword()) && !emptyFields) {
-            // Login works - proceed to application
-            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-            startActivity(loginIntent);
-        } else {
-            makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
 
-    /*Add the registered user to our HashMap*/
-    public void registerUser(String name, String email, String username, String password) {
-        accounts.put(username, new User(username, password, name, email));
+        // We only want to lookup in the Map once
+        if (accounts.containsKey(username)) {
+            attemptedUser = accounts.get(username);
+            if (attemptedUser.getPassword().equals(password) && !emptyFields) {
+                DataHolder.setCurrentUser(attemptedUser);
+                // Login works - proceed to application
+                Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                startActivity(loginIntent);
+            }
+        }
+        // We didn't proceed to Welcome, so we must have an invalid login
+        makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @OnClick(R.id.register_button)
     public void showRegisterDialog() {
         final MaterialDialog registerDialog = new MaterialDialog.Builder(WelcomeActivity.this)
-                .title(getString(R.string.register_dialog_title))
+                .title(registerDialogTitle)
                 .customView(R.layout.register_dialog, true)
                 .theme(Theme.DARK)
-                .positiveText(getString(R.string.register))
-                .negativeText(getString(R.string.cancel))
+                .positiveText(register)
+                .negativeText(cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull final MaterialDialog registerDialog, @NonNull DialogAction which) {
@@ -148,7 +155,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         if (!accounts.containsKey(username) && !emptyFields) {
                             // Call the method to actually register the user after all checks
                             registerUser(name, email, username, password);
-//                            printUsers();
+                            DataHolder.setCurrentUser(accounts.get(username));
                             // Proceed to application
                             Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(registerIntent);
@@ -158,30 +165,21 @@ public class WelcomeActivity extends AppCompatActivity {
                                     getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
                         }
                     }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog registerDialog, @NonNull DialogAction which) {
-                        registerDialog.dismiss(); //close the registerDialog since they pressed "Cancel"
-                    }
                 }).build();
 
         final View registerAction = registerDialog.getActionButton(DialogAction.POSITIVE);
-        final EditText registerNameInput;
-        final EditText registerEmailInput;
-        final EditText registerUsernameInput;
-        final EditText registerPasswordInput;
+
         if (registerDialog.getCustomView() != null) {
-            registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
-            registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
-            registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
-            registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
+            final EditText registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
+            final EditText registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
+            final EditText registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
+            final EditText registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
 
             /*
              * TextWatcher lets us monitor the input fields while registering;
              * This make sure we don't allow the user to register with empty fields
              */
-            TextWatcher watcher = new TextWatcher() {
+            final TextWatcher watcher = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
@@ -209,6 +207,11 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         registerDialog.show();
         registerAction.setEnabled(false); //disabled by default
+    }
+
+    /*Add the registered user to our HashMap*/
+    public static void registerUser(String name, String email, String username, String password) {
+        accounts.put(username, new User(username, password, name, email));
     }
 
 //    private void printUsers() {
