@@ -20,9 +20,29 @@ public class User {
     }
 
     public enum Major {
-        CS, EE, ME, ISYE, Math, Phys, Chem, ChemE
+        NONE("Select your major"),
+        CS("Computer Science"),
+        EE("Electrical Engineering"),
+        ME("Mechanical Engineering"),
+        ISYE("Industrial & Systems Engineering"),
+        MATH("Mathematics"),
+        PHYS("Physics"),
+        CHEM("Chemistry"),
+        CHEME("Chemical Engineering");
+
+        private String theMajor;
+
+        Major(String aMajor) {
+            theMajor = aMajor;
+        }
+
+        @Override
+        public String toString() {
+            return theMajor;
+        }
     }
 
+    /*Getter methods*/
     public String getUsername() {
         return this.username;
     }
@@ -54,10 +74,10 @@ public class User {
         this.password = password;
     }
 
+    /*Setter methods*/
     public void setName(String name) {
         this.name = name;
     }
-
 
     public void setEmail(String email) {
         this.email = email;

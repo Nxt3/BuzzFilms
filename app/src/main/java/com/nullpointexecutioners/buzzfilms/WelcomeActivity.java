@@ -165,30 +165,21 @@ public class WelcomeActivity extends AppCompatActivity {
                                     getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
                         }
                     }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog registerDialog, @NonNull DialogAction which) {
-                        registerDialog.dismiss(); //close the registerDialog since they pressed "Cancel"
-                    }
                 }).build();
 
         final View registerAction = registerDialog.getActionButton(DialogAction.POSITIVE);
-        final EditText registerNameInput;
-        final EditText registerEmailInput;
-        final EditText registerUsernameInput;
-        final EditText registerPasswordInput;
+
         if (registerDialog.getCustomView() != null) {
-            registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
-            registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
-            registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
-            registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
+            final EditText registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
+            final EditText registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
+            final EditText registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
+            final EditText registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
 
             /*
              * TextWatcher lets us monitor the input fields while registering;
              * This make sure we don't allow the user to register with empty fields
              */
-            TextWatcher watcher = new TextWatcher() {
+            final TextWatcher watcher = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }

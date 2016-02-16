@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusableInTouchMode="true">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -16,14 +17,25 @@
             android:hint="@string/name_hint"
             android:ems="10"
             android:id="@+id/edit_name"
+            android:imeOptions="actionDone"
             android:layout_gravity="center"
             android:layout_centerVertical="true" />
     </android.support.design.widget.TextInputLayout>
 
-    <Spinner
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/majorDropdown"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="3dp"
+        android:text="@string/major_hint"
+        android:textColor="#a1a1a1"
+        android:textSize="11sp" />
+
+    <Spinner
+        android:prompt="@string/major_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/major_dropdown"
         android:spinnerMode="dropdown" />
 
     <android.support.design.widget.TextInputLayout
@@ -44,19 +56,18 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textInputLayout_edit_password">
+        android:layout_height="128dp"
+        android:id="@+id/textInputLayout_edit_interests">
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:layout_height="match_parent"
+            android:inputType="textAutoCorrect|textMultiLine|textCapSentences|textShortMessage"
             android:ems="10"
-            android:id="@+id/edit_password"
+            android:id="@+id/edit_interests"
             android:layout_gravity="center"
-            android:hint="@string/password_hint"
-            android:imeOptions="actionDone"
-            android:singleLine="true"
+            android:hint="@string/interests_hint"
+            android:singleLine="false"
             android:layout_centerHorizontal="true" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

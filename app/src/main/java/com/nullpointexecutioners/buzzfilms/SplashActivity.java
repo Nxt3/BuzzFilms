@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import butterknife.BindInt;
+
 public class SplashActivity extends Activity {
 
     @Override
@@ -18,11 +20,11 @@ public class SplashActivity extends Activity {
         Thread timerThread = new Thread() {
             public void run() {
                 try {
-                    sleep(50); //wait
+                    sleep(2000); //wait
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                    Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }

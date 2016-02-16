@@ -47,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(dashboard);
 
         // For the sake of debugging...
-        WelcomeActivity.registerUser("Nate Gantt", "nateg@gatech.edu", "nxt3", "pass");
-        User tempUser = WelcomeActivity.accounts.get("nxt3");
-        DataHolder.setCurrentUser(tempUser);
+//        WelcomeActivity.registerUser("Nate Gantt", "nateg@gatech.edu", "nxt3", "pass");
+//        User tempUser = WelcomeActivity.accounts.get("nxt3");
+//        DataHolder.setCurrentUser(tempUser);
 
         // Create the AccountHeader
         final AccountHeader drawerHeader = new AccountHeaderBuilder()
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
-                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS)
+                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false)
                 ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
