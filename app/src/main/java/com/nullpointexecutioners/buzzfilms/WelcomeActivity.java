@@ -160,7 +160,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             // Proceed to application
                             Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(registerIntent);
-                            finish();
+                            finish(); //We're done with registering
                         } else {
                             //Inform the user that the email address or username is already in use
                             makeSnackbar(findViewById(android.R.id.content), "Username already exists", Snackbar.LENGTH_LONG,
