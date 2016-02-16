@@ -12,7 +12,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:hint="@string/name_hint"
             android:ems="10"
             android:id="@+id/register_name"
