@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                                     return false;
                                 case PROFILE:
                                     intent = new Intent(MainActivity.this, ProfileActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return true;
                                 case SETTINGS:
