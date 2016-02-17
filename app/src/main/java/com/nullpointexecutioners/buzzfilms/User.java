@@ -1,9 +1,5 @@
 package com.nullpointexecutioners.buzzfilms;
 
-/**
- * Created by Matthew on 2/11/2016.
- * This is the user class.
- */
 public class User {
 
     Major studentMajor;
