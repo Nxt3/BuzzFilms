@@ -36,12 +36,12 @@ public class WelcomeActivity extends AppCompatActivity {
     @Bind(R.id.login_button) Button mLoginButton;
     @Bind(R.id.login_password) EditText mLoginPasswordInput;
     @Bind(R.id.login_username) EditText mLoginUsernameInput;
+    @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
+    @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.register) String register;
-    @BindString(R.string.register_username_taken) String usernameTaken;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
-    @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
-    @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
+    @BindString(R.string.register_username_taken) String usernameTaken;
 
     /* Listener for Firebase session changes */
     private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
@@ -110,6 +110,7 @@ public class WelcomeActivity extends AppCompatActivity {
         final String username = mLoginUsernameInput.getText().toString();
         final String password = mLoginPasswordInput.getText().toString();
 
+        /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
 
         mRef.authWithPassword(setUserWithDummyDomain(username), password, new Firebase.AuthResultHandler() {
@@ -125,11 +126,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 Log.e("Buzz Films Welcome", "Didn't auth correctly");
 
                 // We didn't proceed to Welcome, so we must have an invalid login
+                mAuthProgressDialog.dismiss();
                 makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
                         getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                mAuthProgressDialog.dismiss();
             }
         });
     }
@@ -192,6 +193,12 @@ public class WelcomeActivity extends AppCompatActivity {
                                 }
                             });
                         }
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog registerDialog, @NonNull DialogAction which) {
+                        registerDialog.dismiss();
                     }
                 }).build();
 
