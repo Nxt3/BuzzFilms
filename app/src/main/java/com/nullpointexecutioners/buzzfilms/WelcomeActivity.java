@@ -104,12 +104,6 @@ public class WelcomeActivity extends AppCompatActivity {
         final String username = mLoginUsernameInput.getText().toString();
         final String password = mLoginPasswordInput.getText().toString();
 
-        /*Check and see if the Login fields are blank*/
-        boolean emptyFields = true;
-        if (username.length() != 0 && password.length() != 0) {
-            emptyFields = false;
-        }
-
         mRef.authWithPassword(username, password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
