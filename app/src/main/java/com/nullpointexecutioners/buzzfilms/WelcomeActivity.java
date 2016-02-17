@@ -19,6 +19,11 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,14 +35,19 @@ import butterknife.OnClick;
 
 public class WelcomeActivity extends AppCompatActivity {
 
+    @Bind(R.id.login_button) Button mLoginButton;
+    @Bind(R.id.login_password) EditText mLoginPasswordInput;
+    @Bind(R.id.login_username) EditText mLoginUsernameInput;
+    @BindString(R.string.cancel) String cancel;
+    @BindString(R.string.register) String register;
+    @BindString(R.string.register_username_taken) String usernameTaken;
+    @BindString(R.string.register_dialog_title) String registerDialogTitle;
+
+    /* Listener for Firebase session changes */
+    private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+
     public static Map<String, User> accounts = new HashMap<String, User>();
     public static User currentUser;
-    @Bind(R.id.login_button) Button loginButton;
-    @Bind(R.id.login_username) EditText loginUsernameInput;
-    @Bind(R.id.login_password) EditText loginPasswordInput;
-    @BindString(R.string.register_dialog_title) String registerDialogTitle;
-    @BindString(R.string.register) String register;
-    @BindString(R.string.cancel) String cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +55,7 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
 
-        loginButton.setEnabled(false); //disabled by default
+        mLoginButton.setEnabled(false); //disabled by default
 
         TextWatcher watcher = new TextWatcher() {
             @Override
@@ -53,29 +63,29 @@ public class WelcomeActivity extends AppCompatActivity {
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (loginUsernameInput.getText().length() > 0
-                        && loginPasswordInput.getText().length() > 0) {
-                    loginButton.setEnabled(true);
+                if (mLoginUsernameInput.getText().length() > 0
+                        && mLoginPasswordInput.getText().length() > 0) {
+                    mLoginButton.setEnabled(true);
                 } else {
-                    loginButton.setEnabled(false);
+                    mLoginButton.setEnabled(false);
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {
             }
         };
-        loginUsernameInput.addTextChangedListener(watcher);
-        loginPasswordInput.addTextChangedListener(watcher);
+        mLoginUsernameInput.addTextChangedListener(watcher);
+        mLoginPasswordInput.addTextChangedListener(watcher);
 
         /*We want to also allow the user to press the Done button on the keyboard*/
-        loginPasswordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mLoginPasswordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     authenticateLogin();
 //                    Hide virtual keyboard after "Done" action
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     return true;
                 }
                 return false;
@@ -91,9 +101,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_button)
     public void authenticateLogin() {
-        String username = loginUsernameInput.getText().toString();
-        String password = loginPasswordInput.getText().toString();
-        User attemptedUser;
+        final String username = mLoginUsernameInput.getText().toString();
+        final String password = mLoginPasswordInput.getText().toString();
 
         /*Check and see if the Login fields are blank*/
         boolean emptyFields = true;
@@ -101,22 +110,23 @@ public class WelcomeActivity extends AppCompatActivity {
             emptyFields = false;
         }
 
-        // We only want to lookup in the Map once
-        if (accounts.containsKey(username)) {
-            attemptedUser = accounts.get(username);
-            if (attemptedUser.getPassword().equals(password) && !emptyFields) {
-                DataHolder.setCurrentUser(attemptedUser);
-                // Login works - proceed to application
+        mRef.authWithPassword(username, password, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
                 finish(); //We're done with logging in
             }
-        }
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+            }
+        });
+
         // We didn't proceed to Welcome, so we must have an invalid login
         makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
                 getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(loginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @OnClick(R.id.register_button)
@@ -125,6 +135,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 .title(registerDialogTitle)
                 .customView(R.layout.register_dialog, true)
                 .theme(Theme.DARK)
+                .autoDismiss(false)
                 .positiveText(register)
                 .negativeText(cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -134,7 +145,8 @@ public class WelcomeActivity extends AppCompatActivity {
                         final EditText registerEmailInput;
                         final EditText registerUsernameInput;
                         final EditText registerPasswordInput;
-                        String name = "", email = "", username = "", password = "";
+                        final String name, email, username, password;
+
                         if (registerDialog.getCustomView() != null) {
                             registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
                             registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
@@ -144,27 +156,35 @@ public class WelcomeActivity extends AppCompatActivity {
                             email = registerEmailInput.getText().toString();
                             username = registerUsernameInput.getText().toString();
                             password = registerPasswordInput.getText().toString();
-                        }
-                        /*Check and see if the Login fields are blank*/
-                        boolean emptyFields = true;
-                        if (name.length() != 0 && email.length() != 0 && username.length() != 0
-                                && password.length() != 0) {
-                            emptyFields = false;
-                        }
-                        //TODO: search the database for an existing user; if no match is found, allow this user to be added to the DB
 
-                        if (!accounts.containsKey(username) && !emptyFields) {
-                            // Call the method to actually register the user after all checks
-                            registerUser(name, email, username, password);
-                            DataHolder.setCurrentUser(accounts.get(username));
-                            // Proceed to application
-                            Intent registerIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                            startActivity(registerIntent);
-                            finish(); //We're done with registering
-                        } else {
-                            //Inform the user that the email address or username is already in use
-                            makeSnackbar(findViewById(android.R.id.content), "Username already exists", Snackbar.LENGTH_LONG,
-                                    getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+                            mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.getValue() != null) {
+                                        //User exists already
+                                        registerUsernameInput.setError(usernameTaken);
+                                    } else {
+                                        mRef.createUser(username, password, new Firebase.ResultHandler() {
+                                            @Override
+                                            public void onSuccess() {
+                                            }
+                                            @Override
+                                            public void onError(FirebaseError firebaseError) {
+                                            }
+                                        });
+                                        registerDialog.dismiss();
+                                        registerUser(name, email, username, password);
+
+                                        Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                        startActivity(loginIntent);
+                                        finish(); //We're done with logging in
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(FirebaseError firebaseError) {
+                                }
+                            });
                         }
                     }
                 }).build();
@@ -211,17 +231,14 @@ public class WelcomeActivity extends AppCompatActivity {
         registerAction.setEnabled(false); //disabled by default
     }
 
-    /*Add the registered user to our HashMap*/
-    public static void registerUser(String name, String email, String username, String password) {
-        accounts.put(username, new User(username, password, name, email));
+    /*Add the registered user to our backend*/
+    public void registerUser(String name, String email, String username, String password) {
+        Firebase userRef = mRef.child(username);
+        userRef.child("username").setValue(username);
+        userRef.child("name").setValue(name);
+        userRef.child("email").setValue(email);
     }
 
-//    private void printUsers() {
-//        for (Map.Entry<String, User> entry : accounts.entrySet()) {
-//            System.out.println(entry.getKey()+" : " + entry.getValue());
-//        }
-//        System.out.println("Size: " + accounts.size());
-//    }
 
     /**
      * Helper method for creating custom Snackbars

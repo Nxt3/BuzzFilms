@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.firebase.client.Firebase;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -28,12 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
     /*I love ButterKnife <3*/
     @Bind(R.id.toolbar) Toolbar toolbar;
-    private Drawer navDrawer;
     @BindDrawable(R.drawable.rare_pepe_avatar)
-    Drawable profileDrawerIcon;
+    Drawable mProfileDrawerIcon;
+    @BindString(R.string.title_activity_main) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.settings) String settings;
-    @BindString(R.string.title_activity_main) String dashboard;
+
+    Drawer mNavDrawer;
+    Firebase mRef;
+    User mCurrentUser;
 
     final private int DASHBOARD = 1;
     final private int PROFILE = 2;
@@ -58,14 +62,14 @@ public class MainActivity extends AppCompatActivity {
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(DataHolder.getCurrentUser().getUsername())
-                                .withEmail(DataHolder.getCurrentUser().getEmail())
-                                .withIcon(profileDrawerIcon)
+                                .withName("temp")
+                                .withEmail("temp@gmail")
+                                .withIcon(mProfileDrawerIcon)
                 ).withSelectionListEnabledForSingleProfile(false)
                 .build();
 
         //create the drawer and remember the `Drawer` result object
-        navDrawer = new DrawerBuilder()
+        mNavDrawer = new DrawerBuilder()
                 .withAccountHeader(drawerHeader)
                 .withActivity(this)
                 .withToolbar(toolbar)
@@ -97,6 +101,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        mRef = new Firebase("https://buzz-films.firebaseio.com/Users");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -104,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        navDrawer.setSelection(navDrawer.getDrawerItem(DASHBOARD));
-        navDrawer.closeDrawer();
+        mNavDrawer.setSelection(mNavDrawer.getDrawerItem(DASHBOARD));
+        mNavDrawer.closeDrawer();
     }
 
     @Override
@@ -116,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.logout_button)
     public void onLogoutClick() {
+        mRef.unauth();
         Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
         //make sure we can't press the back button to get back to the MaiActivity!
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

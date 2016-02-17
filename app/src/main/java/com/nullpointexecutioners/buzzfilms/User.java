@@ -5,12 +5,13 @@ package com.nullpointexecutioners.buzzfilms;
  * This is the user class.
  */
 public class User {
-    private String username;
-    private String password; // Not hashed yet
-    private String name;
-    private String email;
+
     Major studentMajor;
+    private String email;
     private String interests;
+    private String name;
+    private String password; // Not hashed yet
+    private String username;
 
     public User(String username, String password, String name, String email) {
         this.username = username;

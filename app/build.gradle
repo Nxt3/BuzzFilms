@@ -17,21 +17,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.4@aar') { //MaterialDialogs
         transitive = true
     }
-    compile 'com.jakewharton:butterknife:7.0.1' //the best <3
+    //the best <3
     compile('com.mikepenz:materialdrawer:4.6.4@aar') { //MaterialDrawer library
         transitive = true
     }
-    compile 'com.mikepenz:iconics-core:2.5.5@aar' //Library for using Google's Material Design icons in font form!
-    compile 'com.mikepenz:google-material-typeface:2.2.0.1.original@aar'  //Google Material Icons in font form
+
 //    compile 'com.melnykov:floatingactionbutton:1.3.0' //FloatingActionButton library
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.mikepenz:iconics-core:2.5.5@aar' //Library for using Google's Material Design icons in font form!
+    compile 'com.mikepenz:google-material-typeface:2.2.0.1.original@aar' //Google Material Icons in font form
+    compile 'com.firebase:firebase-client-android:2.3.1'
 }

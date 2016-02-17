@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import butterknife.BindInt;
-
 public class SplashActivity extends Activity {
 
     @Override
