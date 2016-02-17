@@ -190,7 +190,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private boolean passwordMatch(EditText newPassword, EditText newPasswordConfirm) {
-//        return (newPassword.getText().toString().equals(newPasswordConfirm.getText().toString()));
         return (newPassword.getText().toString().matches(newPasswordConfirm.getText().toString()));
     }
 

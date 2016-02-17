@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -104,7 +105,7 @@ public class WelcomeActivity extends AppCompatActivity {
         final String username = mLoginUsernameInput.getText().toString();
         final String password = mLoginPasswordInput.getText().toString();
 
-        mRef.authWithPassword(username, password, new Firebase.AuthResultHandler() {
+        mRef.authWithPassword(setUserWithDummyDomain(username), password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
@@ -113,14 +114,15 @@ public class WelcomeActivity extends AppCompatActivity {
             }
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
+                Log.e("Buzz Films Welcome", "Didn't auth correctly");
+
+                // We didn't proceed to Welcome, so we must have an invalid login
+                makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                        getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
-
-        // We didn't proceed to Welcome, so we must have an invalid login
-        makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @OnClick(R.id.register_button)
@@ -157,8 +159,9 @@ public class WelcomeActivity extends AppCompatActivity {
                                     if (dataSnapshot.getValue() != null) {
                                         //User exists already
                                         registerUsernameInput.setError(usernameTaken);
+                                        registerUsernameInput.requestFocus();
                                     } else {
-                                        mRef.createUser(username, password, new Firebase.ResultHandler() {
+                                        mRef.createUser(setUserWithDummyDomain(username), password, new Firebase.ResultHandler() {
                                             @Override
                                             public void onSuccess() {
                                             }
@@ -167,7 +170,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                             }
                                         });
                                         registerDialog.dismiss();
-                                        registerUser(name, email, username, password);
+                                        registerUser(name, email, username);
 
                                         Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                                         startActivity(loginIntent);
@@ -226,13 +229,16 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     /*Add the registered user to our backend*/
-    public void registerUser(String name, String email, String username, String password) {
+    public void registerUser(String name, String email, String username) {
         Firebase userRef = mRef.child(username);
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
     }
 
+    private String setUserWithDummyDomain(String username) {
+        return username + "@buzz-films.edu";
+    }
 
     /**
      * Helper method for creating custom Snackbars
