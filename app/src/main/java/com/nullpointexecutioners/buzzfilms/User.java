@@ -10,12 +10,10 @@ public class User {
     private String email;
     private String interests;
     private String name;
-    private String password; // Not hashed yet
     private String username;
 
-    public User(String username, String password, String name, String email) {
+    public User(String username, String name, String email) {
         this.username = username;
-        this.password = password;
         this.name = name;
         this.email = email;
     }
@@ -48,11 +46,6 @@ public class User {
         return this.username;
     }
 
-    // Such security. Wow.
-    public String getPassword() {
-        return this.password;
-    }
-
     public String getName() {
         return this.name;
     }
@@ -69,10 +62,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /*Setter methods*/

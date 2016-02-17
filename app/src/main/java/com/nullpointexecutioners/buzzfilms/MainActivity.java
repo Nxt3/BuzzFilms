@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     Firebase mRef;
-    User mCurrentUser;
 
     final private int DASHBOARD = 1;
     final private int PROFILE = 2;
