@@ -33,4 +33,6 @@
     <string name="settings">Settings</string>
     <string name="title_activity_main">Dashboard</string>
     <string name="username_hint">username</string>
+    <string name="auth_progress_dialog_title">Logging in...</string>
+    <string name="auth_progress_dialog_content">Authenticating user</string>
 </resources>

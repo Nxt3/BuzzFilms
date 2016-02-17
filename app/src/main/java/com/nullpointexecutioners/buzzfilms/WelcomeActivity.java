@@ -26,9 +26,6 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -43,12 +40,13 @@ public class WelcomeActivity extends AppCompatActivity {
     @BindString(R.string.register) String register;
     @BindString(R.string.register_username_taken) String usernameTaken;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
+    @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
+    @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
 
     /* Listener for Firebase session changes */
     private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
-    public static Map<String, User> accounts = new HashMap<String, User>();
-    public static User currentUser;
+    private MaterialDialog mAuthProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +90,13 @@ public class WelcomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        /*Shows progress while authenticating user*/
+        mAuthProgressDialog = new MaterialDialog.Builder(WelcomeActivity.this)
+                .title(authProgressDialogTitle)
+                .content(authProgressDialogContent)
+                .progress(true, 0)
+                .build();
     }
 
     @Override
@@ -105,11 +110,14 @@ public class WelcomeActivity extends AppCompatActivity {
         final String username = mLoginUsernameInput.getText().toString();
         final String password = mLoginPasswordInput.getText().toString();
 
+        mAuthProgressDialog.show();
+
         mRef.authWithPassword(setUserWithDummyDomain(username), password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(loginIntent);
+                mAuthProgressDialog.dismiss();
                 finish(); //We're done with logging in
             }
             @Override
@@ -121,6 +129,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                mAuthProgressDialog.dismiss();
             }
         });
     }
@@ -236,6 +245,8 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("email").setValue(email);
     }
 
+    /*Appends a dummy domain to the username when adding it to Firebase
+    * This then follows Firebase's authWithPassword() method call*/
     private String setUserWithDummyDomain(String username) {
         return username + "@buzz-films.edu";
     }
