@@ -111,7 +111,7 @@ public class SessionManager {
     public String getLoggedInName() {
         String name = null;
         if (pref.contains(KEY_NAME) && pref.getBoolean(IS_LOGIN, false)) {
-            name = pref.getString(KEY_NAME, null);
+            name = pref.getString(KEY_NAME, "name");
         }
         return name;
     }

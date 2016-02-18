@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @OnClick(R.id.logout_button)
     public void onLogoutClick() {
-        //Removes user from Session, unAuth via Firebase, and clears Activity stack
+        //Removes user from Session and unAuth via Firebase
         mSession.logoutUser();
 
         //After logout redirect user to WelcomeActivity to login or register
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Closing all the Activities
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //Add new Flag to start new Activity
+//        //Add new Flag to start new Activity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         startActivity(intent);

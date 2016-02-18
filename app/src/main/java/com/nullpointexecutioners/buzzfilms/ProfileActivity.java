@@ -109,8 +109,8 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Object major = dataSnapshot.child("major").getValue();
-                if (major != null) {
-                    mMajor = (User.Major) major;
+                if (!major.equals(User.Major.NONE.toString())) {
+                    mMajor = User.Major.fromString((String) major);
                     profileMajor.setText(mMajor.toString());
                 } else {
                     profileMajor.setText(majorNotSpecified);
@@ -182,10 +182,13 @@ public class ProfileActivity extends AppCompatActivity {
                         /*Update the name and email that's stored in this Session*/
                         mName = NEW_NAME;
                         mEmail = NEW_EMAIL;
+                        mMajor = NEW_MAJOR;
                         mSession.updateSession(mName, mEmail);
 
                         (ProfileActivity.this).passThrough(editName, editEmail, editInterests);
-                        (ProfileActivity.this).profileMajor.setText(mMajor.toString());
+                        if (mMajor != null) {
+                            (ProfileActivity.this).profileMajor.setText(mMajor.toString());
+                        }
                     }
                 }).build();
 
@@ -244,6 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
                         if (passwordMatch(editPasswordText, editPasswordConfirmText)
                                 && editPasswordText.length() != 0
                                 && editPasswordConfirmText.length() != 0) {
+                            mRef.getAuth();
                             mRef.changePassword(mUsername, editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
                                 @Override
                                 public void onSuccess() {

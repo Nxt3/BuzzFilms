@@ -37,7 +37,7 @@ public class User {
         CHEM("Chemistry"),
         CHEME("Chemical Engineering");
 
-        private String theMajor;
+        private final String theMajor;
 
         Major(String aMajor) {
             theMajor = aMajor;
@@ -46,6 +46,20 @@ public class User {
         @Override
         public String toString() {
             return theMajor;
+        }
+
+        /**
+         * Helper method for getting the enum from a String
+         * @param value of String to extract enum from
+         * @return major of enum type
+         */
+        public static Major fromString(String value) {
+            for (Major major : values()) {
+                if (major.theMajor.equals(value)) {
+                    return major;
+                }
+            }
+            return null;
         }
     }
 
