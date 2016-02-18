@@ -2,13 +2,14 @@ package com.nullpointexecutioners.buzzfilms;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -27,21 +28,29 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import butterknife.Bind;
+import butterknife.BindInt;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Login/Register activity
+ */
 public class WelcomeActivity extends AppCompatActivity {
 
     @Bind(R.id.login_button) Button mLoginButton;
     @Bind(R.id.login_password) EditText mLoginPasswordInput;
     @Bind(R.id.login_username) EditText mLoginUsernameInput;
+    @Bind(android.R.id.content) View thisActivity;
+    @BindInt(R.color.accent) int accentColor;
+    @BindInt(R.color.primary_text_light) int primaryTextLightColor;
     @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
     @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.register) String register;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
     @BindString(R.string.register_username_taken) String usernameTaken;
+    @BindString(R.string.network_not_available) String networkNotAvailable;
 
     /* Listener for Firebase session changes */
     private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
@@ -123,26 +132,29 @@ public class WelcomeActivity extends AppCompatActivity {
         /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
 
-        mRef.authWithPassword(setUserWithDummyDomain(username), password, new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                startActivity(loginIntent);
-                mAuthProgressDialog.dismiss();
-                finish(); //We're done with logging in
-            }
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                Log.e("Buzz Films Welcome", "Didn't auth correctly");
-
-                // We didn't proceed to Welcome, so we must have an invalid login
-                mAuthProgressDialog.dismiss();
-                makeSnackbar(findViewById(android.R.id.content), getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                        getColor(R.color.accent), getColor(R.color.primary_text_light)).show();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        });
+        if (isOnline()) {
+            mRef.authWithPassword(setUserWithDummyDomain(username), password, new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    mAuthProgressDialog.dismiss();
+                    Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                    startActivity(loginIntent);
+                    finish(); //We're done with logging in
+                }
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    // We didn't proceed to Welcome, so we must have an invalid login
+                    mAuthProgressDialog.dismiss();
+                    makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                            accentColor, primaryTextLightColor).show();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            });
+        } else {
+            mAuthProgressDialog.dismiss();
+            makeSnackbar(thisActivity, networkNotAvailable, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
+        }
     }
 
     /**
@@ -177,36 +189,40 @@ public class WelcomeActivity extends AppCompatActivity {
                             username = registerUsernameInput.getText().toString();
                             password = registerPasswordInput.getText().toString();
 
-                            mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.getValue() != null) {
-                                        //User exists already
-                                        registerUsernameInput.setError(usernameTaken);
-                                        registerUsernameInput.requestFocus();
-                                    } else {
-                                        mRef.createUser(setUserWithDummyDomain(username), password, new Firebase.ResultHandler() {
-                                            @Override
-                                            public void onSuccess() {
-                                            }
-                                            @Override
-                                            public void onError(FirebaseError firebaseError) {
-                                            }
-                                        });
-                                        registerDialog.dismiss();
-                                        registerUser(name, email, username);
+                            if (isOnline()) {
+                                mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getValue() != null) {
+                                            //User exists already
+                                            registerUsernameInput.setError(usernameTaken);
+                                            registerUsernameInput.requestFocus();
+                                        } else {
+                                            mRef.createUser(setUserWithDummyDomain(username), password, new Firebase.ResultHandler() {
+                                                @Override
+                                                public void onSuccess() {
+                                                }
+                                                @Override
+                                                public void onError(FirebaseError firebaseError) {
+                                                }
+                                            });
+                                            registerDialog.dismiss();
+                                            registerUser(name, email, username);
 
-                                        //Go to the MainActivity
-                                        Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                                        startActivity(loginIntent);
-                                        finish(); //We're done with logging in
+                                            //Go to the MainActivity
+                                            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                            startActivity(loginIntent);
+                                            finish(); //We're done with the WelcomeActivity
+                                        }
                                     }
-                                }
-
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-                                }
-                            });
+                                    @Override
+                                    public void onCancelled(FirebaseError firebaseError) {
+                                    }
+                                });
+                            } else {
+                                registerDialog.dismiss();
+                                makeSnackbar(thisActivity, networkNotAvailable, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
+                            }
                         }
                     }
                 })
@@ -280,6 +296,20 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private String setUserWithDummyDomain(String username) {
         return username + "@buzz-films.edu";
+    }
+
+    /**
+     * Helper method for determining if the device has a network connection
+     * This does NOT check whether we can actually access the Internet, though
+     * @return true or false depending on whether or not the device has a network connection
+     */
+    public boolean isOnline() {
+        Context context = getApplicationContext();
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return (netInfo != null && netInfo.isConnectedOrConnecting());
     }
 
     /**

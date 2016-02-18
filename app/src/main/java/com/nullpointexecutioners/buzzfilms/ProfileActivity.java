@@ -72,16 +72,16 @@ public class ProfileActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
         //Set the current user's attributes
-        profileName.setText(getCurrentUser().getName());
-        profileEmail.setText(getCurrentUser().getEmail());
-        if (getCurrentUser().getMajor() == null) {
-            profileMajor.setText(majorNotSpecified);
-        } else {
-            profileMajor.setText(getCurrentUser().getMajor().toString());
-        }
-        if (getCurrentUser().getInterests() != null) {
-            profileInterests.setText(getCurrentUser().getInterests());
-        }
+//        profileName.setText(getCurrentUser().getName());
+//        profileEmail.setText(getCurrentUser().getEmail());
+//        if (getCurrentUser().getMajor() == null) {
+//            profileMajor.setText(majorNotSpecified);
+//        } else {
+//            profileMajor.setText(getCurrentUser().getMajor().toString());
+//        }
+//        if (getCurrentUser().getInterests() != null) {
+//            profileInterests.setText(getCurrentUser().getInterests());
+//        }
 
         initToolbar();
     }
@@ -106,13 +106,13 @@ public class ProfileActivity extends AppCompatActivity {
                         final Spinner majorDropdown = ButterKnife.findById(editProfileDialog, R.id.major_dropdown);
                         final EditText editInterests = ButterKnife.findById(editProfileDialog, R.id.edit_interests);
 
-                        getCurrentUser().setName(editName.getText().toString());
-                        getCurrentUser().setEmail(editEmail.getText().toString());
-                        getCurrentUser().setInterests(editInterests.getText().toString());
-                        getCurrentUser().setMajor((User.Major) majorDropdown.getSelectedItem());
+//                        getCurrentUser().setName(editName.getText().toString());
+//                        getCurrentUser().setEmail(editEmail.getText().toString());
+//                        getCurrentUser().setInterests(editInterests.getText().toString());
+//                        getCurrentUser().setMajor((User.Major) majorDropdown.getSelectedItem());
 
                         (ProfileActivity.this).passThrough(editName, editEmail, editInterests);
-                        (ProfileActivity.this).profileMajor.setText(getCurrentUser().getMajor().toString());
+//                        (ProfileActivity.this).profileMajor.setText(getCurrentUser().getMajor().toString());
                     }
                 }).build();
 
@@ -134,14 +134,14 @@ public class ProfileActivity extends AppCompatActivity {
             };
             final AbsSpinner majorDropdown = ButterKnife.findById(editProfileDialog, R.id.major_dropdown);
             majorDropdown.setAdapter(adapter);
-            editName.setText(getCurrentUser().getName());
-            editEmail.setText(getCurrentUser().getEmail());
-            if (getCurrentUser().getMajor() != null) {
-                majorDropdown.setSelection(((ArrayAdapter<User.Major>) majorDropdown.getAdapter()).getPosition(getCurrentUser().getMajor()));
-            }
-            if (getCurrentUser().getInterests() != null) {
-                editInterests.setText(getCurrentUser().getInterests());
-            }
+//            editName.setText(getCurrentUser().getName());
+//            editEmail.setText(getCurrentUser().getEmail());
+//            if (getCurrentUser().getMajor() != null) {
+//                majorDropdown.setSelection(((ArrayAdapter<User.Major>) majorDropdown.getAdapter()).getPosition(getCurrentUser().getMajor()));
+//            }
+//            if (getCurrentUser().getInterests() != null) {
+//                editInterests.setText(getCurrentUser().getInterests());
+//            }
         }
         editProfileDialog.show();
     }
@@ -166,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
                         if (passwordMatch(editPassword, editPasswordConfirm)
                                 && editPassword.getText().toString().length() != 0
                                 && editPasswordConfirm.getText().toString().length() != 0) {
-                            getCurrentUser().setPassword(editPasswordConfirm.getText().toString());
+//                            getCurrentUser().setPassword(editPasswordConfirm.getText().toString());
                         }
                     }
                 }).build();
