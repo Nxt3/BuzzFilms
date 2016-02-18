@@ -61,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     /**
      * Creates this activity
-     * @param savedInstanceState
+     * @param savedInstanceState no idea what this is
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,15 @@ public class ProfileActivity extends AppCompatActivity {
 //        }
 
         initToolbar();
+    }
+
+    /**
+     * Handles this activity once it is destroyed
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
     }
 
     /**

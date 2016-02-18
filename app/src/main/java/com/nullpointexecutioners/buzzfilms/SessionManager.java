@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.firebase.client.Firebase;
+
 import java.util.HashMap;
 
 /**
@@ -25,19 +27,18 @@ public class SessionManager {
     private static final String IS_LOGIN = "IsLoggedIn";
 
     //Username
-    public static final String KEY_USERNAME = null;
+    protected static final String KEY_USERNAME = null;
 
     //Name
-    public static final String KEY_NAME = null;
+    protected static final String KEY_NAME = null;
 
     //Email
-    public static final String KEY_EMAIL = null;
+    protected static final String KEY_EMAIL = null;
 
-    //Major
-    public static final String KEY_MAJOR = null;
+    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     //Constructor for SessionManager
-    public SessionManager(Context context){
+    public SessionManager(Context context) {
         this.context = context;
         pref = this.context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
@@ -48,13 +49,12 @@ public class SessionManager {
      * @param username to store in SharedPrefs
      * @param email to store in SharedPrefs
      */
-    public void createLoginSession(String username, String name, String email, User.Major major){
+    public void createLoginSession(String username, String name, String email) {
         /*Store each value into SharedPrefs*/
         editor.putBoolean(IS_LOGIN, true);
         editor.putString(KEY_USERNAME, username);
-        editor.putString(KEY_USERNAME, name);
+        editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
-        editor.putString(KEY_MAJOR, major.toString());
 
         //commit changes to SharedPrefs
         editor.commit();
@@ -64,8 +64,8 @@ public class SessionManager {
      * Checks if current user is logged in
      * If false, the user is redirected to WelcomeActivity to login or register
      */
-    public void checkLogin(){
-        if(!this.isLoggedIn()){
+    public void checkLogin() {
+        if(!this.isLoggedIn()) {
             //User is not logged in redirect him to Login Activity
             Intent intent = new Intent(context, WelcomeActivity.class);
 
@@ -85,7 +85,7 @@ public class SessionManager {
      * Store properties of user to a HashMap in SharedPrefs
      * @return HashMap of values
      */
-    public HashMap<String, String> getUserDetails(){
+    public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<>();
 
         //Username
@@ -97,16 +97,40 @@ public class SessionManager {
         //Email
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
 
-        //Major
-        user.put(KEY_MAJOR, pref.getString(KEY_MAJOR, null));
-
         return user;
+    }
+
+    /**
+     * Getter method for username
+     * @return username of current user
+     */
+    public String getKeyUsername() {
+        return KEY_USERNAME;
+    }
+
+    /**
+     * Getter method for name
+     * @return name of current user
+     */
+    public String getKeyName() {
+        return KEY_NAME;
+    }
+
+    /**
+     * Getter method for email
+     * @return email of current user
+     */
+    public String getKeyEmail() {
+        return KEY_EMAIL;
     }
 
     /**
      * Clears session credentials
      */
-    public void logoutUser(){
+    public void logoutUser() {
+        //UnAuth from Firebase
+        mRef.unauth();
+
         //Clearing all data from Shared Preferences
         editor.clear();
         editor.commit();
@@ -126,7 +150,7 @@ public class SessionManager {
      * Helper method for determining if someone is logged in
      * @return
      */
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return pref.getBoolean(IS_LOGIN, false);
     }
 }

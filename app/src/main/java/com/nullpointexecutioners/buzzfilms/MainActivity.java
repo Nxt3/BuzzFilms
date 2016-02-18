@@ -40,14 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     Firebase mRef;
+    SessionManager mSession;
 
     final private int DASHBOARD = 1;
     final private int PROFILE = 2;
     final private int SETTINGS = 3;
 
+    private AccountHeader drawerHeader;
+
     /**
      * Creates this activity
-     * @param savedInstanceState
+     * @param savedInstanceState no idea what this is
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,19 +60,51 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar.setTitle(dashboard);
 
-        // Create the AccountHeader
-        final AccountHeader drawerHeader = new AccountHeaderBuilder()
+        createDrawerHeader();
+        createNavDrawer();
+    }
+
+    /**
+     * Handles this activity once it is paused (i.e. in the background)
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mNavDrawer.setSelection(mNavDrawer.getDrawerItem(DASHBOARD));
+        mNavDrawer.closeDrawer();
+    }
+
+    /**
+     * Handles this activity once it is destroyed
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    /**
+     * Helper method to create the account header for the nav drawer
+     */
+    private void createDrawerHeader() {
+        //Create the AccountHeader for the nav drawer
+        drawerHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName("temp")
-                                .withEmail("temp@gmail")
-                                .withIcon(mProfileDrawerIcon)
-                ).withSelectionListEnabledForSingleProfile(false)
+                                .withName(mSession.getKeyName())
+                                .withEmail(mSession.getKeyEmail())
+                                .withIcon(mProfileDrawerIcon))
+                .withSelectionListEnabledForSingleProfile(false)
                 .build();
+    }
 
-        //Create the drawer and remember the `Drawer` result object
+    /**
+     * Helper method to create the nav drawer for the MainActivity
+     */
+    private void createNavDrawer() {
+        //Create the nav drawer
         mNavDrawer = new DrawerBuilder()
                 .withAccountHeader(drawerHeader)
                 .withActivity(this)
@@ -77,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
-                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false)
-                ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (drawerItem != null && drawerItem instanceof Nameable) {
@@ -102,52 +137,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles this activity once it is started
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        mRef = new Firebase("https://buzz-films.firebaseio.com/Users");
-    }
-
-    /**
-     * Handles this activity once it is resume
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    /**
-     * Handles this activity once it is paused (i.e. in the background)
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mNavDrawer.setSelection(mNavDrawer.getDrawerItem(DASHBOARD));
-        mNavDrawer.closeDrawer();
-    }
-
-    /**
-     * Handles this activity once it is destroyed
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
-
-    /**
-     * When the user clicks on the logout button, they will be deauthorized from the application.
+     * When the user clicks on the logout button, they will be deauthorize from the application.
      * In addition to kicking them back to the login screen, the activity stack is also cleared as to prevent a user from being able to get back into the app with a "Back" button press.
      */
     @OnClick(R.id.logout_button)
     public void onLogoutClick() {
-        mRef.unauth();
-        Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-        //make sure we can't press the back button to get back to the MaiActivity!
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        //Removes user from Session, unAuth via Firebase, and clears Activity stack
+        mSession.logoutUser();
     }
 }
