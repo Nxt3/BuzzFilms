@@ -55,7 +55,9 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private MaterialDialog mAuthProgressDialog;
 
-    SessionManager mSession;
+    static SessionManager mSession;
+
+    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     /**
      * Creates activity
@@ -135,7 +137,7 @@ public class WelcomeActivity extends AppCompatActivity {
         mAuthProgressDialog.show();
 
         if (isOnline()) {
-            SessionManager.mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
+            mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     //We successfully logged in, go to MainActivity
@@ -194,7 +196,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             PASSWORD = registerPasswordInput.getText().toString();
 
                             if (isOnline()) {
-                                SessionManager.mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                                mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() != null) {
@@ -204,7 +206,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                         } else {
                                             registerDialog.dismiss();
                                             mAuthProgressDialog.show();
-                                            SessionManager.mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
+                                            mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
                                                     //User was created successfully--so take them to the MainActivity
@@ -219,8 +221,10 @@ public class WelcomeActivity extends AppCompatActivity {
                                                 }
                                                 @Override
                                                 public void onError(FirebaseError firebaseError) {
+                                                    mAuthProgressDialog.dismiss();
                                                     String error = firebaseError.getMessage();
-                                                    Log.e("Registering", error);
+                                                    Log.e("Registering...", error);
+                                                    makeSnackbar(thisActivity, "An unexpected error occurred", Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
                                                 }
                                             });
                                         }
@@ -292,7 +296,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param username to register
      */
     private void registerUser(String username, String name, String email) {
-        Firebase userRef = SessionManager.mRef.child(username);
+        Firebase userRef = mRef.child(username);
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
@@ -301,15 +305,17 @@ public class WelcomeActivity extends AppCompatActivity {
     /**
      * Helper method for getting the user's properties (ONLY WHEN LOGGING IN) from Firebase and
      * then creating a Session using SessionManager
-     * @param USERNAME to get information for
+     * @param username to get information for
      */
-    private void getUserInfoForLogin(final String USERNAME) {
-        SessionManager.mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getUserInfoForLogin(String username) {
+        final String USERNAME = username;
+        mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String NAME = dataSnapshot.child("name").getValue().toString();
                 final String EMAIL = dataSnapshot.child("email").getValue().toString();
                 mSession.createLoginSession(USERNAME, NAME, EMAIL);
+                Log.v("getUserInfoForLogin()" + " " + USERNAME, "<" + NAME + ", " + EMAIL + ">");
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

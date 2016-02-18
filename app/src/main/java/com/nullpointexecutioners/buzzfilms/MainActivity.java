@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -17,6 +18,8 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -55,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mSession = new SessionManager(getApplicationContext());
+
+        HashMap<String, String> user = mSession.getUserDetails();
+        String namey = user.get(SessionManager.KEY_NAME);
+        String emaily = user.get(SessionManager.KEY_EMAIL);
+        String usernamey = user.get(SessionManager.KEY_USERNAME);
+        Log.v("Logged in: ", "<" + namey + ", " + emaily + ", " + usernamey + ">");
 
         toolbar.setTitle(dashboard);
 

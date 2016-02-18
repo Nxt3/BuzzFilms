@@ -25,15 +25,15 @@ public class SessionManager {
     private static final String IS_LOGIN = "IsLoggedIn";
 
     //Username
-    protected static final String KEY_USERNAME = null;
+    public static final String KEY_USERNAME = "username";
 
     //Name
-    protected static final String KEY_NAME = null;
+    public static final String KEY_NAME = "name";
 
     //Email
-    protected static final String KEY_EMAIL = null;
+    public static final String KEY_EMAIL = "email";
 
-    final static Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     //Constructor for SessionManager
     public SessionManager(Context context) {
@@ -54,7 +54,7 @@ public class SessionManager {
         editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
 
-        //commit changes to SharedPrefs
+        //Commit changes to SharedPrefs
         editor.commit();
     }
 
