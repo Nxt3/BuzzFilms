@@ -20,6 +20,12 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -42,10 +48,8 @@ public class ProfileActivity extends AppCompatActivity {
     TextView profileMajor;
     @Bind(R.id.currentInterests)
     TextView profileInterests;
-
     @BindDrawable(R.drawable.ic_arrow_back)
     Drawable backArrow;
-
     @BindString(R.string.edit_profile_dialog_title)
     String editProfileDialogTitle;
     @BindString(R.string.edit_password_dialog_title)
@@ -59,6 +63,15 @@ public class ProfileActivity extends AppCompatActivity {
     @BindString(R.string.new_password_mismatch)
     String passwordMismatch;
 
+    SessionManager mSession;
+    String mUsername;
+    String mName;
+    String mEmail;
+    User.Major mMajor;
+    String mInterests;
+
+    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+
     /**
      * Creates this activity
      * @param savedInstanceState no idea what this is
@@ -71,19 +84,55 @@ public class ProfileActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        //Set the current user's attributes
-//        profileName.setText(getCurrentUser().getName());
-//        profileEmail.setText(getCurrentUser().getEmail());
-//        if (getCurrentUser().getMajor() == null) {
-//            profileMajor.setText(majorNotSpecified);
-//        } else {
-//            profileMajor.setText(getCurrentUser().getMajor().toString());
-//        }
-//        if (getCurrentUser().getInterests() != null) {
-//            profileInterests.setText(getCurrentUser().getInterests());
-//        }
+        mSession = new SessionManager(getApplicationContext());
 
         initToolbar();
+        setupProfile();
+    }
+
+    /**
+     * Helper method to setup and display the user's information in the Profile view
+     */
+    private void setupProfile() {
+        /*Get the user's info*/
+        HashMap<String, String> user = mSession.getUserDetails();
+        mUsername = user.get(SessionManager.KEY_USERNAME);
+        mName = user.get(SessionManager.KEY_NAME);
+        mEmail = user.get(SessionManager.KEY_EMAIL);
+
+        //Set the current user's attributes
+        profileName.setText(mName);
+        profileEmail.setText(mEmail);
+
+        /*Get Major from Firebase*/
+        mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null) {
+                    mMajor = (User.Major) dataSnapshot.child("major").getValue();
+                    profileMajor.setText(mMajor.toString());
+                } else {
+                    profileMajor.setText(majorNotSpecified);
+                }
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+
+        /*Get Interests from Firebase*/
+        mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null) {
+                    mInterests = dataSnapshot.child("interests").getValue().toString();
+                    profileInterests.setText(mInterests);
+                }
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
 
     /**
@@ -115,13 +164,26 @@ public class ProfileActivity extends AppCompatActivity {
                         final Spinner majorDropdown = ButterKnife.findById(editProfileDialog, R.id.major_dropdown);
                         final EditText editInterests = ButterKnife.findById(editProfileDialog, R.id.edit_interests);
 
-//                        getCurrentUser().setName(editName.getText().toString());
-//                        getCurrentUser().setEmail(editEmail.getText().toString());
-//                        getCurrentUser().setInterests(editInterests.getText().toString());
-//                        getCurrentUser().setMajor((User.Major) majorDropdown.getSelectedItem());
+                        final String NEW_NAME = editName.getText().toString();
+                        final String NEW_EMAIL = editEmail.getText().toString();
+                        final String NEW_INTERESTS = editInterests.getText().toString();
+                        final User.Major NEW_MAJOR = (User.Major) majorDropdown.getSelectedItem();
+
+                        Firebase userRef = mRef.child(SessionManager.KEY_USERNAME);
+                        HashMap<String, Object> updateValues = new HashMap<>();
+                        updateValues.put("name", NEW_NAME);
+                        updateValues.put("email", NEW_EMAIL);
+                        updateValues.put("interests", NEW_INTERESTS);
+                        updateValues.put("major", NEW_MAJOR);
+                        userRef.updateChildren(updateValues); //Update Firebase with new values
+
+                        /*Update the name and email that's stored in this Session*/
+                        mName = NEW_NAME;
+                        mEmail = NEW_EMAIL;
+                        mSession.updateSession(mName, mEmail);
 
                         (ProfileActivity.this).passThrough(editName, editEmail, editInterests);
-//                        (ProfileActivity.this).profileMajor.setText(getCurrentUser().getMajor().toString());
+                        (ProfileActivity.this).profileMajor.setText(mMajor.toString());
                     }
                 }).build();
 
@@ -143,14 +205,14 @@ public class ProfileActivity extends AppCompatActivity {
             };
             final AbsSpinner majorDropdown = ButterKnife.findById(editProfileDialog, R.id.major_dropdown);
             majorDropdown.setAdapter(adapter);
-//            editName.setText(getCurrentUser().getName());
-//            editEmail.setText(getCurrentUser().getEmail());
-//            if (getCurrentUser().getMajor() != null) {
-//                majorDropdown.setSelection(((ArrayAdapter<User.Major>) majorDropdown.getAdapter()).getPosition(getCurrentUser().getMajor()));
-//            }
-//            if (getCurrentUser().getInterests() != null) {
-//                editInterests.setText(getCurrentUser().getInterests());
-//            }
+            editName.setText(mName);
+            editEmail.setText(mEmail);
+            if (mMajor != null) {
+                majorDropdown.setSelection(((ArrayAdapter<User.Major>) majorDropdown.getAdapter()).getPosition(mMajor));
+            }
+            if (mInterests != null) {
+                editInterests.setText(mInterests);
+            }
         }
         editProfileDialog.show();
     }
@@ -257,8 +319,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     /**
      * Creates the options in the overflow menu
-     * @param  menu
-     * @return
+     * @param  menu to create options for
+     * @return true or false depending on whether or not inflation was successful
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

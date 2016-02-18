@@ -28,6 +28,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.util.HashMap;
+
 import butterknife.Bind;
 import butterknife.BindInt;
 import butterknife.BindString;
@@ -55,7 +57,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private MaterialDialog mAuthProgressDialog;
 
-    static SessionManager mSession;
+    SessionManager mSession;
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
@@ -300,6 +302,8 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
+        userRef.child("major").setValue(null);
+        userRef.child("interests").setValue(null);
     }
 
     /**
@@ -315,7 +319,14 @@ public class WelcomeActivity extends AppCompatActivity {
                 final String NAME = dataSnapshot.child("name").getValue().toString();
                 final String EMAIL = dataSnapshot.child("email").getValue().toString();
                 mSession.createLoginSession(USERNAME, NAME, EMAIL);
-                Log.v("getUserInfoForLogin()" + " " + USERNAME, "<" + NAME + ", " + EMAIL + ">");
+                Log.v("getUserInfoLogin() FB" + " " + USERNAME, "<" + NAME + ", " + EMAIL + ">");
+
+                HashMap<String, String> user = mSession.getUserDetails();
+                String name = user.get(SessionManager.KEY_NAME);
+                String username = user.get(SessionManager.KEY_USERNAME);
+                String email = user.get(SessionManager.KEY_EMAIL);
+
+                Log.v("PREFS getUserInfoLogin" + " " + username, "<" + name + ", " + email + ">");
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

@@ -59,8 +59,23 @@ public class SessionManager {
     }
 
     /**
+     * Update the current Session's values
+     * @param name to update
+     * @param email to update
+     */
+    public void updateSession(String name, String email) {
+        /*Store the updated values into SharedPrefs*/
+        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_EMAIL, email);
+
+        //Commit changes to SharedPrefs
+        editor.commit();
+    }
+
+    /**
      * Checks if current user is logged in
      * If false, the user is redirected to WelcomeActivity to login or register
+     * @return activity the SplashScreen should take the user to
      */
     public Intent checkLogin() {
         Intent intent;
