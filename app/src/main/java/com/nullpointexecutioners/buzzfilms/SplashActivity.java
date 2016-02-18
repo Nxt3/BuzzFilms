@@ -5,9 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+/**
+ * Splash screen for our app gives the appearance of speeeeeeeed
+ */
 public class SplashActivity extends Activity {
 
     @Override
+    /**
+     * Creates this activity
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
@@ -18,7 +25,7 @@ public class SplashActivity extends Activity {
         Thread timerThread = new Thread() {
             public void run() {
                 try {
-                    sleep(2000); //wait
+                    sleep(2000); //wait for x number of milliseconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
@@ -31,6 +38,9 @@ public class SplashActivity extends Activity {
         timerThread.start();
     }
 
+    /**
+     * Handles the activity once it is paused (i.e. in the background)
+     */
     @Override
     protected void onPause() {
         super.onPause();

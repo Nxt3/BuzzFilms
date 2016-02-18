@@ -48,6 +48,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private MaterialDialog mAuthProgressDialog;
 
+    /**
+     * Creates activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,12 +103,18 @@ public class WelcomeActivity extends AppCompatActivity {
                 .build();
     }
 
+    /**
+     * Handles the activity once it is destroyed
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
     }
 
+    /**
+     * When the user clicks the login button, the credentials the user has entered need to be authenticated against what is stored in Firebase.
+     */
     @OnClick(R.id.login_button)
     public void authenticateLogin() {
         final String username = mLoginUsernameInput.getText().toString();
@@ -135,6 +145,10 @@ public class WelcomeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * When the user clicks the register button, a dialog will be shown where they can enter all of the necessary information to register a new account.
+     * Once the user is done editing the information, the user will press the "Register" button in the dialog to commit their registration to Firebase.
+     */
     @OnClick(R.id.register_button)
     public void showRegisterDialog() {
         final MaterialDialog registerDialog = new MaterialDialog.Builder(WelcomeActivity.this)
@@ -182,6 +196,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                         registerDialog.dismiss();
                                         registerUser(name, email, username);
 
+                                        //Go to the MainActivity
                                         Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                                         startActivity(loginIntent);
                                         finish(); //We're done with logging in
@@ -244,7 +259,12 @@ public class WelcomeActivity extends AppCompatActivity {
         registerAction.setEnabled(false); //disabled by default
     }
 
-    /*Add the registered user to our backend*/
+    /**
+     * Method that adds all of the user's attributes to Firebase
+     * @param name of user
+     * @param email of user
+     * @param username to register
+     */
     public void registerUser(String name, String email, String username) {
         Firebase userRef = mRef.child(username);
         userRef.child("username").setValue(username);
@@ -252,8 +272,12 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("email").setValue(email);
     }
 
-    /*Appends a dummy domain to the username when adding it to Firebase
-    * This then follows Firebase's authWithPassword() method call*/
+    /**
+     * Appends a dummy domain to the username when adding it to Firebase
+     * This then follows Firebase's authWithPassword() method call
+     * @param  username to append dummy domain to
+     * @return username + dummy domain
+     */
     private String setUserWithDummyDomain(String username) {
         return username + "@buzz-films.edu";
     }

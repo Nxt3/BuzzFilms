@@ -25,6 +25,9 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Dashboard of the app--Main view
+ */
 public class MainActivity extends AppCompatActivity {
 
     /*I love ButterKnife <3*/
@@ -42,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
     final private int PROFILE = 2;
     final private int SETTINGS = 3;
 
+    /**
+     * Creates this activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,11 +56,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         toolbar.setTitle(dashboard);
-
-        // For the sake of debugging...
-//        WelcomeActivity.registerUser("Nate Gantt", "nateg@gatech.edu", "nxt3", "pass");
-//        User tempUser = WelcomeActivity.accounts.get("nxt3");
-//        DataHolder.setCurrentUser(tempUser);
 
         // Create the AccountHeader
         final AccountHeader drawerHeader = new AccountHeaderBuilder()
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 ).withSelectionListEnabledForSingleProfile(false)
                 .build();
 
-        //create the drawer and remember the `Drawer` result object
+        //Create the drawer and remember the `Drawer` result object
         mNavDrawer = new DrawerBuilder()
                 .withAccountHeader(drawerHeader)
                 .withActivity(this)
@@ -99,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
                 }).build();
     }
 
+    /**
+     * Handles the activity once it is started
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -106,11 +111,17 @@ public class MainActivity extends AppCompatActivity {
         mRef = new Firebase("https://buzz-films.firebaseio.com/Users");
     }
 
+    /**
+     * Handles the activity once it is resume
+     */
     @Override
     protected void onResume() {
         super.onResume();
     }
 
+    /**
+     * Handles the activity once it is paused (i.e. in the background)
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -118,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
         mNavDrawer.closeDrawer();
     }
 
+    /**
+     * Handles the activity once it is destroyed
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -125,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.logout_button)
+    /**
+     * When the user clicks on the logout button, they will be deauthorized from the application.
+     * In addition to kicking them back to the login screen, the activity stack is also cleared as to prevent a user from being able to get back into the app with a "Back" button press.
+     */
     public void onLogoutClick() {
         mRef.unauth();
         Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);

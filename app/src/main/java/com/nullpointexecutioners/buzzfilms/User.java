@@ -1,5 +1,8 @@
 package com.nullpointexecutioners.buzzfilms;
 
+/**
+ * User class holds all relevant data for the User
+ */
 public class User {
 
     Major studentMajor;
@@ -8,12 +11,21 @@ public class User {
     private String name;
     private String username;
 
+    /**
+     * Constructor for User
+     * @param username to register
+     * @param name of user
+     * @param email of user
+     */
     public User(String username, String name, String email) {
         this.username = username;
         this.name = name;
         this.email = email;
     }
 
+    /**
+     * User's college major
+     */
     public enum Major {
         NONE("Select your major"),
         CS("Computer Science"),
@@ -37,11 +49,18 @@ public class User {
         }
     }
 
-    /*Getter methods*/
+    /**
+     * Getter for the User's username
+     * @return this user's username
+     */
     public String getUsername() {
         return this.username;
     }
 
+    /**
+     * Getter for the User's name
+     * @return this user's name
+     */
     public String getName() {
         return this.name;
     }
