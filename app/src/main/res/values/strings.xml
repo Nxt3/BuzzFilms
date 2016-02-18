@@ -37,4 +37,5 @@
     <string name="title_activity_main">Dashboard</string>
     <string name="username_hint">username</string>
     <string name="old_password_hint">old password</string>
+    <string name="recent_releases">Recent Releases</string>
 </resources>

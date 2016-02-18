@@ -1,11 +1,10 @@
 package com.nullpointexecutioners.buzzfilms;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -23,19 +22,17 @@ import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-/**
- * Dashboard of the app--Main view
- */
-public class MainActivity extends AppCompatActivity {
+public class RecentFilms extends Activity {
 
     /*I love ButterKnife <3*/
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar)
     Drawable mProfileDrawerIcon;
     @BindString(R.string.title_activity_main) String dashboard;
     @BindString(R.string.profile) String profile;
+    @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
@@ -46,35 +43,12 @@ public class MainActivity extends AppCompatActivity {
     final private int RECENT_RELEASES = 3;
     final private int SETTINGS = 4;
 
-    /**
-     * Creates this activity
-     * @param savedInstanceState no idea what this is
-     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_recent_films);
         ButterKnife.bind(this);
-
-        this.mSession = SessionManager.getInstance(getApplicationContext());
-
-        String namey = mSession.getLoggedInName();
-        String emaily = mSession.getLoggedInEmail();
-        String usernamey = mSession.getLoggedInUsername();
-        Log.v("Logged in: ", "<" + namey + ", " + emaily + ", " + usernamey + ">");
-
-        toolbar.setTitle(dashboard);
-
-        createNavDrawer();
-    }
-
-    /**
-     * Handles this activity once it is destroyed
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
     }
 
     /**
@@ -99,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
-                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
-                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
+                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(false),
+                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSetSelected(true),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -109,13 +83,18 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent;
 
                             switch(drawerItem.getIdentifier()) {
-                                case DASHBOARD:
-                                    return false;
                                 case PROFILE:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(MainActivity.this, ProfileActivity.class);
+                                    intent = new Intent(RecentFilms.this, ProfileActivity.class);
                                     startActivity(intent);
                                     return true;
+                                case DASHBOARD:
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(RecentFilms.this, MainActivity.class);
+                                    startActivity(intent);
+                                    return false;
+                                case RECENT_RELEASES:
+                                    return false;
                                 case SETTINGS:
                                     //TODO, handle Settings
                                     return false;
@@ -124,25 +103,5 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     }
                 }).build();
-    }
-
-    /**
-     * When the user clicks on the logout button, they will be deauthorize from the application.
-     * In addition to kicking them back to the login screen, the activity stack is also cleared as to prevent a user from being able to get back into the app with a "Back" button press.
-     */
-    @OnClick(R.id.logout_button)
-    public void onLogoutClick() {
-        //Removes user from Session and unAuth via Firebase
-        mSession.logoutUser();
-
-        //After logout redirect user to WelcomeActivity to login or register
-        Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-
-        //Closing all the Activities
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        //Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        startActivity(intent);
     }
 }
