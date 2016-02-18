@@ -66,6 +66,8 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
 
+        mSession = new SessionManager(getApplicationContext());
+
         mLoginButton.setEnabled(false); //disable the login button until the user fills out the login fields
 
         TextWatcher watcher = new TextWatcher() {
@@ -132,7 +134,7 @@ public class WelcomeActivity extends AppCompatActivity {
         mAuthProgressDialog.show();
 
         if (isOnline()) {
-            mSession.mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
+            SessionManager.mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     //We successfully logged in, go to MainActivity
@@ -191,7 +193,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             PASSWORD = registerPasswordInput.getText().toString();
 
                             if (isOnline()) {
-                                mSession.mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                                SessionManager.mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() != null) {
@@ -199,7 +201,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                             registerUsernameInput.setError(usernameTaken);
                                             registerUsernameInput.requestFocus();
                                         } else {
-                                            mSession.mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
+                                            SessionManager.mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
                                                 }
@@ -284,7 +286,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param username to register
      */
     private void registerUser(String username, String name, String email) {
-        Firebase userRef = mSession.mRef.child(username);
+        Firebase userRef = SessionManager.mRef.child(username);
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
@@ -296,7 +298,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param USERNAME to get information for
      */
     private void getUserInfoForLogin(final String USERNAME) {
-        mSession.mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+        SessionManager.mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String NAME = dataSnapshot.child("name").getValue().toString();

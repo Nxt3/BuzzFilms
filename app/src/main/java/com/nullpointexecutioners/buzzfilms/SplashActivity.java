@@ -5,14 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import butterknife.BindInt;
-
 /**
  * Splash screen for our app gives the appearance of speeeeeeeed
  */
 public class SplashActivity extends Activity {
-
-    @BindInt(R.layout.splash_screen) int splashScreen;
 
     SessionManager mSession;
 
@@ -23,11 +19,13 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(splashScreen);
+        setContentView(R.layout.splash_screen);
 
         /*Make the status bar and nav bar translucent*/
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
+        mSession = new SessionManager(getApplicationContext());
 
         Thread timerThread = new Thread() {
             public void run() {
