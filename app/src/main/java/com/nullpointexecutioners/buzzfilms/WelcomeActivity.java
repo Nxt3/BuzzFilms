@@ -59,7 +59,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     /**
      * Creates activity
-     * @param savedInstanceState
+     * @param savedInstanceState no idea what this is
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,14 +126,14 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     @OnClick(R.id.login_button)
     public void authenticateLogin() {
-        final String username = mLoginUsernameInput.getText().toString();
-        final String password = mLoginPasswordInput.getText().toString();
+        final String USERNAME = mLoginUsernameInput.getText().toString();
+        final String PASSWORD = mLoginPasswordInput.getText().toString();
 
         /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
 
         if (isOnline()) {
-            mRef.authWithPassword(setUserWithDummyDomain(username), password, new Firebase.AuthResultHandler() {
+            mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     mAuthProgressDialog.dismiss();
@@ -177,20 +177,20 @@ public class WelcomeActivity extends AppCompatActivity {
                         final EditText registerEmailInput;
                         final EditText registerUsernameInput;
                         final EditText registerPasswordInput;
-                        final String name, email, username, password;
+                        final String NAME, EMAIL, USERNAME, PASSWORD;
 
                         if (registerDialog.getCustomView() != null) {
                             registerNameInput = ButterKnife.findById(registerDialog, R.id.register_name);
                             registerEmailInput = ButterKnife.findById(registerDialog, R.id.register_email);
                             registerUsernameInput = ButterKnife.findById(registerDialog, R.id.register_username);
                             registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
-                            name = registerNameInput.getText().toString();
-                            email = registerEmailInput.getText().toString();
-                            username = registerUsernameInput.getText().toString();
-                            password = registerPasswordInput.getText().toString();
+                            NAME = registerNameInput.getText().toString();
+                            EMAIL = registerEmailInput.getText().toString();
+                            USERNAME = registerUsernameInput.getText().toString();
+                            PASSWORD = registerPasswordInput.getText().toString();
 
                             if (isOnline()) {
-                                mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                                mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() != null) {
@@ -198,7 +198,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                             registerUsernameInput.setError(usernameTaken);
                                             registerUsernameInput.requestFocus();
                                         } else {
-                                            mRef.createUser(setUserWithDummyDomain(username), password, new Firebase.ResultHandler() {
+                                            mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
                                                 }
@@ -207,7 +207,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                                 }
                                             });
                                             registerDialog.dismiss();
-                                            registerUser(name, email, username);
+                                            registerUser(NAME, EMAIL, USERNAME);
 
                                             //Go to the MainActivity
                                             Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
@@ -292,13 +292,14 @@ public class WelcomeActivity extends AppCompatActivity {
      * Appends a dummy domain to the username when adding it to Firebase
      * This then follows Firebase's authWithPassword() method call
      * @param  username to append dummy domain to
-     * @return username + dummy domain
+     * @return username appended with the dummy domain
      */
     private String setUserWithDummyDomain(String username) {
         return username + "@buzz-films.edu";
     }
 
-    /**
+    /** TODO, put this method in class containing other helper methods
+     * TODO, ping www.google.com to see if we have an active internet connection?
      * Helper method for determining if the device has a network connection
      * This does NOT check whether we can actually access the Internet, though
      * @return true or false depending on whether or not the device has a network connection
@@ -312,7 +313,7 @@ public class WelcomeActivity extends AppCompatActivity {
         return (netInfo != null && netInfo.isConnectedOrConnecting());
     }
 
-    /**
+    /** TODO, put this method in class containing other helper methods
      * Helper method for creating custom Snackbars
      * @param layout view to place the Snackbar in
      * @param text what you want the Snackbar to say
