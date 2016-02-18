@@ -305,7 +305,7 @@ public class ProfileActivity extends AppCompatActivity {
      * sets Toolbar title, enables the visibility of the overflow menu, shows a back arrow for navigation, and handles what to do if a user presses the back button in the Toolbar.
      */
     private void initToolbar() {
-        toolbar.setTitle(DataHolder.getCurrentUser().getUsername());
+        toolbar.setTitle(mUsername);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(backArrow);
