@@ -10,7 +10,7 @@ import android.view.WindowManager;
  */
 public class SplashActivity extends Activity {
 
-    SessionManager mSession;
+    private SessionManager mSession;
 
     /**
      * Creates this activity
@@ -25,7 +25,7 @@ public class SplashActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
-        mSession = new SessionManager(getApplicationContext());
+        this.mSession = SessionManager.getInstance(getApplicationContext());
 
         Thread timerThread = new Thread() {
             public void run() {
@@ -34,7 +34,12 @@ public class SplashActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    Intent intent = mSession.checkLogin();
+                    Intent intent;
+                    if (mSession.checkLogin()) {
+                        intent = new Intent(SplashActivity.this, MainActivity.class);
+                    } else {
+                        intent = new Intent(SplashActivity.this, WelcomeActivity.class);
+                    }
                     //Closing all the Activities
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     //Add new Flag to start new Activity

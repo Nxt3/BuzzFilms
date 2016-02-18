@@ -57,7 +57,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private MaterialDialog mAuthProgressDialog;
 
-    SessionManager mSession;
+    private SessionManager mSession;
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
@@ -71,7 +71,7 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
 
-        mSession = new SessionManager(getApplicationContext());
+        this.mSession = SessionManager.getInstance(getApplicationContext());
 
         mLoginButton.setEnabled(false); //disable the login button until the user fills out the login fields
 
@@ -325,7 +325,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 String name = user.get(SessionManager.KEY_NAME);
                 String username = user.get(SessionManager.KEY_USERNAME);
                 String email = user.get(SessionManager.KEY_EMAIL);
-
                 Log.v("PREFS getUserInfoLogin" + " " + username, "<" + name + ", " + email + ">");
             }
             @Override

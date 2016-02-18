@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
-    SessionManager mSession;
+    private SessionManager mSession;
 
     final private int DASHBOARD = 1;
     final private int PROFILE = 2;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mSession = new SessionManager(getApplicationContext());
+        this.mSession = SessionManager.getInstance(getApplicationContext());
 
         HashMap<String, String> user = mSession.getUserDetails();
         String namey = user.get(SessionManager.KEY_NAME);
@@ -135,5 +135,15 @@ public class MainActivity extends AppCompatActivity {
     public void onLogoutClick() {
         //Removes user from Session, unAuth via Firebase, and clears Activity stack
         mSession.logoutUser();
+
+        //After logout redirect user to WelcomeActivity to login or register
+        Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+
+        //Closing all the Activities
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //Add new Flag to start new Activity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
     }
 }

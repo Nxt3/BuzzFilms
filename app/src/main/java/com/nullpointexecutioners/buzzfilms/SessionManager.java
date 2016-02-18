@@ -1,7 +1,6 @@
 package com.nullpointexecutioners.buzzfilms;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.firebase.client.Firebase;
@@ -13,10 +12,10 @@ import java.util.HashMap;
  */
 public class SessionManager {
 
-    Context context;
-    SharedPreferences pref;
-    //Editor for Shared preferences
-    SharedPreferences.Editor editor;
+    private static SessionManager sInstance;
+
+    private final SharedPreferences pref;
+    private final SharedPreferences.Editor editor;
 
     //SharedPref file name
     private static final String PREF_NAME = "current.user";
@@ -35,10 +34,24 @@ public class SessionManager {
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
-    //Constructor for SessionManager
-    public SessionManager(Context context) {
-        this.context = context;
-        pref = this.context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    /**
+     * Constructor for instance of SessionManager
+     * @param context of session
+     * @return instance of SessionManager
+     */
+    public static SessionManager getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new SessionManager(context);
+        }
+        return sInstance;
+    }
+
+    /**
+     * Constructor for SessionManager class
+     * @param context of session
+     */
+    private SessionManager(Context context) {
+        pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 
@@ -75,21 +88,11 @@ public class SessionManager {
     /**
      * Checks if current user is logged in
      * If false, the user is redirected to WelcomeActivity to login or register
-     * @return activity the SplashScreen should take the user to
+     * @return true or false depending if we're logged in
      */
-    public Intent checkLogin() {
-        Intent intent;
-
-        if(!this.isLoggedIn()) {
-            //User is not logged in; redirect them to Login Activity
-            intent = new Intent(context, WelcomeActivity.class);
-        } else {
-            //User is logged in; redirect them to MainActivity
-            intent = new Intent(context, MainActivity.class);
-        }
-        return intent;
+    public boolean checkLogin() {
+        return pref.getBoolean(IS_LOGIN, false);
     }
-
 
     /**
      * Store properties of user to a HashMap in SharedPrefs
@@ -111,25 +114,52 @@ public class SessionManager {
     }
 
     /**
+     * Getter for currently logged in user's username
+     * @return current user's username
+     */
+    public String getLoggedInUsername() {
+        String username = null;
+        if (pref.contains(KEY_USERNAME) && pref.getBoolean(IS_LOGIN, false)) {
+            username = pref.getString(KEY_USERNAME, null);
+        }
+        return username;
+    }
+
+    /**
+     * Getter for currently logged in user's name
+     * @return current user's name
+     */
+    public String getLoggedInName() {
+        String name = null;
+        if (pref.contains(KEY_NAME) && pref.getBoolean(IS_LOGIN, false)) {
+            name = pref.getString(KEY_NAME, null);
+        }
+        return name;
+    }
+
+    /**
+     * Getter for currently logged in user's email
+     * @return current user's email
+     */
+    public String getLoggedInEmail() {
+        String email = null;
+        if (pref.contains(KEY_EMAIL) && pref.getBoolean(IS_LOGIN, false)) {
+            email = pref.getString(KEY_EMAIL, null);
+        }
+        return email;
+    }
+
+    /**
      * Clears session credentials
      */
     public void logoutUser() {
         //UnAuth from Firebase
         mRef.unauth();
 
-        //Clearing all data from Shared Preferences
+        //Clear SharedPrefs and set IS_LOGIN to false
         editor.clear();
+        editor.putBoolean(IS_LOGIN, false);
         editor.commit();
-
-        //After logout redirect user to WelcomeActivity to login or register
-        Intent intent = new Intent(context, WelcomeActivity.class);
-        //Closing all the Activities
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        //Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        context.startActivity(intent);
     }
 
     /**
@@ -138,5 +168,13 @@ public class SessionManager {
      */
     public boolean isLoggedIn() {
         return pref.getBoolean(IS_LOGIN, false);
+    }
+
+    /**
+     * Getter for accessing the current SharedPrefs
+     * @return this session's SharedPrefs
+     */
+    public SharedPreferences getPref() {
+        return pref;
     }
 }

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,7 +64,8 @@ public class ProfileActivity extends AppCompatActivity {
     @BindString(R.string.new_password_mismatch)
     String passwordMismatch;
 
-    SessionManager mSession;
+    private SessionManager mSession;
+
     String mUsername;
     String mName;
     String mEmail;
@@ -84,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        mSession = new SessionManager(getApplicationContext());
+        this.mSession = SessionManager.getInstance(getApplicationContext());
 
         initToolbar();
         setupProfile();
@@ -230,14 +232,29 @@ public class ProfileActivity extends AppCompatActivity {
                 .negativeText(cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog editPasswordDialog, @NonNull DialogAction which) {
+                    public void onClick(@NonNull final MaterialDialog editPasswordDialog, @NonNull DialogAction which) {
+                        final EditText editPasswordOld = ButterKnife.findById(editPasswordDialog, R.id.edit_password_old);
                         final EditText editPassword = ButterKnife.findById(editPasswordDialog, R.id.edit_password);
                         final EditText editPasswordConfirm = ButterKnife.findById(editPasswordDialog, R.id.edit_password_confirm);
 
+                        final String editPasswordOldText = editPasswordOld.getText().toString();
+                        final String editPasswordText = editPassword.getText().toString();
+                        final String editPasswordConfirmText = editPasswordConfirm.getText().toString();
+
+                        String oldPasswordAuth = mRef.child(mUsername).getAuth().toString();
+                        Log.v("oldPasswordAuth", oldPasswordAuth);
+
                         if (passwordMatch(editPassword, editPasswordConfirm)
-                                && editPassword.getText().toString().length() != 0
-                                && editPasswordConfirm.getText().toString().length() != 0) {
-//                            getCurrentUser().setPassword(editPasswordConfirm.getText().toString());
+                                && editPasswordText.length() != 0
+                                && editPasswordConfirmText.length() != 0) {
+                            mRef.changePassword(mUsername, null, editPasswordConfirmText, new Firebase.ResultHandler() {
+                                @Override
+                                public void onSuccess() {
+                                }
+                                @Override
+                                public void onError(FirebaseError firebaseError) {
+                                }
+                            });
                         }
                     }
                 }).build();
@@ -284,7 +301,6 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean passwordMatch(EditText newPassword, EditText newPasswordConfirm) {
         return (newPassword.getText().toString().matches(newPasswordConfirm.getText().toString()));
     }
-
 
     /**
      * I wish I could tell you. If I put this up in the method where it is called, the text doesn't update. Moving it to it's own method works, however.
