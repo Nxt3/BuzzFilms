@@ -105,11 +105,12 @@ public class ProfileActivity extends AppCompatActivity {
         profileEmail.setText(mEmail);
 
         /*Get Major from Firebase*/
-        mRef.child(mUsername).child("major").addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
-                    mMajor = (User.Major) dataSnapshot.child("major").getValue();
+                Object major = dataSnapshot.child("major").getValue();
+                if (major != null) {
+                    mMajor = (User.Major) major;
                     profileMajor.setText(mMajor.toString());
                 } else {
                     profileMajor.setText(majorNotSpecified);
@@ -124,8 +125,9 @@ public class ProfileActivity extends AppCompatActivity {
         mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
-                    mInterests = dataSnapshot.child("interests").getValue().toString();
+                Object interests = dataSnapshot.child("interests").getValue();
+                if (interests != null) {
+                    mInterests = interests.toString();
                     profileInterests.setText(mInterests);
                 }
             }
@@ -169,12 +171,12 @@ public class ProfileActivity extends AppCompatActivity {
                         final String NEW_INTERESTS = editInterests.getText().toString();
                         final User.Major NEW_MAJOR = (User.Major) majorDropdown.getSelectedItem();
 
-                        Firebase userRef = mRef.child(SessionManager.KEY_USERNAME);
+                        Firebase userRef = mRef.child(mSession.getLoggedInUsername());
                         HashMap<String, Object> updateValues = new HashMap<>();
                         updateValues.put("name", NEW_NAME);
                         updateValues.put("email", NEW_EMAIL);
                         updateValues.put("interests", NEW_INTERESTS);
-                        updateValues.put("major", NEW_MAJOR);
+                        updateValues.put("major", NEW_MAJOR.toString());
                         userRef.updateChildren(updateValues); //Update Firebase with new values
 
                         /*Update the name and email that's stored in this Session*/

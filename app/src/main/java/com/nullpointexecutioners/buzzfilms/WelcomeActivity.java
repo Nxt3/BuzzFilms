@@ -28,8 +28,6 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
-import java.util.HashMap;
-
 import butterknife.Bind;
 import butterknife.BindInt;
 import butterknife.BindString;
@@ -321,10 +319,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 mSession.createLoginSession(USERNAME, NAME, EMAIL);
                 Log.v("getUserInfoLogin() FB" + " " + USERNAME, "<" + NAME + ", " + EMAIL + ">");
 
-                HashMap<String, String> user = mSession.getUserDetails();
-                String name = user.get(SessionManager.KEY_NAME);
-                String username = user.get(SessionManager.KEY_USERNAME);
-                String email = user.get(SessionManager.KEY_EMAIL);
+                String username = mSession.getLoggedInUsername();
+                String name = mSession.getLoggedInName();
+                String email = mSession.getLoggedInEmail();
                 Log.v("PREFS getUserInfoLogin" + " " + username, "<" + name + ", " + email + ">");
             }
             @Override
