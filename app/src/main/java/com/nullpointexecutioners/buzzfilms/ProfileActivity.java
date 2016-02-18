@@ -259,8 +259,13 @@ public class ProfileActivity extends AppCompatActivity {
         final View saveAction = editPasswordDialog.getActionButton(DialogAction.POSITIVE);
 
         if (editPasswordDialog.getCustomView() != null) {
+            final EditText editPasswordOld = ButterKnife.findById(editPasswordDialog, R.id.edit_password_old);
             final EditText editPassword = ButterKnife.findById(editPasswordDialog, R.id.edit_password);
             final EditText editPasswordConfirm = ButterKnife.findById(editPasswordDialog, R.id.edit_password_confirm);
+
+            final String editPasswordOldText = editPasswordOld.getText().toString();
+            final String editPasswordText = editPassword.getText().toString();
+            final String editPasswordConfirmText = editPasswordConfirm.getText().toString();
 
             final TextWatcher watcher = new TextWatcher() {
                 @Override
@@ -268,7 +273,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (passwordMatch(editPassword, editPasswordConfirm)
+                    if (passwordMatch(editPasswordText, editPasswordConfirmText)
                             && editPassword.getText().toString().length() != 0
                             && editPasswordConfirm.getText().toString().length() != 0) {
                         editPasswordConfirm.setError(null); //Clears the error
@@ -282,6 +287,7 @@ public class ProfileActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable s) {
                 }
             };
+            editPasswordOld.addTextChangedListener(watcher);
             editPassword.addTextChangedListener(watcher);
             editPasswordConfirm.addTextChangedListener(watcher);
         }
