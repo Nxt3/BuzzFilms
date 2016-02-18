@@ -96,17 +96,16 @@ public class ProfileActivity extends AppCompatActivity {
      */
     private void setupProfile() {
         /*Get the user's info*/
-        HashMap<String, String> user = mSession.getUserDetails();
-        mUsername = user.get(SessionManager.KEY_USERNAME);
-        mName = user.get(SessionManager.KEY_NAME);
-        mEmail = user.get(SessionManager.KEY_EMAIL);
+        mUsername = mSession.getLoggedInUsername();
+        mName = mSession.getLoggedInName();
+        mEmail = mSession.getLoggedInEmail();
 
         //Set the current user's attributes
         profileName.setText(mName);
         profileEmail.setText(mEmail);
 
         /*Get Major from Firebase*/
-        mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.child(mUsername).child("major").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {

@@ -19,8 +19,6 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
-import java.util.HashMap;
-
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
@@ -59,10 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-        HashMap<String, String> user = mSession.getUserDetails();
-        String namey = user.get(SessionManager.KEY_NAME);
-        String emaily = user.get(SessionManager.KEY_EMAIL);
-        String usernamey = user.get(SessionManager.KEY_USERNAME);
+        String namey = mSession.getLoggedInName();
+        String emaily = mSession.getLoggedInEmail();
+        String usernamey = mSession.getLoggedInUsername();
         Log.v("Logged in: ", "<" + namey + ", " + emaily + ", " + usernamey + ">");
 
         toolbar.setTitle(dashboard);
@@ -89,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(mSession.getUserDetails().get(SessionManager.KEY_NAME))
-                                .withEmail(mSession.getUserDetails().get(SessionManager.KEY_EMAIL))
+                                .withName(mSession.getLoggedInName())
+                                .withEmail(mSession.getLoggedInEmail())
                                 .withIcon(mProfileDrawerIcon))
                 .withSelectionListEnabledForSingleProfile(false)
                 .build();

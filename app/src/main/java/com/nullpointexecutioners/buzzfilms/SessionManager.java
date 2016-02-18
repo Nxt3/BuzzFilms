@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import com.firebase.client.Firebase;
 
-import java.util.HashMap;
-
 /**
  * Helper class for managing a session (i.e. persistence across launches of the app
  */
@@ -92,25 +90,6 @@ public class SessionManager {
      */
     public boolean checkLogin() {
         return pref.getBoolean(IS_LOGIN, false);
-    }
-
-    /**
-     * Store properties of user to a HashMap in SharedPrefs
-     * @return HashMap of values
-     */
-    public HashMap<String, String> getUserDetails() {
-        HashMap<String, String> user = new HashMap<>();
-
-        //Username
-        user.put(KEY_USERNAME, pref.getString(KEY_USERNAME, null));
-
-        //Name
-        user.put(KEY_NAME, pref.getString(KEY_NAME, null));
-
-        //Email
-        user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
-
-        return user;
     }
 
     /**
