@@ -49,6 +49,8 @@ public class RecentFilms extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_films);
         ButterKnife.bind(this);
+
+        toolbar.setTitle(recentReleases);
     }
 
     /**
