@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -241,18 +240,16 @@ public class ProfileActivity extends AppCompatActivity {
                         final String editPasswordText = editPassword.getText().toString();
                         final String editPasswordConfirmText = editPasswordConfirm.getText().toString();
 
-                        String oldPasswordAuth = mRef.child(mUsername).getAuth().toString();
-                        Log.v("oldPasswordAuth", oldPasswordAuth);
-
-                        if (passwordMatch(editPassword, editPasswordConfirm)
+                        if (passwordMatch(editPasswordText, editPasswordConfirmText)
                                 && editPasswordText.length() != 0
                                 && editPasswordConfirmText.length() != 0) {
-                            mRef.changePassword(mUsername, null, editPasswordConfirmText, new Firebase.ResultHandler() {
+                            mRef.changePassword(mUsername, editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
                                 @Override
                                 public void onSuccess() {
                                 }
                                 @Override
                                 public void onError(FirebaseError firebaseError) {
+                                    //TODO, handle an incorrect old password
                                 }
                             });
                         }
@@ -298,8 +295,8 @@ public class ProfileActivity extends AppCompatActivity {
      * @param newPasswordConfirm is the EditText field that confirms the new password
      * @return true or false depending on the equality of the password fields
      */
-    private boolean passwordMatch(EditText newPassword, EditText newPasswordConfirm) {
-        return (newPassword.getText().toString().matches(newPasswordConfirm.getText().toString()));
+    private boolean passwordMatch(String newPassword, String newPasswordConfirm) {
+        return (newPassword.matches(newPasswordConfirm));
     }
 
     /**
