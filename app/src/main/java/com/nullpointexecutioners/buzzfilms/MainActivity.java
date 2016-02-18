@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the activity once it is started
+     * Handles this activity once it is started
      */
     @Override
     protected void onStart() {
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the activity once it is resume
+     * Handles this activity once it is resume
      */
     @Override
     protected void onResume() {
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the activity once it is paused (i.e. in the background)
+     * Handles this activity once it is paused (i.e. in the background)
      */
     @Override
     protected void onPause() {
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the activity once it is destroyed
+     * Handles this activity once it is destroyed
      */
     @Override
     protected void onDestroy() {
@@ -138,11 +138,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
-    @OnClick(R.id.logout_button)
     /**
      * When the user clicks on the logout button, they will be deauthorized from the application.
      * In addition to kicking them back to the login screen, the activity stack is also cleared as to prevent a user from being able to get back into the app with a "Back" button press.
      */
+    @OnClick(R.id.logout_button)
     public void onLogoutClick() {
         mRef.unauth();
         Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);

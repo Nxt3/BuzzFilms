@@ -58,7 +58,7 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
 
-        mLoginButton.setEnabled(false); //disabled by default
+        mLoginButton.setEnabled(false); //disable the login button until the user fills out the login fields
 
         TextWatcher watcher = new TextWatcher() {
             @Override
@@ -86,7 +86,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     authenticateLogin();
-//                    Hide virtual keyboard after "Done" action
+                    /*Hide virtual keyboard after "Done" action is pressed on keyboard*/
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     return true;
@@ -104,7 +104,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the activity once it is destroyed
+     * Handles this activity once it is destroyed
      */
     @Override
     protected void onDestroy() {
@@ -226,7 +226,7 @@ public class WelcomeActivity extends AppCompatActivity {
             final EditText registerPasswordInput = ButterKnife.findById(registerDialog, R.id.register_password);
 
             /*
-             * TextWatcher lets us monitor the input fields while registering;
+             * TextWatcher lets us monitor the input fields while registering
              * This make sure we don't allow the user to register with empty fields
              */
             final TextWatcher watcher = new TextWatcher() {
