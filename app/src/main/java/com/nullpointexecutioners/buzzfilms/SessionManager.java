@@ -35,7 +35,7 @@ public class SessionManager {
     //Email
     protected static final String KEY_EMAIL = null;
 
-    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    final static Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     //Constructor for SessionManager
     public SessionManager(Context context) {
@@ -64,20 +64,17 @@ public class SessionManager {
      * Checks if current user is logged in
      * If false, the user is redirected to WelcomeActivity to login or register
      */
-    public void checkLogin() {
+    public Intent checkLogin() {
+        Intent intent;
+
         if(!this.isLoggedIn()) {
-            //User is not logged in redirect him to Login Activity
-            Intent intent = new Intent(context, WelcomeActivity.class);
-
-            //Closing all the Activities
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            //Add new Flag to start new Activity
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            //Staring Login Activity
-            context.startActivity(intent);
+            //User is not logged in; redirect them to Login Activity
+            intent = new Intent(context, WelcomeActivity.class);
+        } else {
+            //User is logged in; redirect them to MainActivity
+            intent = new Intent(context, MainActivity.class);
         }
+        return intent;
     }
 
 

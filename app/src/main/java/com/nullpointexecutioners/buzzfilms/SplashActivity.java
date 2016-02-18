@@ -14,6 +14,8 @@ public class SplashActivity extends Activity {
 
     @BindInt(R.layout.splash_screen) int splashScreen;
 
+    SessionManager mSession;
+
     /**
      * Creates this activity
      * @param savedInstanceState no idea what this is
@@ -34,7 +36,12 @@ public class SplashActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
+                    Intent intent = mSession.checkLogin();
+                    //Closing all the Activities
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    //Add new Flag to start new Activity
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
