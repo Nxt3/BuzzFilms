@@ -316,6 +316,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 final String NAME = dataSnapshot.child("name").getValue().toString();
                 final String EMAIL = dataSnapshot.child("email").getValue().toString();
                 mSession.createLoginSession(USERNAME, NAME, EMAIL);
+                Log.v("userInfoForLogin: ", mSession.getLoggedInUsername() + ", " + mSession.getLoggedInName());
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
