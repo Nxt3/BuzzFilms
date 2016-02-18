@@ -142,14 +142,6 @@ public class SessionManager {
     }
 
     /**
-     * Helper method for determining if someone is logged in
-     * @return
-     */
-    public boolean isLoggedIn() {
-        return pref.getBoolean(IS_LOGIN, false);
-    }
-
-    /**
      * Getter for accessing the current SharedPrefs
      * @return this session's SharedPrefs
      */
