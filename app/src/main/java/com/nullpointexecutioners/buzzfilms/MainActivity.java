@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.firebase.client.Firebase;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
-    Firebase mRef;
     SessionManager mSession;
 
     final private int DASHBOARD = 1;
