@@ -17,11 +17,9 @@ public class SessionManager {
     SharedPreferences pref;
     //Editor for Shared preferences
     SharedPreferences.Editor editor;
-    //SharedPref mode
-    int PRIVATE_MODE = 0;
 
     //SharedPref file name
-    private static final String PREF_NAME = "current_user";
+    private static final String PREF_NAME = "current.user";
 
     //All Shared Preferences Keys
     private static final String IS_LOGIN = "IsLoggedIn";
@@ -40,7 +38,7 @@ public class SessionManager {
     //Constructor for SessionManager
     public SessionManager(Context context) {
         this.context = context;
-        pref = this.context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        pref = this.context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 
