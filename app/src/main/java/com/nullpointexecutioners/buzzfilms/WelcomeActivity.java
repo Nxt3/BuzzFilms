@@ -56,7 +56,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private MaterialDialog mAuthProgressDialog;
 
     private SessionManager mSession;
-    private String xUsername;
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
@@ -124,7 +123,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-        getUserInfoForLogin(xUsername);
     }
 
     /**
@@ -137,7 +135,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
-        xUsername = USERNAME;
         if (isOnline()) {
             mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override

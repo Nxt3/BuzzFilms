@@ -66,7 +66,7 @@ public class SessionManager {
         editor.putString(KEY_EMAIL, email);
 
         //Commit changes to SharedPrefs
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -80,7 +80,7 @@ public class SessionManager {
         editor.putString(KEY_EMAIL, email);
 
         //Commit changes to SharedPrefs
-        editor.commit();
+        editor.apply();
     }
 
     /**
