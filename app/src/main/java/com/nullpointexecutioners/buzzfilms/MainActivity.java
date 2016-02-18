@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     final private int PROFILE = 2;
     final private int SETTINGS = 3;
 
-    private AccountHeader drawerHeader;
-
     /**
      * Creates this activity
      * @param savedInstanceState no idea what this is
@@ -60,18 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar.setTitle(dashboard);
 
-        createDrawerHeader();
         createNavDrawer();
-    }
-
-    /**
-     * Handles this activity once it is paused (i.e. in the background)
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mNavDrawer.setSelection(mNavDrawer.getDrawerItem(DASHBOARD));
-        mNavDrawer.closeDrawer();
     }
 
     /**
@@ -84,26 +71,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Helper method to create the account header for the nav drawer
+     * Helper method to create the nav drawer for the MainActivity
      */
-    private void createDrawerHeader() {
+    private void createNavDrawer() {
         //Create the AccountHeader for the nav drawer
-        drawerHeader = new AccountHeaderBuilder()
+        final AccountHeader drawerHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(mSession.getKeyName())
-                                .withEmail(mSession.getKeyEmail())
+                                .withName(mSession.getUserDetails().get(SessionManager.KEY_NAME))
+                                .withEmail(mSession.getUserDetails().get(SessionManager.KEY_EMAIL))
                                 .withIcon(mProfileDrawerIcon))
                 .withSelectionListEnabledForSingleProfile(false)
                 .build();
-    }
-
-    /**
-     * Helper method to create the nav drawer for the MainActivity
-     */
-    private void createNavDrawer() {
         //Create the nav drawer
         mNavDrawer = new DrawerBuilder()
                 .withAccountHeader(drawerHeader)
@@ -117,12 +98,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (drawerItem != null && drawerItem instanceof Nameable) {
-                            Intent intent = null;
+                            Intent intent;
 
                             switch(drawerItem.getIdentifier()) {
                                 case DASHBOARD:
                                     return false;
                                 case PROFILE:
+                                    mNavDrawer.closeDrawer();
                                     intent = new Intent(MainActivity.this, ProfileActivity.class);
                                     startActivity(intent);
                                     return true;

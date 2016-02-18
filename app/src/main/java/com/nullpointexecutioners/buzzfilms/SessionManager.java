@@ -98,30 +98,6 @@ public class SessionManager {
     }
 
     /**
-     * Getter method for username
-     * @return username of current user
-     */
-    public String getKeyUsername() {
-        return KEY_USERNAME;
-    }
-
-    /**
-     * Getter method for name
-     * @return name of current user
-     */
-    public String getKeyName() {
-        return KEY_NAME;
-    }
-
-    /**
-     * Getter method for email
-     * @return email of current user
-     */
-    public String getKeyEmail() {
-        return KEY_EMAIL;
-    }
-
-    /**
      * Clears session credentials
      */
     public void logoutUser() {

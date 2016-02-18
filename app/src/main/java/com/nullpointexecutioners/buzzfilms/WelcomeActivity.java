@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -201,22 +202,27 @@ public class WelcomeActivity extends AppCompatActivity {
                                             registerUsernameInput.setError(usernameTaken);
                                             registerUsernameInput.requestFocus();
                                         } else {
+                                            registerDialog.dismiss();
+                                            mAuthProgressDialog.show();
                                             SessionManager.mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
+                                                    //User was created successfully--so take them to the MainActivity
+                                                    mAuthProgressDialog.dismiss();
+                                                    registerUser(USERNAME, NAME, EMAIL);
+                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL);
+
+                                                    //Go to the MainActivity
+                                                    Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                                    startActivity(loginIntent);
+                                                    finish(); //We're done with the WelcomeActivity
                                                 }
                                                 @Override
                                                 public void onError(FirebaseError firebaseError) {
+                                                    String error = firebaseError.getMessage();
+                                                    Log.e("Registering", error);
                                                 }
                                             });
-                                            registerDialog.dismiss();
-                                            registerUser(USERNAME, NAME, EMAIL);
-                                            mSession.createLoginSession(USERNAME, NAME, EMAIL);
-
-                                            //Go to the MainActivity
-                                            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                                            startActivity(loginIntent);
-                                            finish(); //We're done with the WelcomeActivity
                                         }
                                     }
                                     @Override
