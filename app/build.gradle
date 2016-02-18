@@ -18,9 +18,9 @@ android {
             zipAlignEnabled true
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            zipAlignEnabled true
+            zipAlignEnabled false
         }
     }
     packagingOptions {
