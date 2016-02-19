@@ -8,6 +8,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     private SessionManager mSession;
+    private TomatoVolley tomato;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
@@ -66,6 +72,32 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(dashboard);
 
         createNavDrawer();
+
+        // Testing Volley
+        this.tomato = TomatoVolley.getInstance(this);
+        RequestQueue queue = this.tomato.getRequestQueue();
+
+        String url ="http://api.rottentomatoes.com/api/public/v1.0.json?apikey=";
+
+        url = url + TomatoVolley.API_KEY;
+        System.out.println(url);
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        System.out.println("Response is: " + response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("That didn't work!");
+                System.out.println(error);
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     /**

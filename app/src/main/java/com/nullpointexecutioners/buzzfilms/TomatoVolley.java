@@ -1,5 +1,6 @@
 package com.nullpointexecutioners.buzzfilms;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -13,35 +14,24 @@ import com.android.volley.toolbox.Volley;
 /**
  * Created by Matthew on 2/18/2016.
  */
-public class TomatoVolley extends AppCompatActivity {
-    private static TomatoVolley ourInstance = new TomatoVolley();
+public class TomatoVolley {
+    private static TomatoVolley instance;
+    private RequestQueue requestQueue;
+    public static final String API_KEY = "vbhetn4chdpudf7mqhckacca";
 
-    public static TomatoVolley getInstance() {
-        return ourInstance;
+    private TomatoVolley(Context context) {
+        requestQueue = Volley.newRequestQueue(context);
+
     }
 
-    private final String API_KEY = "vbhetn4chdpudf7mqhckaccasdf";
+    public static TomatoVolley getInstance(Context context) {
+        if (instance == null) {
+            instance = new TomatoVolley(context);
+        }
+        return instance;
+    }
 
-    private TomatoVolley() {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://api.rottentomatoes.com/api/public/v1.0.json?apikey=";
-
-        url = url + API_KEY;
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        System.out.println("Response is: " + response.substring(0, 500));
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("That didn't work!");
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+    public RequestQueue getRequestQueue() {
+        return requestQueue;
     }
 }
