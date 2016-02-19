@@ -109,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Object major = dataSnapshot.child("major").getValue();
-                if (!major.equals(User.Major.NONE.toString())) {
+                if (!major.equals(User.Major.NONE)) {
                     mMajor = User.Major.fromString((String) major);
                     profileMajor.setText(mMajor.toString());
                 } else {
