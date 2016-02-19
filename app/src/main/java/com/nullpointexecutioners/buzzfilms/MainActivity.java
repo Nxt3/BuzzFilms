@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.title_activity_main) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.settings) String settings;
+    @BindString(R.string.recent_releases) String recent_relesses;
 
     Drawer mNavDrawer;
     private SessionManager mSession;
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
-                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
+                        new PrimaryDrawerItem().withName(recent_relesses).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -141,11 +142,16 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent;
 
                             switch(drawerItem.getIdentifier()) {
-                                case DASHBOARD:
-                                    return false;
                                 case PROFILE:
                                     mNavDrawer.closeDrawer();
                                     intent = new Intent(MainActivity.this, ProfileActivity.class);
+                                    startActivity(intent);
+                                    return true;
+                                case DASHBOARD:
+                                    return false;
+                                case RECENT_RELEASES:
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(MainActivity.this, RecentFilms.class);
                                     startActivity(intent);
                                     return true;
                                 case SETTINGS:
