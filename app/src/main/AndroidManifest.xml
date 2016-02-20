@@ -34,7 +34,10 @@
             android:name=".ProfileActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme" />
-        <activity android:name=".RecentFilms"></activity>
+        <activity
+            android:name=".RecentFilms"
+            android:label="New Releases"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

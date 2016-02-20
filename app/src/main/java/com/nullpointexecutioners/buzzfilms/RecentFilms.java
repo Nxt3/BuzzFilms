@@ -5,7 +5,12 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -17,6 +22,10 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -32,11 +41,11 @@ public class RecentFilms extends Activity {
     Drawable mProfileDrawerIcon;
     @BindString(R.string.title_activity_main) String dashboard;
     @BindString(R.string.profile) String profile;
-    @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
     private SessionManager mSession;
+    private ArrayAdapter<String> filmAdapter;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
@@ -48,10 +57,63 @@ public class RecentFilms extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_films);
+
+
 //        ButterKnife.bind(this);
 //
 //        toolbar.setTitle(recentReleases);
+        String[] data = {
+                "Deadpool",
+                "Kung Fu Panda 3",
+                "How To Be Single",
+                "Zoolander2",
+                "The Revenant",
+                "Hail, Caesar!",
+                "Star Wars",
+                "The Choice",
+                "Ride Along2",
+                "The Boy"
+        };
+        List<String> films = new ArrayList<String>(Arrays.asList(data));
+
+        filmAdapter = new ArrayAdapter<>(
+                this,
+                R.layout.list_item_film,
+                R.id.list_item_film,
+                films);
+
+        ListView listView = (ListView) findViewById(R.id.listview_film);
+        listView.setAdapter(filmAdapter);
+
+        Log.d("debug", "why list view not shown");
+
     }
+
+
+//
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        // Create some dummy data for the ListView.  Here's a sample weekly forecast
+//        String[] data = {
+//                "Mon 6/23 - Sunny - 31/17",
+//                "Tue 6/24 - Foggy - 21/8",
+//                "Wed 6/25 - Cloudy - 22/17",
+//                "Thurs 6/26 - Rainy - 18/11",
+//                "Fri 6/27 - Foggy - 21/10",
+//                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
+//                "Sun 6/29 - Sunny - 20/7"
+//        };
+//        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
+//
+//        filmAdapter = new ArrayAdapter<>(
+//                getActivity(),
+//                R.layout.list_item_forecast,
+//                R.id.list_item_forecast_textview,
+//                new ArrayList<String>());
+//
+//        View rootView = inflater.inflate(R.layout.content_recent_films, container, false);
+//        return rootView;
+//    }
 
     /**
      * Helper method to create the nav drawer for the MainActivity
