@@ -3,8 +3,11 @@ package com.nullpointexecutioners.buzzfilms;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +26,16 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,63 +71,168 @@ public class RecentFilms extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_films);
 
-
 //        ButterKnife.bind(this);
 //
 //        toolbar.setTitle(recentReleases);
-        String[] data = {
-                "Deadpool",
-                "Kung Fu Panda 3",
-                "How To Be Single",
-                "Zoolander2",
-                "The Revenant",
-                "Hail, Caesar!",
-                "Star Wars",
-                "The Choice",
-                "Ride Along2",
-                "The Boy"
-        };
-        List<String> films = new ArrayList<String>(Arrays.asList(data));
+//        String[] data = {
+//                "Deadpool",
+//                "Kung Fu Panda 3",
+//                "How To Be Single",
+//                "Zoolander2",
+//                "The Revenant",
+//                "Hail, Caesar!",
+//                "Star Wars",
+//                "The Choice",
+//                "Ride Along2",
+//                "The Boy"
+//        };
+//        List<String> films = new ArrayList<String>(Arrays.asList(data));
 
         filmAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.list_item_film,
                 R.id.list_item_film,
-                films);
+                new ArrayList<String>());
 
         ListView listView = (ListView) findViewById(R.id.listview_film);
         listView.setAdapter(filmAdapter);
 
-        Log.d("debug", "why list view not shown");
+        FetchData task = new FetchData();
+        task.execute();
 
     }
 
+    public class FetchData extends AsyncTask<String, Void, String[]> {
 
-//
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-//        String[] data = {
-//                "Mon 6/23 - Sunny - 31/17",
-//                "Tue 6/24 - Foggy - 21/8",
-//                "Wed 6/25 - Cloudy - 22/17",
-//                "Thurs 6/26 - Rainy - 18/11",
-//                "Fri 6/27 - Foggy - 21/10",
-//                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-//                "Sun 6/29 - Sunny - 20/7"
-//        };
-//        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
-//
-//        filmAdapter = new ArrayAdapter<>(
-//                getActivity(),
-//                R.layout.list_item_forecast,
-//                R.id.list_item_forecast_textview,
-//                new ArrayList<String>());
-//
-//        View rootView = inflater.inflate(R.layout.content_recent_films, container, false);
-//        return rootView;
-//    }
+        private final String LOG_TAG = FetchData.class.getSimpleName();
 
+        private String[] getDataFromJson(String FilmJsonStr, int num)
+                throws JSONException {
+
+            JSONObject forecastJson = new JSONObject(FilmJsonStr);
+            JSONArray FilmArray = forecastJson.getJSONArray("movies");
+
+            String[] resultStrs = new String[FilmArray.length()];
+            for (int i = 0; i < FilmArray.length(); i++) {
+
+                // Get the JSON object representing the title
+                JSONObject titleObject = FilmArray.getJSONObject(i);
+                resultStrs[i] = titleObject.getString("title");
+            }
+
+            for (String s : resultStrs) {
+                Log.v(LOG_TAG, "Movie: " + s);
+            }
+            return resultStrs;
+
+        }
+
+        @Override
+        protected String[] doInBackground(String... params) {
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // Will contain the raw JSON response as a string.
+            String FilmJsonStr = null;
+
+            try {
+                // Construct the URL for the OpenWeatherMap query
+                // Possible parameters are avaiable at OWM's forecast API page, at
+                // http://openweathermap.org/API#forecast
+                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=30308usa&mode=json&units=metric&cnt=7&APPID=9865e34c3a87279d20c6cac3adc7eaf3");
+//                final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
+//                final String QUERY_PARAM = "q";
+//                final String FORMAT_PARAM = "mode";
+//                final String UNITS_PARAM = "units";
+//                final String DAYS_PARAM = "cnt";
+//                final String APPID_PARAM = "APPID";
+//
+//                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+//                        .appendQueryParameter(QUERY_PARAM, params[0])
+//                        .appendQueryParameter(FORMAT_PARAM, format)
+//                        .appendQueryParameter(UNITS_PARAM, units)
+//                        .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+//                        .appendQueryParameter(APPID_PARAM, "9865e34c3a87279d20c6cac3adc7eaf3")
+//                        .build();
+//
+//                URL url = new URL(builtUri.toString());
+
+//                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+
+                URL url = new URL("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=vbhetn4chdpudf7mqhckacca");
+
+
+                // Create the request to OpenWeatherMap, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                FilmJsonStr = buffer.toString();
+
+                Log.v(LOG_TAG, "Forecast JSON String: " + FilmJsonStr);
+
+            } catch (IOException e) {
+                Log.e("PlaceholderFragment", "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attemping
+                // to parse it.
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getDataFromJson(FilmJsonStr, 10);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                filmAdapter.clear();
+                for (String movie : result) {
+                    filmAdapter.add(movie);
+                }
+                // New data is back from the server.  Hooray!
+            }
+        }
+    }
     /**
      * Helper method to create the nav drawer for the MainActivity
      */
