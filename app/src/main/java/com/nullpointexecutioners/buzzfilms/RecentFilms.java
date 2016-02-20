@@ -74,19 +74,7 @@ public class RecentFilms extends Activity {
 //        ButterKnife.bind(this);
 //
 //        toolbar.setTitle(recentReleases);
-//        String[] data = {
-//                "Deadpool",
-//                "Kung Fu Panda 3",
-//                "How To Be Single",
-//                "Zoolander2",
-//                "The Revenant",
-//                "Hail, Caesar!",
-//                "Star Wars",
-//                "The Choice",
-//                "Ride Along2",
-//                "The Boy"
-//        };
-//        List<String> films = new ArrayList<String>(Arrays.asList(data));
+
 
         filmAdapter = new ArrayAdapter<>(
                 this,
@@ -138,28 +126,6 @@ public class RecentFilms extends Activity {
             String FilmJsonStr = null;
 
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=30308usa&mode=json&units=metric&cnt=7&APPID=9865e34c3a87279d20c6cac3adc7eaf3");
-//                final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
-//                final String QUERY_PARAM = "q";
-//                final String FORMAT_PARAM = "mode";
-//                final String UNITS_PARAM = "units";
-//                final String DAYS_PARAM = "cnt";
-//                final String APPID_PARAM = "APPID";
-//
-//                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-//                        .appendQueryParameter(QUERY_PARAM, params[0])
-//                        .appendQueryParameter(FORMAT_PARAM, format)
-//                        .appendQueryParameter(UNITS_PARAM, units)
-//                        .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-//                        .appendQueryParameter(APPID_PARAM, "9865e34c3a87279d20c6cac3adc7eaf3")
-//                        .build();
-//
-//                URL url = new URL(builtUri.toString());
-
-//                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 URL url = new URL("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=vbhetn4chdpudf7mqhckacca");
 
