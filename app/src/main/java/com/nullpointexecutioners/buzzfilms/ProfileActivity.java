@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -252,14 +253,14 @@ public class ProfileActivity extends AppCompatActivity {
                         if (passwordMatch(editPasswordText, editPasswordConfirmText)
                                 && editPasswordText.length() != 0
                                 && editPasswordConfirmText.length() != 0) {
-                            mRef.getAuth();
-                            mRef.changePassword(mUsername, editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
+                            mRef.changePassword(WelcomeActivity.setUserWithDummyDomain(mUsername), editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
                                 @Override
                                 public void onSuccess() {
+                                    Log.v("Change password", "Success!!");
                                 }
                                 @Override
                                 public void onError(FirebaseError firebaseError) {
-                                    //TODO, handle an incorrect old password
+                                    Log.e("Change password", firebaseError.toString());
                                 }
                             });
                         }

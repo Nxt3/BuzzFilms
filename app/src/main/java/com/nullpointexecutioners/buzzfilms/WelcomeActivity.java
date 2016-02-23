@@ -370,7 +370,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param  username to append dummy domain to
      * @return username appended with the dummy domain
      */
-    private String setUserWithDummyDomain(String username) {
+    public static String setUserWithDummyDomain(String username) {
         return username + "@buzz-films.edu";
     }
 
