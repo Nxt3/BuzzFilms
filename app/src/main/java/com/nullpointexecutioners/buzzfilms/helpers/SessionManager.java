@@ -1,4 +1,4 @@
-package com.nullpointexecutioners.buzzfilms;
+package com.nullpointexecutioners.buzzfilms.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;

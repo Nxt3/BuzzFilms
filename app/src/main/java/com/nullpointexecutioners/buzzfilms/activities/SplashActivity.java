@@ -1,9 +1,12 @@
-package com.nullpointexecutioners.buzzfilms;
+package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
+
+import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 
 /**
  * Splash screen for our app gives the appearance of speeeeeeeed

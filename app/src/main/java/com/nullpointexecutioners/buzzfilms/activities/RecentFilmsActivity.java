@@ -1,17 +1,13 @@
-package com.nullpointexecutioners.buzzfilms;
+package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Time;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -25,6 +21,8 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,15 +35,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
-import butterknife.ButterKnife;
 
-public class RecentFilms extends Activity {
+public class RecentFilmsActivity extends Activity {
 
     /*I love ButterKnife <3*/
     @Bind(R.id.toolbar)
@@ -233,12 +228,12 @@ public class RecentFilms extends Activity {
                             switch(drawerItem.getIdentifier()) {
                                 case PROFILE:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(RecentFilms.this, ProfileActivity.class);
+                                    intent = new Intent(RecentFilmsActivity.this, ProfileActivity.class);
                                     startActivity(intent);
                                     return true;
                                 case DASHBOARD:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(RecentFilms.this, MainActivity.class);
+                                    intent = new Intent(RecentFilmsActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     return false;
                                 case RECENT_RELEASES:

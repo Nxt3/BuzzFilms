@@ -1,9 +1,7 @@
-package com.nullpointexecutioners.buzzfilms;
+package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -29,6 +26,12 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.nullpointexecutioners.buzzfilms.Major;
+import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.NetworkHelper;
+import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 
 import butterknife.Bind;
 import butterknife.BindInt;
@@ -50,11 +53,11 @@ public class WelcomeActivity extends AppCompatActivity {
     @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
     @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
     @BindString(R.string.cancel) String cancel;
+    @BindString(R.string.network_not_available) String invalidEmail;
+    @BindString(R.string.network_not_available) String networkNotAvailable;
     @BindString(R.string.register) String register;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
     @BindString(R.string.register_username_taken) String usernameTaken;
-    @BindString(R.string.network_not_available) String networkNotAvailable;
-    @BindString(R.string.invalid_email) String invalidEmail;
 
     private MaterialDialog mAuthProgressDialog;
 
@@ -138,8 +141,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
         /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
-        if (isOnline()) {
-            mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
+        if (NetworkHelper.isInternetAvailable()) {
+            mRef.authWithPassword(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     getUserInfoForLogin(USERNAME);
@@ -159,8 +162,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     //Invalid login credentials
+                    Log.e("authenticateLogin", firebaseError.toString());
                     mAuthProgressDialog.dismiss();
-                    makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                    ViewHelper.makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
                             accentColor, primaryTextLightColor).show();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -168,7 +172,7 @@ public class WelcomeActivity extends AppCompatActivity {
             });
         } else {
             mAuthProgressDialog.dismiss();
-            makeSnackbar(thisActivity, networkNotAvailable, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
+            ViewHelper.makeSnackbar(thisActivity, networkNotAvailable, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
         }
     }
 
@@ -204,7 +208,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             USERNAME = registerUsernameInput.getText().toString();
                             PASSWORD = registerPasswordInput.getText().toString();
 
-                            if (isOnline()) {
+                            if (NetworkHelper.isInternetAvailable()) {
                                 mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -215,7 +219,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                         } else {
                                             registerDialog.dismiss();
                                             mAuthProgressDialog.show();
-                                            mRef.createUser(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
+                                            mRef.createUser(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
                                                     //User was created successfully--so take them to the MainActivity
@@ -233,7 +237,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                                     mAuthProgressDialog.dismiss();
                                                     String error = firebaseError.getMessage();
                                                     Log.e("Registering...", error);
-                                                    makeSnackbar(thisActivity, "An unexpected error occurred", Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
+                                                    ViewHelper.makeSnackbar(thisActivity, "An unexpected error occurred", Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
                                                 }
                                             });
                                         }
@@ -244,7 +248,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                 });
                             } else {
                                 registerDialog.dismiss();
-                                makeSnackbar(thisActivity, networkNotAvailable, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
+                                ViewHelper.makeSnackbar(thisActivity, networkNotAvailable, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
                             }
                         }
                     }
@@ -291,24 +295,8 @@ public class WelcomeActivity extends AppCompatActivity {
             /**
              * This lets us monitor the validity of the email entered
              */
-            final TextWatcher emailWatcher = new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!isValidEmail(registerEmailInput.getText().toString())) {
-                        registerEmailInput.setError(invalidEmail); //not valid email
-                        registerAction.setEnabled(false);
-                    } else {
-                        registerEmailInput.setError(null); //clears error
-                        registerAction.setEnabled(true);
-                    }
-                }
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            };
+            final TextWatcher emailWatcher = StringHelper.emailWatcher(registerEmailInput, registerAction, invalidEmail);
+
             /*We want to watch all EditText fields for input*/
             registerNameInput.addTextChangedListener(watcher);
             registerEmailInput.addTextChangedListener(emailWatcher);
@@ -317,16 +305,6 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         registerDialog.show();
         registerAction.setEnabled(false); //disabled by default
-    }
-
-    /**
-     * Helper method for checking the validity of an email
-     * This will check and make sure the format of an input email is in email form
-     * @param email to check
-     * @return true or false depending if the email was valid
-     */
-    private boolean isValidEmail(CharSequence email) {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     /**
@@ -362,49 +340,5 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
-    }
-
-    /**
-     * Appends a dummy domain to the username when adding it to Firebase
-     * This then follows Firebase's authWithPassword() method call
-     * @param  username to append dummy domain to
-     * @return username appended with the dummy domain
-     */
-    public static String setUserWithDummyDomain(String username) {
-        return username + "@buzz-films.edu";
-    }
-
-    /** TODO, put this method in class containing other helper methods
-     * TODO, ping www.google.com to see if we have an active internet connection?
-     * Helper method for determining if the device has a network connection
-     * This does NOT check whether we can actually access the Internet, though
-     * @return true or false depending on whether or not the device has a network connection
-     */
-    public boolean isOnline() {
-        Context context = getApplicationContext();
-        ConnectivityManager cm = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-
-        return (netInfo != null && netInfo.isConnectedOrConnecting());
-    }
-
-    /** TODO, put this method in class containing other helper methods
-     * Helper method for creating custom Snackbars
-     * @param layout view to place the Snackbar in
-     * @param text what you want the Snackbar to say
-     * @param duration how long you want the Snackbar to appear for
-     * @param backgroundColor color you want the Snackbar's background to be
-     * @param textColor color you want the Snackbar's text to be
-     * @return the custom made Snackbar
-     */
-    @NonNull
-    public static Snackbar makeSnackbar(@NonNull View layout, @NonNull CharSequence  text, int duration, int backgroundColor, int textColor/*, int actionTextColor*/) {
-        Snackbar snackBarView = Snackbar.make(layout, text, duration);
-        snackBarView.getView().setBackgroundColor(backgroundColor);
-        //snackBarView.setActionTextColor(actionTextColor);
-        TextView tv = (TextView) snackBarView.getView().findViewById(android.support.design.R.id.snackbar_text);
-        tv.setTextColor(textColor);
-        return snackBarView;
     }
 }

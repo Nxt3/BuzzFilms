@@ -1,4 +1,4 @@
-package com.nullpointexecutioners.buzzfilms;
+package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -13,7 +13,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.firebase.client.Firebase;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -24,6 +23,9 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.TomatoVolley;
+import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -38,12 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
     /*I love ButterKnife <3*/
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @BindDrawable(R.drawable.rare_pepe_avatar)
-    Drawable mProfileDrawerIcon;
+    @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.title_activity_main) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.settings) String settings;
-    @BindString(R.string.recent_releases) String recent_relesses;
+    @BindString(R.string.recent_releases) String recent_releases;
 
     Drawer mNavDrawer;
     private SessionManager mSession;
@@ -53,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
     final private int DASHBOARD = 2;
     final private int RECENT_RELEASES = 3;
     final private int SETTINGS = 4;
-
-    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     /**
      * Creates this activity
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
-                        new PrimaryDrawerItem().withName(recent_relesses).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
+                        new PrimaryDrawerItem().withName(recent_releases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                                     return false;
                                 case RECENT_RELEASES:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(MainActivity.this, RecentFilms.class);
+                                    intent = new Intent(MainActivity.this, RecentFilmsActivity.class);
                                     startActivity(intent);
                                     return true;
                                 case SETTINGS:

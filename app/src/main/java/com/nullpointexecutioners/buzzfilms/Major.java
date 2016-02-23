@@ -7,7 +7,7 @@ package com.nullpointexecutioners.buzzfilms;
 /**
  * User's college major
  */
-enum Major {
+public enum Major {
     NONE("Select your major"),
     CS("Computer Science"),
     EE("Electrical Engineering"),

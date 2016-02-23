@@ -1,11 +1,10 @@
-package com.nullpointexecutioners.buzzfilms;
+package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +24,10 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.nullpointexecutioners.buzzfilms.Major;
+import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 
 import java.util.HashMap;
 
@@ -39,30 +42,19 @@ import butterknife.OnClick;
  */
 public class ProfileActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @Bind(R.id.currentName)
-    TextView profileName;
-    @Bind(R.id.currentEmail)
-    TextView profileEmail;
-    @Bind(R.id.currentMajor)
-    TextView profileMajor;
-    @Bind(R.id.currentInterests)
-    TextView profileInterests;
-    @BindDrawable(R.drawable.ic_arrow_back)
-    Drawable backArrow;
-    @BindString(R.string.edit_profile_dialog_title)
-    String editProfileDialogTitle;
-    @BindString(R.string.edit_password_dialog_title)
-    String editPasswordDialogTitle;
-    @BindString(R.string.save)
-    String save;
-    @BindString(R.string.cancel)
-    String cancel;
-    @BindString(R.string.major_not_specified)
-    String majorNotSpecified;
-    @BindString(R.string.new_password_mismatch)
-    String passwordMismatch;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.currentName) TextView profileName;
+    @Bind(R.id.currentEmail) TextView profileEmail;
+    @Bind(R.id.currentMajor) TextView profileMajor;
+    @Bind(R.id.currentInterests) TextView profileInterests;
+    @BindDrawable(R.drawable.ic_arrow_back) Drawable backArrow;
+    @BindString(R.string.cancel) String cancel;
+    @BindString(R.string.edit_password_dialog_title) String editPasswordDialogTitle;
+    @BindString(R.string.edit_profile_dialog_title) String editProfileDialogTitle;
+    @BindString(R.string.major_not_specified) String majorNotSpecified;
+    @BindString(R.string.network_not_available) String invalidEmail;
+    @BindString(R.string.new_password_mismatch) String passwordMismatch;
+    @BindString(R.string.save) String save;
 
     private SessionManager mSession;
 
@@ -202,6 +194,9 @@ public class ProfileActivity extends AppCompatActivity {
             final EditText editName = ButterKnife.findById(editProfileDialog, R.id.edit_name);
             final EditText editEmail = ButterKnife.findById(editProfileDialog, R.id.edit_email);
             final EditText editInterests = ButterKnife.findById(editProfileDialog, R.id.edit_interests);
+            final View saveEdits = editProfileDialog.getActionButton(DialogAction.POSITIVE);
+
+            StringHelper.emailWatcher(editEmail, saveEdits, invalidEmail);
 
             /*Need to override isEnabled so the user can't select the hint text in the spinner*/
             ArrayAdapter<Major> adapter = new ArrayAdapter<Major>(this, android.R.layout.simple_spinner_dropdown_item, Major.values()) {
@@ -250,10 +245,10 @@ public class ProfileActivity extends AppCompatActivity {
                         final String editPasswordText = editPassword.getText().toString();
                         final String editPasswordConfirmText = editPasswordConfirm.getText().toString();
 
-                        if (passwordMatch(editPasswordText, editPasswordConfirmText)
+                        if (StringHelper.passwordMatch(editPassword, editPasswordConfirm)
                                 && editPasswordText.length() != 0
                                 && editPasswordConfirmText.length() != 0) {
-                            mRef.changePassword(WelcomeActivity.setUserWithDummyDomain(mUsername), editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
+                            mRef.changePassword(StringHelper.setUserWithDummyDomain(mUsername), editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
                                 @Override
                                 public void onSuccess() {
                                     Log.v("Change password", "Success!!");
@@ -274,46 +269,15 @@ public class ProfileActivity extends AppCompatActivity {
             final EditText editPassword = ButterKnife.findById(editPasswordDialog, R.id.edit_password);
             final EditText editPasswordConfirm = ButterKnife.findById(editPasswordDialog, R.id.edit_password_confirm);
 
-            final String editPasswordOldText = editPasswordOld.getText().toString();
-            final String editPasswordText = editPassword.getText().toString();
-            final String editPasswordConfirmText = editPasswordConfirm.getText().toString();
+            final TextWatcher passwordWatcher = StringHelper.passwordWatcher(editPasswordOld,
+                    editPassword, editPasswordConfirm, saveAction, passwordMismatch);
 
-            final TextWatcher watcher = new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (passwordMatch(editPasswordText, editPasswordConfirmText)
-                            && editPassword.getText().toString().length() != 0
-                            && editPasswordConfirm.getText().toString().length() != 0) {
-                        editPasswordConfirm.setError(null); //Clears the error
-                        saveAction.setEnabled(true);
-                    } else {
-                        editPasswordConfirm.setError(passwordMismatch);
-                        saveAction.setEnabled(false);
-                    }
-                }
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            };
-            editPasswordOld.addTextChangedListener(watcher);
-            editPassword.addTextChangedListener(watcher);
-            editPasswordConfirm.addTextChangedListener(watcher);
+            editPasswordOld.addTextChangedListener(passwordWatcher);
+            editPassword.addTextChangedListener(passwordWatcher);
+            editPasswordConfirm.addTextChangedListener(passwordWatcher);
         }
         editPasswordDialog.show();
         saveAction.setEnabled(false); //Disabled by default
-    }
-
-    /**
-     * Helper method for making sure the new password and the confirm new password fields hold the same password.
-     * @param newPassword is the new password EditText field
-     * @param newPasswordConfirm is the EditText field that confirms the new password
-     * @return true or false depending on the equality of the password fields
-     */
-    private boolean passwordMatch(String newPassword, String newPasswordConfirm) {
-        return (newPassword.matches(newPasswordConfirm));
     }
 
     /**
