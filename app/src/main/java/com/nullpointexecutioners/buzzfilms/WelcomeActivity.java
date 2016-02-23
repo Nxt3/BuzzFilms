@@ -299,7 +299,7 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
-        userRef.child("major").setValue(User.Major.NONE);
+        userRef.child("major").setValue(Major.NONE);
         userRef.child("interests").setValue(null);
     }
 
@@ -314,7 +314,9 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String NAME = dataSnapshot.child("name").getValue().toString();
+                Log.v("userInfoLogin", "NAME " + NAME);
                 final String EMAIL = dataSnapshot.child("email").getValue().toString();
+                Log.v("userInfoLogin", "EMAIL " + EMAIL);
                 mSession.createLoginSession(USERNAME, NAME, EMAIL);
 
                 Log.v("userInfoForLogin: ", mSession.getLoggedInUsername() + ", " + mSession.getLoggedInName());
