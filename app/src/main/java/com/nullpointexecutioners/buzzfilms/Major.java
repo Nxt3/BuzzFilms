@@ -3,10 +3,6 @@ package com.nullpointexecutioners.buzzfilms;
 /**
  * ENUM type for User's Major
  */
-
-/**
- * User's college major
- */
 public enum Major {
     NONE("Select your major"),
     CS("Computer Science"),
