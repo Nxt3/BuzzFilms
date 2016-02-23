@@ -41,7 +41,7 @@ import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 
-public class RecentFilmsActivity extends Activity {
+public class RecentReleasesActivity extends Activity {
 
     /*I love ButterKnife <3*/
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -230,12 +230,12 @@ public class RecentFilmsActivity extends Activity {
                             switch(drawerItem.getIdentifier()) {
                                 case PROFILE:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(RecentFilmsActivity.this, ProfileActivity.class);
+                                    intent = new Intent(RecentReleasesActivity.this, ProfileActivity.class);
                                     startActivity(intent);
                                     return true;
                                 case DASHBOARD:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(RecentFilmsActivity.this, MainActivity.class);
+                                    intent = new Intent(RecentReleasesActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     return false;
                                 case RECENT_RELEASES:

@@ -35,7 +35,7 @@
             android:label="@string/dashboard"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.RecentFilmsActivity"
+            android:name=".activities.RecentReleasesActivity"
             android:label="New Releases"
             android:theme="@style/AppTheme"/>
     </application>

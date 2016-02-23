@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                                     return false;
                                 case RECENT_RELEASES:
                                     mNavDrawer.closeDrawer();
-                                    intent = new Intent(MainActivity.this, RecentFilmsActivity.class);
+                                    intent = new Intent(MainActivity.this, RecentReleasesActivity.class);
                                     startActivity(intent);
                                     return true;
                                 case SETTINGS:
