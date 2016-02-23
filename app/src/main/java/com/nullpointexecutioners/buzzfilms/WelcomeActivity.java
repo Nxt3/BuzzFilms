@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -139,12 +140,19 @@ public class WelcomeActivity extends AppCompatActivity {
             mRef.authWithPassword(setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
-                    //We successfully logged in, go to MainActivity
                     getUserInfoForLogin(USERNAME);
-                    mAuthProgressDialog.dismiss();
-                    Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                    startActivity(loginIntent);
-                    finish(); //We're done with logging in
+                    /*This delay of 500ms must be present or else we run into issues with setting the
+                    * navdrawer info in the MainActivity. Makes sense. ¯\_(ツ)_/¯
+                    */
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            mAuthProgressDialog.dismiss();
+                            //We successfully logged in, go to MainActivity
+                            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                            startActivity(loginIntent);
+                            finish(); //We're done with logging in
+                        }
+                    }, 500);
                 }
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
@@ -300,7 +308,7 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
         userRef.child("major").setValue(Major.NONE);
-        userRef.child("interests").setValue(null);
+        userRef.child("interests").setValue("");
     }
 
     /**
@@ -314,12 +322,8 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String NAME = dataSnapshot.child("name").getValue().toString();
-                Log.v("userInfoLogin", "NAME " + NAME);
                 final String EMAIL = dataSnapshot.child("email").getValue().toString();
-                Log.v("userInfoLogin", "EMAIL " + EMAIL);
                 mSession.createLoginSession(USERNAME, NAME, EMAIL);
-
-                Log.v("userInfoForLogin: ", mSession.getLoggedInUsername() + ", " + mSession.getLoggedInName());
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

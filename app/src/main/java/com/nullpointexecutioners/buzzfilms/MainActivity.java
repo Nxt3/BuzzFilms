@@ -13,6 +13,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.firebase.client.Firebase;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     final private int RECENT_RELEASES = 3;
     final private int SETTINGS = 4;
 
+    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+
     /**
      * Creates this activity
      * @param savedInstanceState no idea what this is
@@ -65,11 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-        String namey = mSession.getLoggedInName();
-        String emaily = mSession.getLoggedInEmail();
-        String usernamey = mSession.getLoggedInUsername();
-        Log.v("Logged in: ", "<" + namey + ", " + emaily + ", " + usernamey + ">");
-
         toolbar.setTitle(dashboard);
 
         createNavDrawer();
@@ -79,22 +77,19 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = this.tomato.getRequestQueue();
 
         String url ="http://api.rottentomatoes.com/api/public/v1.0.json?apikey=";
-
         url = url + TomatoVolley.API_KEY;
-        System.out.println(url);
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        System.out.println("Response is: " + response);
+                        Log.v("Response", response);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("That didn't work!");
-                System.out.println(error);
+                Log.e("Volley Error", error.toString());
             }
         });
         // Add the request to the RequestQueue.
@@ -131,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
+                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false).withSetSelected(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(true),
                         new PrimaryDrawerItem().withName(recent_relesses).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
