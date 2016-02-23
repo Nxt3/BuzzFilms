@@ -1,8 +1,10 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +27,8 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.Major;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
@@ -34,7 +38,6 @@ import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 import java.util.HashMap;
 
 import butterknife.Bind;
-import butterknife.BindDrawable;
 import butterknife.BindInt;
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -50,8 +53,8 @@ public class ProfileActivity extends AppCompatActivity {
     @Bind(R.id.currentInterests) TextView profileInterests;
     @Bind(R.id.currentMajor) TextView profileMajor;
     @Bind(R.id.currentName) TextView profileName;
+    @Bind(R.id.profile_fab) FloatingActionButton floatingActionButton;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @BindDrawable(R.drawable.ic_arrow_back) Drawable backArrow;
     @BindInt(R.color.accent) int accentColor;
     @BindInt(R.color.primary_text_light) int primaryTextLightColor;
     @BindString(R.string.cancel) String cancel;
@@ -85,11 +88,16 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        Drawable editIcon = new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_edit)
+                .color(Color.BLACK)
+                .sizeDp(16);
+        floatingActionButton.setImageDrawable(editIcon);
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-        initToolbar();
         setupProfile();
+        initToolbar();
     }
 
     /**
@@ -315,7 +323,11 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setTitle(mUsername);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(backArrow);
+        Drawable backArrowIcon = new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_arrow_back)
+                .color(Color.WHITE)
+                .sizeDp(16);
+        toolbar.setNavigationIcon(backArrowIcon);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
