@@ -1,9 +1,10 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,11 +29,13 @@ import com.nullpointexecutioners.buzzfilms.Major;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 
 import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
+import butterknife.BindInt;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,29 +43,33 @@ import butterknife.OnClick;
 /**
  * User's Profile for their account
  */
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends Activity {
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.currentName) TextView profileName;
+    @Bind(android.R.id.content) View thisActivity;
     @Bind(R.id.currentEmail) TextView profileEmail;
-    @Bind(R.id.currentMajor) TextView profileMajor;
     @Bind(R.id.currentInterests) TextView profileInterests;
+    @Bind(R.id.currentMajor) TextView profileMajor;
+    @Bind(R.id.currentName) TextView profileName;
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.ic_arrow_back) Drawable backArrow;
+    @BindInt(R.color.accent) int accentColor;
+    @BindInt(R.color.primary_text_light) int primaryTextLightColor;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.edit_password_dialog_title) String editPasswordDialogTitle;
     @BindString(R.string.edit_profile_dialog_title) String editProfileDialogTitle;
     @BindString(R.string.major_not_specified) String majorNotSpecified;
     @BindString(R.string.network_not_available) String invalidEmail;
     @BindString(R.string.new_password_mismatch) String passwordMismatch;
+    @BindString(R.string.password_change_success) String passwordChangeSuccess;
     @BindString(R.string.save) String save;
 
     private SessionManager mSession;
 
-    String mUsername;
-    String mName;
-    String mEmail;
     Major mMajor;
+    String mEmail;
     String mInterests;
+    String mName;
+    String mUsername;
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
@@ -251,6 +258,7 @@ public class ProfileActivity extends AppCompatActivity {
                             mRef.changePassword(StringHelper.setUserWithDummyDomain(mUsername), editPasswordOldText, editPasswordConfirmText, new Firebase.ResultHandler() {
                                 @Override
                                 public void onSuccess() {
+                                    ViewHelper.makeSnackbar(thisActivity, passwordChangeSuccess, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
                                     Log.v("Change password", "Success!!");
                                 }
                                 @Override
@@ -301,7 +309,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void initToolbar() {
         toolbar.setTitle(mUsername);
         toolbar.showOverflowMenu();
-        setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(backArrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
