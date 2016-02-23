@@ -67,6 +67,7 @@ public class RecentFilmsActivity extends Activity {
         ButterKnife.bind(this);
 
         toolbar.setTitle(recentReleases);
+        createNavDrawer();
 
         filmAdapter = new ArrayAdapter<>(
                 this,
