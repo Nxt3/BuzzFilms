@@ -17,7 +17,7 @@
     <string name="invalid_email">Invalid email</string>
     <string name="invalid_login">Invalid login, please try again</string>
     <string name="login">Login</string>
-    <string name="logout_text">Logout</string>
+    <string name="logout">Logout</string>
     <string name="major">Major</string>
     <string name="major_hint">major</string>
     <string name="major_not_specified">Not specified</string>

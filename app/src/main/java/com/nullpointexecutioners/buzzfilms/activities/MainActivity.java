@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -43,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
-    @BindString(R.string.settings) String settings;
     @BindString(R.string.recent_releases) String recentReleases;
+    @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
     private SessionManager mSession;
@@ -67,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-        toolbar.setTitle(dashboard);
-
+        initToolbar();
         createNavDrawer();
 
         // Testing Volley
@@ -159,6 +160,47 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).build();
         mNavDrawer.setSelection(DASHBOARD);
+    }
+
+    /**
+     * Helper method that inits all of the Toolbar stuff.
+     * Specifically:
+     * sets Toolbar title, enables the visibility of the overflow menu, shows a back arrow for navigation, and handles what to do if a user presses the back button in the Toolbar.
+     */
+    private void initToolbar() {
+        toolbar.setTitle(dashboard);
+        setSupportActionBar(toolbar);
+    }
+
+    /**
+     * Creates the options in the overflow menu
+     * @param  menu to create options for
+     * @return true or false depending on whether or not inflation was successful
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dashboard_overflow, menu);
+        return true;
+    }
+
+    /**
+     * Handles what to do when a particular item is selected from the overflow menu
+     * @param  item in the overflow menu
+     * @return true or false if we handled the selection
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.logout) {
+            onLogoutClick();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
