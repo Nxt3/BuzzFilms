@@ -39,37 +39,34 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
+import butterknife.ButterKnife;
 
 public class RecentFilmsActivity extends Activity {
 
     /*I love ButterKnife <3*/
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @BindDrawable(R.drawable.rare_pepe_avatar)
-    Drawable mProfileDrawerIcon;
-    @BindString(R.string.title_activity_main) String dashboard;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.profile) String profile;
+    @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
+    @BindString(R.string.dashboard) String dashboard;
 
     Drawer mNavDrawer;
-    private SessionManager mSession;
     private ArrayAdapter<String> filmAdapter;
+    private SessionManager mSession;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
     final private int RECENT_RELEASES = 3;
     final private int SETTINGS = 4;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_films);
+        ButterKnife.bind(this);
 
-//        ButterKnife.bind(this);
-//
-//        toolbar.setTitle(recentReleases);
-
+        toolbar.setTitle(recentReleases);
 
         filmAdapter = new ArrayAdapter<>(
                 this,
@@ -85,6 +82,9 @@ public class RecentFilmsActivity extends Activity {
 
     }
 
+    /**
+     * Class for Fetching data (JSON) using RottenTomatoes API asynchronously
+     */
     public class FetchData extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchData.class.getSimpleName();
@@ -194,6 +194,7 @@ public class RecentFilmsActivity extends Activity {
             }
         }
     }
+
     /**
      * Helper method to create the nav drawer for the MainActivity
      */
@@ -216,8 +217,8 @@ public class RecentFilmsActivity extends Activity {
                 .withToolbar(toolbar)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
-                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSetSelected(false),
-                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSetSelected(true),
+                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSelectable(false),
+                        new PrimaryDrawerItem().withName(recentReleases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -246,5 +247,6 @@ public class RecentFilmsActivity extends Activity {
                         return false;
                     }
                 }).build();
+        mNavDrawer.setSelection(RECENT_RELEASES);
     }
 }

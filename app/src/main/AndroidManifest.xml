@@ -28,11 +28,11 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/dashboard"
             android:theme="@style/DrawerTheme_Dark" />
         <activity
             android:name=".activities.ProfileActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/dashboard"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.RecentFilmsActivity"

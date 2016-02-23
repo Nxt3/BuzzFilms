@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
     /*I love ButterKnife <3*/
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
-    @BindString(R.string.title_activity_main) String dashboard;
+    @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.settings) String settings;
-    @BindString(R.string.recent_releases) String recent_releases;
+    @BindString(R.string.recent_releases) String recentReleases;
 
     Drawer mNavDrawer;
     private SessionManager mSession;
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
-                        new PrimaryDrawerItem().withName(recent_releases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
+                        new PrimaryDrawerItem().withName(recentReleases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
