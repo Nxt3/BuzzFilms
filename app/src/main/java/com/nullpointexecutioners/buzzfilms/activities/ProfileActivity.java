@@ -77,10 +77,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
-    /**
-     * Creates this activity
-     * @param savedInstanceState no idea what this is
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,9 +145,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Handles this activity once it is destroyed
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -339,22 +332,12 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Creates the options in the overflow menu
-     * @param  menu to create options for
-     * @return true or false depending on whether or not inflation was successful
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.profile_overflow, menu);
         return true;
     }
 
-    /**
-     * Handles what to do when a particular item is selected from the overflow menu
-     * @param  item in the overflow menu
-     * @return true or false if we handled the selection
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

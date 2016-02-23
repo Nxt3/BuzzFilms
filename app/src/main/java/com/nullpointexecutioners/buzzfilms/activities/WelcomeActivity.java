@@ -65,10 +65,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
-    /**
-     * Creates activity
-     * @param savedInstanceState no idea what this is
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,9 +118,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 .build();
     }
 
-    /**
-     * Handles this activity once it is destroyed
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

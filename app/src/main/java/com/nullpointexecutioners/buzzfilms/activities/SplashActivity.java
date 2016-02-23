@@ -15,10 +15,6 @@ public class SplashActivity extends Activity {
 
     private SessionManager mSession;
 
-    /**
-     * Creates this activity
-     * @param savedInstanceState no idea what this is
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +52,6 @@ public class SplashActivity extends Activity {
         timerThread.start();
     }
 
-    /**
-     * Handles the activity once it is paused (i.e. in the background)
-     */
     @Override
     protected void onPause() {
         super.onPause();

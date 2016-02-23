@@ -51,15 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager mSession;
     private TomatoVolley tomato;
 
+    private String mName;
+    private String mEmail;
+
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
     final private int RECENT_RELEASES = 3;
     final private int SETTINGS = 4;
 
-    /**
-     * Creates this activity
-     * @param savedInstanceState no idea what this is
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,13 +94,21 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    /**
-     * Handles this activity once it is destroyed
-     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateDrawerText();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+    }
+
+    private void updateDrawerText() {
+        mName = mSession.getLoggedInName();
+        mEmail = mSession.getLoggedInEmail();
     }
 
     /**
@@ -114,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(mSession.getLoggedInName())
-                                .withEmail(mSession.getLoggedInEmail())
+                                .withName(mName)
+                                .withEmail(mEmail)
                                 .withIcon(mProfileDrawerIcon))
                 .withSelectionListEnabledForSingleProfile(false)
                 .build();
@@ -171,22 +178,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    /**
-     * Creates the options in the overflow menu
-     * @param  menu to create options for
-     * @return true or false depending on whether or not inflation was successful
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard_overflow, menu);
         return true;
     }
 
-    /**
-     * Handles what to do when a particular item is selected from the overflow menu
-     * @param  item in the overflow menu
-     * @return true or false if we handled the selection
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
