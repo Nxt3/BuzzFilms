@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     String mUsername;
     String mName;
     String mEmail;
-    User.Major mMajor;
+    Major mMajor;
     String mInterests;
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
@@ -109,8 +109,8 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Object major = dataSnapshot.child("major").getValue();
-                if (!major.equals(User.Major.NONE)) {
-                    mMajor = User.Major.fromString((String) major);
+                if (!major.equals(Major.NONE)) {
+                    mMajor = Major.fromString((String) major);
                     profileMajor.setText(mMajor.toString());
                 } else {
                     profileMajor.setText(majorNotSpecified);
@@ -169,7 +169,7 @@ public class ProfileActivity extends AppCompatActivity {
                         final String NEW_NAME = editName.getText().toString();
                         final String NEW_EMAIL = editEmail.getText().toString();
                         final String NEW_INTERESTS = editInterests.getText().toString();
-                        final User.Major NEW_MAJOR = (User.Major) majorDropdown.getSelectedItem();
+                        final Major NEW_MAJOR = (Major) majorDropdown.getSelectedItem();
 
                         Firebase userRef = mRef.child(mSession.getLoggedInUsername());
                         HashMap<String, Object> updateValues = new HashMap<>();
@@ -198,7 +198,7 @@ public class ProfileActivity extends AppCompatActivity {
             final EditText editInterests = ButterKnife.findById(editProfileDialog, R.id.edit_interests);
 
             /*Need to override isEnabled so the user can't select the hint text in the spinner*/
-            ArrayAdapter<User.Major> adapter = new ArrayAdapter<User.Major>(this, android.R.layout.simple_spinner_dropdown_item, User.Major.values()) {
+            ArrayAdapter<Major> adapter = new ArrayAdapter<Major>(this, android.R.layout.simple_spinner_dropdown_item, Major.values()) {
                 @Override
                 public boolean isEnabled(int position) {
                     return position != 0; //Disabled "Select a major" item
@@ -213,7 +213,7 @@ public class ProfileActivity extends AppCompatActivity {
             editName.setText(mName);
             editEmail.setText(mEmail);
             if (mMajor != null) {
-                majorDropdown.setSelection(((ArrayAdapter<User.Major>) majorDropdown.getAdapter()).getPosition(mMajor));
+                majorDropdown.setSelection(((ArrayAdapter<Major>) majorDropdown.getAdapter()).getPosition(mMajor));
             }
             if (mInterests != null) {
                 editInterests.setText(mInterests);
