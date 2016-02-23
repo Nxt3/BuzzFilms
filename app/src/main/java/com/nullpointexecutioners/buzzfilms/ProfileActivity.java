@@ -111,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Object major = dataSnapshot.child("major").getValue();
 
                 if (!major.equals("NONE")) {
-                    mMajor = Major.valueOf((String) major);
+                    mMajor = Major.fromString((String) major);
                     profileMajor.setText(mMajor.toString());
                 } else {
                     profileMajor.setText(majorNotSpecified);
@@ -177,17 +177,21 @@ public class ProfileActivity extends AppCompatActivity {
                         updateValues.put("name", NEW_NAME);
                         updateValues.put("email", NEW_EMAIL);
                         updateValues.put("interests", NEW_INTERESTS);
-                        updateValues.put("major", NEW_MAJOR.toString());
+                        if (NEW_MAJOR != Major.NONE) {
+                            updateValues.put("major", NEW_MAJOR.toString());
+                        }
                         userRef.updateChildren(updateValues); //Update Firebase with new values
 
                         /*Update the name and email that's stored in this Session*/
                         mName = NEW_NAME;
                         mEmail = NEW_EMAIL;
-                        mMajor = NEW_MAJOR;
+                        if (NEW_MAJOR != Major.NONE) {
+                            mMajor = NEW_MAJOR;
+                        }
                         mSession.updateSession(mName, mEmail);
 
                         (ProfileActivity.this).passThrough(editName, editEmail, editInterests);
-                        if (mMajor != null) {
+                        if (mMajor != null && mMajor != Major.NONE) {
                             (ProfileActivity.this).profileMajor.setText(mMajor.toString());
                         }
                     }
