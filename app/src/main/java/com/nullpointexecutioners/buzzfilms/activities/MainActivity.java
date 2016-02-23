@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager mSession;
     private TomatoVolley tomato;
 
-    private String mName;
-    private String mEmail;
-
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
     final private int RECENT_RELEASES = 3;
@@ -97,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateDrawerText();
+        createNavDrawer();
     }
 
     @Override
@@ -106,29 +103,24 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
-    private void updateDrawerText() {
-        mName = mSession.getLoggedInName();
-        mEmail = mSession.getLoggedInEmail();
-    }
-
     /**
      * Helper method to create the nav drawer for the MainActivity
      */
     private void createNavDrawer() {
         //Create the AccountHeader for the nav drawer
-        final AccountHeader drawerHeader = new AccountHeaderBuilder()
+        final AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.color.accent)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName(mName)
-                                .withEmail(mEmail)
+                                .withName(mSession.getLoggedInName())
+                                .withEmail(mSession.getLoggedInEmail())
                                 .withIcon(mProfileDrawerIcon))
                 .withSelectionListEnabledForSingleProfile(false)
                 .build();
         //Create the nav drawer
         mNavDrawer = new DrawerBuilder()
-                .withAccountHeader(drawerHeader)
+                .withAccountHeader(accountHeader)
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .addDrawerItems(
