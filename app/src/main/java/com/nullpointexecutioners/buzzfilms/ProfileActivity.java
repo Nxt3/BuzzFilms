@@ -109,8 +109,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Object major = dataSnapshot.child("major").getValue();
-                if (!major.equals(Major.NONE)) {
-                    mMajor = Major.fromString((String) major);
+
+                if (!major.equals("NONE")) {
+                    mMajor = Major.valueOf((String) major);
                     profileMajor.setText(mMajor.toString());
                 } else {
                     profileMajor.setText(majorNotSpecified);

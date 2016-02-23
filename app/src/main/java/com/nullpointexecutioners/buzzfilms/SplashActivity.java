@@ -30,7 +30,7 @@ public class SplashActivity extends Activity {
         Thread timerThread = new Thread() {
             public void run() {
                 try {
-                    sleep(2000); //wait for X number of milliseconds
+                    sleep(5); //wait for X number of milliseconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
