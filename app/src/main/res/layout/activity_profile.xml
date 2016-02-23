@@ -42,15 +42,16 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/profile_fab"
+        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="6dp"
         android:layout_margin="@dimen/fab_margin"
+        app:elevation="6dp"
         app:pressedTranslationZ="12dp"
-        app:layout_anchor="@id/app_bar"
         app:rippleColor="@color/icons_dark"
-        app:layout_anchorGravity="bottom|end"
-        android:clickable="true" />
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end">
+    </android.support.design.widget.FloatingActionButton>
 
     <include layout="@layout/content_profile" />
 

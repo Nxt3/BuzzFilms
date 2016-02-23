@@ -33,7 +33,6 @@ import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Dashboard of the app--Main view
@@ -207,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
      * When the user clicks on the logout button, they will be deauthorize from the application.
      * In addition to kicking them back to the login screen, the activity stack is also cleared as to prevent a user from being able to get back into the app with a "Back" button press.
      */
-    @OnClick(R.id.logout_button)
     public void onLogoutClick() {
         //Removes user from Session and unAuth via Firebase
         mSession.logoutUser();

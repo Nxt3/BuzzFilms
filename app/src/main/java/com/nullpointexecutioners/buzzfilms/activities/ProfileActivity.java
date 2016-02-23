@@ -88,10 +88,12 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
         Drawable editIcon = new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_edit)
                 .color(Color.BLACK)
-                .sizeDp(16);
+                .sizeDp(24)
+                .paddingDp(2);
         floatingActionButton.setImageDrawable(editIcon);
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
@@ -326,7 +328,8 @@ public class ProfileActivity extends AppCompatActivity {
         Drawable backArrowIcon = new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_arrow_back)
                 .color(Color.WHITE)
-                .sizeDp(16);
+                .sizeDp(24)
+                .paddingDp(4);
         toolbar.setNavigationIcon(backArrowIcon);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
