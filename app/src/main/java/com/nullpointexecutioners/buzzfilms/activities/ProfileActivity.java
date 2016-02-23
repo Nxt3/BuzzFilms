@@ -1,10 +1,10 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -43,7 +43,7 @@ import butterknife.OnClick;
 /**
  * User's Profile for their account
  */
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends AppCompatActivity {
 
     @Bind(android.R.id.content) View thisActivity;
     @Bind(R.id.currentEmail) TextView profileEmail;
@@ -61,6 +61,7 @@ public class ProfileActivity extends Activity {
     @BindString(R.string.network_not_available) String invalidEmail;
     @BindString(R.string.new_password_mismatch) String passwordMismatch;
     @BindString(R.string.password_change_success) String passwordChangeSuccess;
+    @BindString(R.string.password_incorrect) String passwordIncorrect;
     @BindString(R.string.save) String save;
 
     private SessionManager mSession;
@@ -263,6 +264,10 @@ public class ProfileActivity extends Activity {
                                 }
                                 @Override
                                 public void onError(FirebaseError firebaseError) {
+                                    switch (firebaseError.getCode()) {
+                                        case FirebaseError.INVALID_PASSWORD:
+                                            ViewHelper.makeSnackbar(thisActivity, passwordIncorrect, Snackbar.LENGTH_LONG, accentColor, primaryTextLightColor).show();
+                                    }
                                     Log.e("Change password", firebaseError.toString());
                                 }
                             });
@@ -309,6 +314,7 @@ public class ProfileActivity extends Activity {
     private void initToolbar() {
         toolbar.setTitle(mUsername);
         toolbar.showOverflowMenu();
+        setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(backArrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
