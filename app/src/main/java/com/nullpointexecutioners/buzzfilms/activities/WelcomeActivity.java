@@ -154,6 +154,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             mAuthProgressDialog.dismiss();
                             //We successfully logged in, go to MainActivity
                             Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(loginIntent);
                             finish(); //We're done with logging in
                         }
@@ -229,6 +230,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
                                                     //Go to the MainActivity
                                                     Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                                    loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                     startActivity(loginIntent);
                                                     finish(); //We're done with the WelcomeActivity
                                                 }
