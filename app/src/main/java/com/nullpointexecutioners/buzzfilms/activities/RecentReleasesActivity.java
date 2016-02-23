@@ -63,10 +63,13 @@ public class RecentReleasesActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recent_films);
+        setContentView(R.layout.activity_recent_releases);
         ButterKnife.bind(this);
 
+        this.mSession = SessionManager.getInstance(getApplicationContext());
+
         toolbar.setTitle(recentReleases);
+
         createNavDrawer();
 
         filmAdapter = new ArrayAdapter<>(
@@ -231,11 +234,13 @@ public class RecentReleasesActivity extends Activity {
                                 case PROFILE:
                                     mNavDrawer.closeDrawer();
                                     intent = new Intent(RecentReleasesActivity.this, ProfileActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return true;
                                 case DASHBOARD:
                                     mNavDrawer.closeDrawer();
                                     intent = new Intent(RecentReleasesActivity.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return false;
                                 case RECENT_RELEASES:

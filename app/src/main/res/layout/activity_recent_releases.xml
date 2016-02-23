@@ -17,6 +17,6 @@
         android:theme="@style/AppTheme">
     </android.support.v7.widget.Toolbar>
 
-    <include layout="@layout/content_recent_films" />
+    <include layout="@layout/content_recent_releases" />
 
 </android.support.design.widget.CoordinatorLayout>

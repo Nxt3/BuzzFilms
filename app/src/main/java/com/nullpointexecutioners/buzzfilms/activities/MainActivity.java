@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                                 case PROFILE:
                                     mNavDrawer.closeDrawer();
                                     intent = new Intent(MainActivity.this, ProfileActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return true;
                                 case DASHBOARD:
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                                 case RECENT_RELEASES:
                                     mNavDrawer.closeDrawer();
                                     intent = new Intent(MainActivity.this, RecentReleasesActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return true;
                                 case SETTINGS:

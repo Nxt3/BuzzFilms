@@ -32,12 +32,12 @@
             android:theme="@style/DrawerTheme_Dark" />
         <activity
             android:name=".activities.ProfileActivity"
-            android:label="@string/dashboard"
+            android:label="@string/profile"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.RecentReleasesActivity"
-            android:label="New Releases"
-            android:theme="@style/AppTheme"/>
+            android:label="@string/recent_releases"
+            android:theme="@style/DrawerTheme_Dark"/>
     </application>
 
 </manifest>
