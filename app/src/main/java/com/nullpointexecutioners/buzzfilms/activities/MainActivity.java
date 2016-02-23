@@ -3,12 +3,14 @@ package com.nullpointexecutioners.buzzfilms.activities;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -16,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -28,6 +31,10 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.TomatoVolley;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.quinny898.library.persistentsearch.SearchBox;
+import com.quinny898.library.persistentsearch.SearchResult;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -39,7 +46,7 @@ import butterknife.ButterKnife;
  */
 public class MainActivity extends AppCompatActivity {
 
-    /*I love ButterKnife <3*/
+    @Bind(R.id.searchbox) SearchBox mSearchBox;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.dashboard) String dashboard;
@@ -89,6 +96,19 @@ public class MainActivity extends AppCompatActivity {
         });
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
+        mSearchBox.enableVoiceRecognition(this);
+        this.setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case (R.id.search):
+                        openSearch();
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -181,14 +201,92 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.logout) {
-            onLogoutClick();
+        item.setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_search)
+                .sizeDp(24)
+                .paddingDp(4));
+
+        switch(item.getItemId()) {
+            case (R.id.logout):
+                onLogoutClick();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void openSearch() {
+        toolbar.setTitle("");
+        mSearchBox.revealFromMenuItem(R.id.action_search, this);
+        for (int x = 0; x < 10; x++) {
+            SearchResult option = new SearchResult("Result "
+                    + Integer.toString(x),
+                    new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_change_history)
+                            .sizeDp(24).paddingDp(4));
+            mSearchBox.addSearchable(option);
+        }
+        mSearchBox.setMenuListener(new SearchBox.MenuListener() {
+
+            @Override
+            public void onMenuClick() {
+                // Hamburger has been clicked
+                Toast.makeText(MainActivity.this, "Menu click",
+                        Toast.LENGTH_LONG).show();
+            }
+
+        });
+        mSearchBox.setSearchListener(new SearchBox.SearchListener() {
+
+            @Override
+            public void onSearchOpened() {
+                // Use this to tint the screen
+            }
+
+            @Override
+            public void onSearchClosed() {
+                // Use this to un-tint the screen
+                closeSearch();
+            }
+
+            @Override
+            public void onSearchTermChanged(String term) {
+                // React to the search term changing
+                // Called after it has updated results
+            }
+
+            @Override
+            public void onSearch(String searchTerm) {
+                Toast.makeText(MainActivity.this, searchTerm + " Searched",
+                        Toast.LENGTH_LONG).show();
+                toolbar.setTitle(searchTerm);
+
+            }
+
+            @Override
+            public void onResultClick(SearchResult result) {
+                //React to result being clicked
+            }
+
+            @Override
+            public void onSearchCleared() {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1234 && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            mSearchBox.populateEditText(matches.get(0));
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    protected void closeSearch() {
+        mSearchBox.hideCircularly(this);
+        if(mSearchBox.getSearchText().isEmpty())toolbar.setTitle("");
     }
 
     /**

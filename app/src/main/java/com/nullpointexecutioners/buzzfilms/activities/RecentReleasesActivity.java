@@ -43,7 +43,6 @@ import butterknife.ButterKnife;
 
 public class RecentReleasesActivity extends Activity {
 
-    /*I love ButterKnife <3*/
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.profile) String profile;
