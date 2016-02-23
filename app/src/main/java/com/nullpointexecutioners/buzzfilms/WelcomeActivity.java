@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -53,6 +54,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
     @BindString(R.string.register_username_taken) String usernameTaken;
     @BindString(R.string.network_not_available) String networkNotAvailable;
+    @BindString(R.string.invalid_email) String invalidEmail;
 
     private MaterialDialog mAuthProgressDialog;
 
@@ -286,14 +288,45 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable s) {
                 }
             };
+            /**
+             * This lets us monitor the validity of the email entered
+             */
+            final TextWatcher emailWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (!isValidEmail(registerEmailInput.getText().toString())) {
+                        registerEmailInput.setError(invalidEmail); //not valid email
+                        registerAction.setEnabled(false);
+                    } else {
+                        registerEmailInput.setError(null); //clears error
+                        registerAction.setEnabled(true);
+                    }
+                }
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            };
             /*We want to watch all EditText fields for input*/
             registerNameInput.addTextChangedListener(watcher);
-            registerEmailInput.addTextChangedListener(watcher);
+            registerEmailInput.addTextChangedListener(emailWatcher);
             registerUsernameInput.addTextChangedListener(watcher);
             registerPasswordInput.addTextChangedListener(watcher);
         }
         registerDialog.show();
         registerAction.setEnabled(false); //disabled by default
+    }
+
+    /**
+     * Helper method for checking the validity of an email
+     * This will check and make sure the format of an input email is in email form
+     * @param email to check
+     * @return true or false depending if the email was valid
+     */
+    private boolean isValidEmail(CharSequence email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     /**
