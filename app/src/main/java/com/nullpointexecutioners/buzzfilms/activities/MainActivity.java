@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 .withAccountHeader(accountHeader)
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withActionBarDrawerToggle(false)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.action_search).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_search)
                 .color(Color.WHITE)
-                .sizeDp(24)
+                .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
                 .paddingDp(4));
         return true;
     }
@@ -227,7 +226,8 @@ public class MainActivity extends AppCompatActivity {
             SearchResult option = new SearchResult("Result "
                     + Integer.toString(x),
                     new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_history)
-                            .sizeDp(24).paddingDp(4));
+                            .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
+                            .paddingDp(4));
             mSearchBox.addSearchable(option);
         }
 
@@ -256,17 +256,32 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, searchTerm + " Searched",
                         Toast.LENGTH_LONG).show();
                 toolbar.setTitle(searchTerm);
-                mNavDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
+                        .icon(GoogleMaterial.Icon.gmd_cancel)
+                        .color(Color.WHITE)
+                        .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
+                        .paddingDp(4));
             }
 
             @Override
             public void onResultClick(SearchResult result) {
                 //React to result being clicked
+                toolbar.setTitle(result.toString());
             }
 
             @Override
             public void onSearchCleared() {
+                /**
+                 * TODO figure out how to set the Search menu item to clear the toolbar title (like exiting search)
+                 * Need to first set the icon, to a "cancel" icon
+                 * If the icon is a "cancel" icon--then we need to clear the Toolbar title and reset the menu item's icon
+                 * back to the "search" icon
+                 */
+//                toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
+//                        .icon(GoogleMaterial.Icon.gmd_search)
+//                        .color(Color.WHITE)
+//                        .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
+//                        .paddingDp(4));
             }
         });
     }
@@ -275,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
      * Helper method to close the searchbar view
      */
     private void closeSearch() {
-        Log.v("closeSearch()", "closed search");
         mSearchBox.hideCircularly(this);
         if (mSearchBox.getSearchText().isEmpty()) {
             toolbar.setTitle(dashboard);
@@ -311,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (mSearchBox.getSearchOpen()) {
-            Log.v("back pressed", "back button pressed");
             closeSearch();
         } else if (mNavDrawer != null && mNavDrawer.isDrawerOpen()) {
             mNavDrawer.closeDrawer();

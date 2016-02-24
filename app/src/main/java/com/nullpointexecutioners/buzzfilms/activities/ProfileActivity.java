@@ -321,7 +321,7 @@ public class ProfileActivity extends AppCompatActivity {
         Drawable backArrowIcon = new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_arrow_back)
                 .color(Color.WHITE)
-                .sizeDp(24)
+                .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
                 .paddingDp(4);
         toolbar.setNavigationIcon(backArrowIcon);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
