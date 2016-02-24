@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
-                    case (R.id.search):
+                    case (R.id.action_search):
                         openSearch();
                 }
                 return true;
@@ -193,6 +193,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard_overflow, menu);
+        menu.findItem(R.id.action_search).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_search)
+                .sizeDp(24)
+                .paddingDp(4));
         return true;
     }
 
@@ -201,11 +205,6 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
-        item.setIcon(new IconicsDrawable(this)
-                .icon(GoogleMaterial.Icon.gmd_search)
-                .sizeDp(24)
-                .paddingDp(4));
 
         switch(item.getItemId()) {
             case (R.id.logout):
@@ -286,7 +285,9 @@ public class MainActivity extends AppCompatActivity {
 
     protected void closeSearch() {
         mSearchBox.hideCircularly(this);
-        if(mSearchBox.getSearchText().isEmpty())toolbar.setTitle("");
+        if(mSearchBox.getSearchText().isEmpty()) {
+            toolbar.setTitle(dashboard);
+        }
     }
 
     /**
@@ -305,4 +306,14 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mSearchBox.getSearchOpen()) {
+            closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 }
