@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StringHelper extends Activity {
 
@@ -112,7 +113,7 @@ public class StringHelper extends Activity {
      * @param args an ArrayList of arguments to add to the
      * @return a String to use as the URL
      */
-    public static String tomatoURI(ArrayList<String> args) {
+    public static String tomatoURI(List<String> args) {
         Uri.Builder builder = new Uri.Builder();
         final String API_KEY = "vbhetn4chdpudf7mqhckacca";
 
@@ -120,10 +121,11 @@ public class StringHelper extends Activity {
                 .authority("api.rottentomatoes.com")
                 .appendPath("api")
                 .appendPath("public")
-                .appendPath("v1.0")
-                // TODO: Add the ArrayList of paths
-
-                .appendQueryParameter("apikey", API_KEY);
+                .appendPath("v1.0");
+        for (String p: args) {
+            builder.appendPath(p);
+        }
+        builder.appendQueryParameter("apikey", API_KEY);
         return builder.build().toString();
     }
 }

@@ -32,10 +32,13 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.TomatoVolley;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -79,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
         this.tomato = TomatoVolley.getInstance(this);
         RequestQueue queue = this.tomato.getRequestQueue();
 
-        String url ="http://api.rottentomatoes.com/api/public/v1.0.json?apikey=";
-        url = url + TomatoVolley.API_KEY;
+        List<String> search = Arrays.asList("movies.json");
+        String url = StringHelper.tomatoURI(search);
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
