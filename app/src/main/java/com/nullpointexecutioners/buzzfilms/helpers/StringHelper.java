@@ -1,11 +1,14 @@
 package com.nullpointexecutioners.buzzfilms.helpers;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+
+import java.util.ArrayList;
 
 public class StringHelper extends Activity {
 
@@ -102,5 +105,25 @@ public class StringHelper extends Activity {
             }
         };
         return passwordWatcher;
+    }
+
+    /**
+     * URI builder for creating a URL to access certain methods of the Rotten Tomato API
+     * @param args an ArrayList of arguments to add to the
+     * @return a String to use as the URL
+     */
+    public static String tomatoURI(ArrayList<String> args) {
+        Uri.Builder builder = new Uri.Builder();
+        final String API_KEY = "vbhetn4chdpudf7mqhckacca";
+
+        builder.scheme("http")
+                .authority("api.rottentomatoes.com")
+                .appendPath("api")
+                .appendPath("public")
+                .appendPath("v1.0")
+                // TODO: Add the ArrayList of paths
+
+                .appendQueryParameter("apikey", API_KEY);
+        return builder.build().toString();
     }
 }

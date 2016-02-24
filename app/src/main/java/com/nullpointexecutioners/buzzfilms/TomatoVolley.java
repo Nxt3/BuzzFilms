@@ -12,7 +12,6 @@ public class TomatoVolley {
 
     private TomatoVolley(Context context) {
         requestQueue = Volley.newRequestQueue(context);
-
     }
 
     public static TomatoVolley getInstance(Context context) {
