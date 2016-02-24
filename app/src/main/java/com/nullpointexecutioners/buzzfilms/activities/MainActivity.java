@@ -254,6 +254,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSearch(String searchTerm) {
                 //TODO http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=[your_api_key]&q=[search_keyword]&page_limit=[page_limit]
+                searchTerm = formatSearchString(searchTerm);
+
+                String URL = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=vbhetn4chdpudf7mqhckacca&q=" + searchTerm + "&page_limit=1";
+
                 Toast.makeText(MainActivity.this, searchTerm + " Searched",
                         Toast.LENGTH_LONG).show();
                 toolbar.setTitle(searchTerm);
@@ -287,6 +291,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to format the search term
+     */
+    private String formatSearchString(String search){
+        // Replace all spaces with plus signs
+        return search.replaceAll(" ", "+");
+    }
     /**
      * Helper method to close the searchbar view
      */
