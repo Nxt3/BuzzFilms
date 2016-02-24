@@ -1,6 +1,7 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 .withAccountHeader(accountHeader)
                 .withActivity(this)
                 .withToolbar(toolbar)
+                .withActionBarDrawerToggle(false)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
@@ -195,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.dashboard_overflow, menu);
         menu.findItem(R.id.action_search).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_search)
+                .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4));
         return true;
@@ -214,26 +217,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Opens and shows the searchbar view
+     */
     public void openSearch() {
         toolbar.setTitle("");
         mSearchBox.revealFromMenuItem(R.id.action_search, this);
         for (int x = 0; x < 10; x++) {
             SearchResult option = new SearchResult("Result "
                     + Integer.toString(x),
-                    new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_change_history)
+                    new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_history)
                             .sizeDp(24).paddingDp(4));
             mSearchBox.addSearchable(option);
         }
-        mSearchBox.setMenuListener(new SearchBox.MenuListener() {
 
-            @Override
-            public void onMenuClick() {
-                // Hamburger has been clicked
-                Toast.makeText(MainActivity.this, "Menu click",
-                        Toast.LENGTH_LONG).show();
-            }
-
-        });
         mSearchBox.setSearchListener(new SearchBox.SearchListener() {
 
             @Override
@@ -255,10 +252,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearch(String searchTerm) {
+                //TODO http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=[your_api_key]&q=[search_keyword]&page_limit=[page_limit]
                 Toast.makeText(MainActivity.this, searchTerm + " Searched",
                         Toast.LENGTH_LONG).show();
                 toolbar.setTitle(searchTerm);
-
+                mNavDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
             @Override
@@ -268,26 +267,28 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearchCleared() {
-
             }
         });
+    }
+
+    /**
+     * Helper method to close the searchbar view
+     */
+    private void closeSearch() {
+        Log.v("closeSearch()", "closed search");
+        mSearchBox.hideCircularly(this);
+        if (mSearchBox.getSearchText().isEmpty()) {
+            toolbar.setTitle(dashboard);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1234 && resultCode == RESULT_OK) {
-            ArrayList<String> matches = data
-                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             mSearchBox.populateEditText(matches.get(0));
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    protected void closeSearch() {
-        mSearchBox.hideCircularly(this);
-        if(mSearchBox.getSearchText().isEmpty()) {
-            toolbar.setTitle(dashboard);
-        }
     }
 
     /**
@@ -310,7 +311,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (mSearchBox.getSearchOpen()) {
+            Log.v("back pressed", "back button pressed");
             closeSearch();
+        } else if (mNavDrawer != null && mNavDrawer.isDrawerOpen()) {
+            mNavDrawer.closeDrawer();
         } else {
             super.onBackPressed();
         }
