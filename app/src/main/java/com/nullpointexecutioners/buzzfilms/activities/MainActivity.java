@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
                     case (R.id.action_search):
+                        //TODO, add checks for icon set to perform two different actions
                         openSearch();
                 }
                 return true;
