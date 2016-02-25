@@ -7,7 +7,10 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
-
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class StringHelper extends Activity {
@@ -109,12 +112,21 @@ public class StringHelper extends Activity {
 
     /**
      * URI builder for creating a URL to access certain methods of the Rotten Tomato API
-     * @param args an ArrayList of arguments to add to the
+     * The List parameter needs to contain anything in the URL that comes after the base URL
+     * (except the API Key, which is automatically added):
+     * http://api.rottentomatoes.com/api/public/v1.0
+     *
+     * Usage Example:
+     * List<String> search = Arrays.asList("lists", "movies", "in_theaters.json");
+     * This navigates to:
+     * http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=...
+     *
+     * @param args a Lits of things to append to the URL, to be separated by slashes.
      * @return a String to use as the URL
      */
-    public static String tomatoURI(List<String> args) {
+    public static URL tomatoURI(List<String> args) throws IOException {
         Uri.Builder builder = new Uri.Builder();
-        final String API_KEY = "vbhetn4chdpudf7mqhckacca";
+        String API_KEY = "vbhetn4chdpudf7mqhckacca";
 
         builder.scheme("http")
                 .authority("api.rottentomatoes.com")
@@ -125,6 +137,11 @@ public class StringHelper extends Activity {
             builder.appendPath(p);
         }
         builder.appendQueryParameter("apikey", API_KEY);
-        return builder.build().toString();
+        return new URL(builder.build().toString());
+    }
+
+    public static URL searchURL(String search) throws IOException {
+        return new URL("http://api.rottentomatoes.com/api/public/v1.0/movies.json" +
+                "&page_limit=1&apikey=vbhetn4chdpudf7mqhckacca?q=" + search);
     }
 }
