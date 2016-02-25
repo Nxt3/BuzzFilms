@@ -44,11 +44,7 @@
             android:clipToPadding="false"
             xmlns:android="http://schemas.android.com/apk/res/android">
         </ListView>
-
     </RelativeLayout>
-
-
-
 
     <include layout="@layout/content_main" />
 

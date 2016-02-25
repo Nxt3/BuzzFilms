@@ -7,10 +7,9 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class StringHelper extends Activity {
@@ -141,7 +140,6 @@ public class StringHelper extends Activity {
     }
 
     public static URL searchURL(String search) throws IOException {
-        return new URL("http://api.rottentomatoes.com/api/public/v1.0/movies.json" +
-                "&page_limit=1&apikey=vbhetn4chdpudf7mqhckacca?q=" + search);
+        return new URL("http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=vbhetn4chdpudf7mqhckacca&q=" + search);
     }
 }

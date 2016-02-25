@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -63,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
+    @BindString(R.string.search_movie_hint) String searchMovieHint;
     @BindString(R.string.settings) String settings;
 
+    Boolean inSearch;
     Drawer mNavDrawer;
     private SessionManager mSession;
     private TomatoVolley tomato;
@@ -87,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
         initToolbar();
         createNavDrawer();
+        inSearch = false;
+
+        mSearchAdapter = new ArrayAdapter<>(this,
+                R.layout.list_item_film,
+                R.id.list_item_film,
+                new ArrayList<String>());
+        mSearchList.setAdapter(mSearchAdapter);
 
 //        // Testing Volley
 //        this.tomato = TomatoVolley.getInstance(this);
@@ -210,7 +218,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.action_search):
-                openSearch();
+                if (inSearch) {
+                    resetSearch();
+                } else {
+                    openSearch();
+                }
                 break;
             case (R.id.logout):
                 onLogoutClick();
@@ -225,26 +237,22 @@ public class MainActivity extends AppCompatActivity {
      */
     public void openSearch() {
         toolbar.setTitle("");
+        mSearchBox.setHint(searchMovieHint);
         mSearchBox.revealFromMenuItem(R.id.action_search, this);
-        for (int x = 0; x < 10; x++) {
-            SearchResult option = new SearchResult("Result "
-                    + Integer.toString(x),
-                    new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_history)
-                            .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
-                            .paddingDp(4));
-            mSearchBox.addSearchable(option);
-        }
 
         mSearchBox.setSearchListener(new SearchBox.SearchListener() {
 
             @Override
             public void onSearchOpened() {
                 // Use this to tint the screen
+//                getWindow().getDecorView().setBackgroundColor(Color.WHITE);
+                toolbar.getMenu().findItem(R.id.logout).setVisible(false);
             }
 
             @Override
             public void onSearchClosed() {
                 // Use this to un-tint the screen
+                toolbar.getMenu().findItem(R.id.logout).setVisible(true);
                 closeSearch();
             }
 
@@ -256,8 +264,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearch(String searchTerm) {
-                Toast.makeText(MainActivity.this, searchTerm + " Searched",
-                        Toast.LENGTH_LONG).show();
+                inSearch = true;
+
                 toolbar.setTitle(searchTerm);
                 toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
                         .icon(GoogleMaterial.Icon.gmd_cancel)
@@ -268,12 +276,8 @@ public class MainActivity extends AppCompatActivity {
                 searchTerm = formatSearchString(searchTerm);
                 search = searchTerm;
 
-                // TODO: Search and populate the search recommendations in the search box in real time
-
-                // TODO: Show a list of all matching movies
                 FetchSearch taskMovie = new FetchSearch();
                 taskMovie.execute();
-                //searchMovieList();
             }
 
             @Override
@@ -284,17 +288,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearchCleared() {
-                /**
-                 * TODO figure out how to set the Search menu item to clear the toolbar title (like exiting search)
-                 * Need to first set the icon, to a "cancel" icon
-                 * If the icon is a "cancel" icon--then we need to clear the Toolbar title and reset the menu item's icon
-                 * back to the "search" icon
-                 */
-//                toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
-//                        .icon(GoogleMaterial.Icon.gmd_search)
-//                        .color(Color.WHITE)
-//                        .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
-//                        .paddingDp(4));
             }
         });
     }
@@ -312,9 +305,29 @@ public class MainActivity extends AppCompatActivity {
      */
     private void closeSearch() {
         mSearchBox.hideCircularly(this);
-        if (mSearchBox.getSearchText().isEmpty()) {
+        if (mSearchBox.getSearchText().equals("") || mSearchBox.getSearchText().isEmpty()) {
             toolbar.setTitle(dashboard);
         }
+    }
+
+    /**
+     * Helper for clearing the current search results once the cancel button is pressed
+     * Clears results, set's search text to empty, and resets the search menu icon
+     */
+    private void resetSearch() {
+        mSearchBox.clearResults();
+        mSearchBox.setSearchString("");
+
+        toolbar.setTitle(dashboard);
+        toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
+                .icon(GoogleMaterial.Icon.gmd_search)
+                .color(Color.WHITE)
+                .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
+                .paddingDp(4));
+
+        mSearchAdapter.clear();
+
+        inSearch = false;
     }
 
     @Override
@@ -396,7 +409,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 URL url = StringHelper.searchURL(search);
 
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -465,13 +477,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    public void searchMovieList() {
-        mSearchAdapter = new ArrayAdapter<>(this,
-                        R.layout.list_item_film,
-                        R.id.list_item_film,
-                        new ArrayList<String>());
-        mSearchList.setAdapter(mSearchAdapter);
-    }
-
 }
