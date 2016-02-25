@@ -9,20 +9,13 @@ import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -52,8 +45,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -65,6 +56,7 @@ import butterknife.ButterKnife;
  */
 public class MainActivity extends AppCompatActivity {
 
+    @Bind(R.id.listview_movie_search) ListView mSearchList;
     @Bind(R.id.searchbox) SearchBox mSearchBox;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
@@ -82,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     final private int RECENT_RELEASES = 3;
     final private int SETTINGS = 4;
 
-    private ArrayAdapter<String> mFilmAdapter;
+    private ArrayAdapter<String> mSearchAdapter;
     private String search;
 
     @Override
@@ -118,20 +110,6 @@ public class MainActivity extends AppCompatActivity {
 //        });
 //        // Add the request to the RequestQueue.
 //        queue.add(stringRequest);
-
-        mSearchBox.enableVoiceRecognition(this);
-        this.setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getItemId()) {
-                    case (R.id.action_search):
-                        //TODO, add checks for icon set to perform two different actions
-                        openSearch();
-                }
-                return true;
-            }
-        });
     }
 
     @Override
@@ -216,23 +194,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard_overflow, menu);
+
+        //Set Search icon
         menu.findItem(R.id.action_search).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_search)
                 .color(Color.WHITE)
                 .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
                 .paddingDp(4));
+        mSearchBox.enableVoiceRecognition(this);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         switch(item.getItemId()) {
+            case (R.id.action_search):
+                openSearch();
+                break;
             case (R.id.logout):
                 onLogoutClick();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -324,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
         // Replace all spaces with plus signs
         return search.replaceAll(" ", "+");
     }
+
     /**
      * Helper method to close the searchbar view
      */
@@ -333,8 +316,6 @@ public class MainActivity extends AppCompatActivity {
             toolbar.setTitle(dashboard);
         }
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -477,23 +458,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String[] result) {
             if (result != null) {
-                mFilmAdapter.clear();
+                mSearchAdapter.clear();
                 for (String movie : result) {
-                    mFilmAdapter.add(movie);
+                    mSearchAdapter.add(movie);
                 }
-                // New data is back from the server.  Hooray!
             }
         }
     }
 
-    public void searchMovieList(View v) {
-        ListView mSearchList = (ListView) v.findViewById(R.id.listview_movie_search);
-        ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<String>(this,
+    public void searchMovieList() {
+        mSearchAdapter = new ArrayAdapter<>(this,
                         R.layout.list_item_film,
                         R.id.list_item_film,
                         new ArrayList<String>());
-        mSearchList.setAdapter(mFilmAdapter);
+        mSearchList.setAdapter(mSearchAdapter);
     }
 
 }
