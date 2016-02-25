@@ -115,10 +115,10 @@ public class ProfileActivity extends AppCompatActivity {
         mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Object major = dataSnapshot.child("major").getValue();
+                String major = dataSnapshot.child("major").getValue(String.class);
 
                 if (!major.equals("NONE")) {
-                    mMajor = Major.fromString((String) major);
+                    mMajor = Major.fromString(major);
                     profileMajor.setText(mMajor.toString());
                 } else {
                     profileMajor.setText(majorNotSpecified);
@@ -133,9 +133,10 @@ public class ProfileActivity extends AppCompatActivity {
         mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Object interests = dataSnapshot.child("interests").getValue();
+                String interests = dataSnapshot.child("interests").getValue(String.class);
+
                 if (interests != null) {
-                    mInterests = interests.toString();
+                    mInterests = interests;
                     profileInterests.setText(mInterests);
                 }
             }
