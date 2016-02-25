@@ -26,10 +26,16 @@ import java.util.ArrayList;
 
 public class RecentReleasesFragment extends Fragment {
 
-    private ArrayAdapter<String> mFilmAdapter;
+    private ArrayAdapter<String> mMovieAdapter;
+    private ArrayAdapter<String> mDVDAdapter;
     private int mPage;
     public static final String ARG_PAGE = "ARG_PAGE";
 
+    /**
+     * Constructor for the RecentReleasesFragment
+     * @param page fragment is on
+     * @return newly created fragment
+     */
     public static RecentReleasesFragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
@@ -49,59 +55,59 @@ public class RecentReleasesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recent_releases, container, false);
 
-        FetchData task = new FetchData();
-        task.execute();
-
         switch(mPage) {
             case 1:
+                FetchMovies taskMovie = new FetchMovies();
+                taskMovie.execute();
                 recentMoviesList(view);
-                return view;
+                break;
             case 2:
+                FetchDVDs taskDVD = new FetchDVDs();
+                taskDVD.execute();
                 recentDVDsList(view);
-                return view;
+                break;
         }
-
         return view;
     }
 
     public void recentMoviesList(View v) {
-        ListView mRecentsList = (ListView) v.findViewById(R.id.listview_recent_releases);
-        mFilmAdapter = new ArrayAdapter<>(
+        ListView mRecentMoviesList = (ListView) v.findViewById(R.id.listview_recent_movies);
+        mMovieAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_film,
                 R.id.list_item_film,
                 new ArrayList<String>());
-        mRecentsList.setAdapter(mFilmAdapter);
+        mRecentMoviesList.setAdapter(mMovieAdapter);
     }
 
     public void recentDVDsList(View v) {
-        ListView mRecentsList = (ListView) v.findViewById(R.id.listview_recent_releases);
-        mFilmAdapter = new ArrayAdapter<>(
+        ListView mRecentDVDsList = (ListView) v.findViewById(R.id.listview_recent_movies);
+        mDVDAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_film,
                 R.id.list_item_film,
                 new ArrayList<String>());
-        mRecentsList.setAdapter(mFilmAdapter);
+        mRecentDVDsList.setAdapter(mDVDAdapter);
     }
 
     /**
      * Class for Fetching data (JSON) using RottenTomatoes API asynchronously
      */
-    public class FetchData extends AsyncTask<String, Void, String[]> {
+    public class FetchMovies extends AsyncTask<String, Void, String[]> {
 
-        private final String LOG_TAG = FetchData.class.getSimpleName();
+        private final String LOG_TAG = FetchMovies.class.getSimpleName();
 
         private String[] getDataFromJson(String FilmJsonStr, int num)
                 throws JSONException {
 
-            JSONObject forecastJson = new JSONObject(FilmJsonStr);
-            JSONArray FilmArray = forecastJson.getJSONArray("movies");
+            JSONObject filmJson = new JSONObject(FilmJsonStr);
+            JSONArray filmArray = filmJson.getJSONArray("movies");
 
-            String[] resultStrs = new String[FilmArray.length()];
-            for (int i = 0; i < FilmArray.length(); i++) {
+            String[] resultStrs = new String[filmArray.length()];
+            for (int i = 0; i < filmArray.length(); i++) {
 
                 // Get the JSON object representing the title
-                JSONObject titleObject = FilmArray.getJSONObject(i);
+                JSONObject titleObject = filmArray.getJSONObject(i);
                 resultStrs[i] = titleObject.getString("title");
             }
 
@@ -117,84 +123,190 @@ public class RecentReleasesFragment extends Fragment {
         protected String[] doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
+            HttpURLConnection urlConnectionMovie = null;
+            BufferedReader readerMovie = null;
 
             // Will contain the raw JSON response as a string.
-            String FilmJsonStr = null;
+            String movieJsonString = null;
 
             try {
+                URL urlMovie = new URL("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=vbhetn4chdpudf7mqhckacca");
 
-                URL url = new URL("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=vbhetn4chdpudf7mqhckacca");
-
-
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
+                // Create the request to RottenTomatoes, and open the connection
+                urlConnectionMovie = (HttpURLConnection) urlMovie.openConnection();
+                urlConnectionMovie.setRequestMethod("GET");
+                urlConnectionMovie.connect();
 
                 // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
+                InputStream inputStreamMovie = urlConnectionMovie.getInputStream();
+
+                StringBuffer bufferMovie = new StringBuffer();
+                if (inputStreamMovie == null) {
                     // Nothing to do.
                     return null;
                 }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                readerMovie = new BufferedReader(new InputStreamReader(inputStreamMovie));
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
+                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                // But it does make debugging a *lot* easier if you print out the completed
+                // bufferMovie for debugging.
+                String lineMovie;
+                while ((lineMovie = readerMovie.readLine()) != null) {
+                    bufferMovie.append(lineMovie + "\n");
                 }
 
-                if (buffer.length() == 0) {
+                if (bufferMovie.length() == 0) {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                FilmJsonStr = buffer.toString();
+                movieJsonString = bufferMovie.toString();
 
                 //Disable logging for debugging, TODO re-enable this
-//                Log.v(LOG_TAG, "Forecast JSON String: " + FilmJsonStr);
+//                Log.v(LOG_TAG, "Forecast JSON String: " + movieJsonString);
 
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
+                // If the code didn't successfully get the movie data, there's no point in attempting
                 // to parse it.
                 return null;
             } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
+                if (urlConnectionMovie != null) {
+                    urlConnectionMovie.disconnect();
                 }
-                if (reader != null) {
+                if (readerMovie != null) {
                     try {
-                        reader.close();
+                        readerMovie.close();
                     } catch (final IOException e) {
-                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                        Log.e("Movie Fetch", "Error closing stream", e);
                     }
                 }
             }
 
             try {
-                return getDataFromJson(FilmJsonStr, 10);
+                return getDataFromJson(movieJsonString, 10);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(String[] result) {
             if (result != null) {
-                mFilmAdapter.clear();
+                mMovieAdapter.clear();
                 for (String movie : result) {
-                    mFilmAdapter.add(movie);
+                    mMovieAdapter.add(movie);
                 }
-                // New data is back from the server.  Hooray!
+            }
+        }
+    }
+
+    public class FetchDVDs extends AsyncTask<String, Void, String[]> {
+
+        private final String LOG_TAG = FetchDVDs.class.getSimpleName();
+
+        private String[] getDataFromJson(String FilmJsonStr, int num)
+                throws JSONException {
+
+            JSONObject filmJson = new JSONObject(FilmJsonStr);
+            JSONArray filmArray = filmJson.getJSONArray("movies");
+
+            String[] resultStrs = new String[filmArray.length()];
+            for (int i = 0; i < filmArray.length(); i++) {
+
+                // Get the JSON object representing the title
+                JSONObject titleObject = filmArray.getJSONObject(i);
+                resultStrs[i] = titleObject.getString("title");
+            }
+
+            //Disable logging for debugging TODO re-enable
+//            for (String s : resultStrs) {
+//                Log.v(LOG_TAG, "Movie: " + s);
+//            }
+            return resultStrs;
+
+        }
+
+        @Override
+        protected String[] doInBackground(String... params) {
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnectionDVD = null;
+            BufferedReader readerDVD = null;
+
+            // Will contain the raw JSON response as a string.
+            String dvdJsonString = null;
+
+            try {
+                URL urlDVD = new URL("http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/new_releases.json?apikey=vbhetn4chdpudf7mqhckacca");
+
+                // Create the request to RottenTomatoes, and open the connection
+                urlConnectionDVD = (HttpURLConnection) urlDVD.openConnection();
+                urlConnectionDVD.setRequestMethod("GET");
+                urlConnectionDVD.connect();
+
+                // Read the input stream into a String
+                InputStream inputStreamDVD = urlConnectionDVD.getInputStream();
+
+                StringBuffer bufferDVD = new StringBuffer();
+                if (inputStreamDVD == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                readerDVD = new BufferedReader(new InputStreamReader(inputStreamDVD));
+
+                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                // But it does make debugging a *lot* easier if you print out the completed
+                // bufferMovie for debugging.
+                String lineDVD;
+                while ((lineDVD = readerDVD.readLine()) != null) {
+                    bufferDVD.append(lineDVD + "\n");
+                }
+
+                if (bufferDVD.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                dvdJsonString = bufferDVD.toString();
+
+                //Disable logging for debugging, TODO re-enable this
+//                Log.v(LOG_TAG, "Forecast JSON String: " + movieJsonString);
+
+            } catch (IOException e) {
+                Log.e("PlaceholderFragment", "Error ", e);
+                // If the code didn't successfully get the movie data, there's no point in attempting
+                // to parse it.
+                return null;
+            } finally {
+                if (urlConnectionDVD != null) {
+                    urlConnectionDVD.disconnect();
+                }
+                if (readerDVD != null) {
+                    try {
+                        readerDVD.close();
+                    } catch (final IOException e) {
+                        Log.e("DVD Fetch", "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getDataFromJson(dvdJsonString, 10);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mDVDAdapter.clear();
+                for (String dvd : result) {
+                    mDVDAdapter.add(dvd);
+                }
             }
         }
     }

@@ -12,6 +12,11 @@ public class RecentReleasesFragmentPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 2;
     private Context context;
 
+    /**
+     * Constructor for the RecentReleasesFragmentPagerAdapter
+     * @param fm used for getting the fragment
+     * @param context context for the PagerAdapter
+     */
     public RecentReleasesFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.context = context;

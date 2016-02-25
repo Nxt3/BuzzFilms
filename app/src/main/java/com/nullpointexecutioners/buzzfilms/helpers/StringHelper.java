@@ -8,7 +8,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StringHelper extends Activity {
