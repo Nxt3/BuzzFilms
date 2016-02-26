@@ -12,7 +12,7 @@ import java.util.List;
 
 public class StringHelper {
 
-    private final String API_KEY = "54d159d13a8918dcb7bba43e27770cd8";
+    private static final String API_KEY = "54d159d13a8918dcb7bba43e27770cd8";
 
     /**
      * Appends a dummy domain to the username when adding it to Firebase
