@@ -1,6 +1,5 @@
 package com.nullpointexecutioners.buzzfilms.helpers;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,10 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
-public class StringHelper extends Activity {
+public class StringHelper {
+
+    private final String API_KEY = "54d159d13a8918dcb7bba43e27770cd8";
 
     /**
      * Appends a dummy domain to the username when adding it to Firebase
@@ -123,10 +123,9 @@ public class StringHelper extends Activity {
      * @param args a Lits of things to append to the URL, to be separated by slashes.
      * @return a String to use as the URL
      */
-    public static String tomatoURI(List<String> args) throws IOException {
+    public static String themovieURI(List<String> args) throws IOException {
         Uri.Builder builder = new Uri.Builder();
         //https://api.themoviedb.org/3/search/movie?api_key=54d159d13a8918dcb7bba43e27770cd8
-        String API_KEY = "54d159d13a8918dcb7bba43e27770cd8";
 
         builder.scheme("https")
                 .authority("api.themoviedb.org")

@@ -46,8 +46,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -295,6 +293,7 @@ public class MainActivity extends AppCompatActivity {
             String FilmJsonStr = null;
 
             try {
+                //FIXME broken af--waiting for Volley Rewrite
                 URL url = StringHelper.searchURL(search);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
