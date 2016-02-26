@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,8 +34,6 @@ import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.TomatoVolley;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
-import com.quinny898.library.persistentsearch.SearchBox;
-import com.quinny898.library.persistentsearch.SearchResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +60,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.listview_movie_search) ListView mSearchList;
-    @Bind(R.id.searchbox) SearchBox mSearchBox;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.dashboard) String dashboard;
@@ -72,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.search_movie_hint) String searchMovieHint;
     @BindString(R.string.settings) String settings;
 
-    Boolean inSearch;
     Drawer mNavDrawer;
     private SessionManager mSession;
     private TomatoVolley tomato;
@@ -95,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
 
         initToolbar();
         createNavDrawer();
-        inSearch = false;
 
         mSearchAdapter = new ArrayAdapter<>(this,
                 R.layout.list_item_film,
@@ -217,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
                 .color(Color.WHITE)
                 .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
                 .paddingDp(4));
-        mSearchBox.enableVoiceRecognition(this);
 
         return true;
     }
@@ -226,11 +219,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.action_search):
-                if (inSearch) {
-                    resetSearch();
-                } else {
-                    openSearch();
-                }
+                //TODO, re-implement search
                 break;
             case (R.id.logout):
                 onLogoutClick();
@@ -238,113 +227,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Opens and shows the searchbar view
-     */
-    public void openSearch() {
-        toolbar.setTitle("");
-        mSearchBox.setHint(searchMovieHint);
-        mSearchBox.revealFromMenuItem(R.id.action_search, this);
-
-        mSearchBox.setSearchListener(new SearchBox.SearchListener() {
-
-            @Override
-            public void onSearchOpened() {
-                // Use this to tint the screen
-//                getWindow().getDecorView().setBackgroundColor(Color.WHITE);
-                toolbar.getMenu().findItem(R.id.logout).setVisible(false);
-            }
-
-            @Override
-            public void onSearchClosed() {
-                // Use this to un-tint the screen
-                toolbar.getMenu().findItem(R.id.logout).setVisible(true);
-                closeSearch();
-            }
-
-            @Override
-            public void onSearchTermChanged(String term) {
-                // React to the search term changing
-                // Called after it has updated results
-            }
-
-            @Override
-            public void onSearch(String searchTerm) {
-                inSearch = true;
-
-                toolbar.setTitle(searchTerm);
-                toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
-                        .icon(GoogleMaterial.Icon.gmd_cancel)
-                        .color(Color.WHITE)
-                        .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
-                        .paddingDp(4));
-
-                searchTerm = formatSearchString(searchTerm);
-                search = searchTerm;
-
-                FetchSearch taskMovie = new FetchSearch();
-                taskMovie.execute();
-            }
-
-            @Override
-            public void onResultClick(SearchResult result) {
-                //React to result being clicked
-                toolbar.setTitle(result.toString());
-            }
-
-            @Override
-            public void onSearchCleared() {
-            }
-        });
-    }
-
-    /**
-     * Helper method to format the search term
-     */
-    private String formatSearchString(String search){
-        // Replace all spaces with plus signs
-        return search.replaceAll(" ", "+");
-    }
-
-    /**
-     * Helper method to close the searchbar view
-     */
-    private void closeSearch() {
-        mSearchBox.hideCircularly(this);
-        if (mSearchBox.getSearchText().equals("") || mSearchBox.getSearchText().isEmpty()) {
-            toolbar.setTitle(dashboard);
-        }
-    }
-
-    /**
-     * Helper for clearing the current search results once the cancel button is pressed
-     * Clears results, set's search text to empty, and resets the search menu icon
-     */
-    private void resetSearch() {
-        mSearchBox.clearResults();
-        mSearchBox.setSearchString("");
-
-        toolbar.setTitle(dashboard);
-        toolbar.getMenu().findItem(R.id.action_search).setIcon(new IconicsDrawable(MainActivity.this)
-                .icon(GoogleMaterial.Icon.gmd_search)
-                .color(Color.WHITE)
-                .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
-                .paddingDp(4));
-
-        mSearchAdapter.clear();
-
-        inSearch = false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1234 && resultCode == RESULT_OK) {
-            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            mSearchBox.populateEditText(matches.get(0));
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -366,9 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mSearchBox.getSearchOpen()) {
-            closeSearch();
-        } else if (mNavDrawer != null && mNavDrawer.isDrawerOpen()) {
+        if (mNavDrawer != null && mNavDrawer.isDrawerOpen()) {
             mNavDrawer.closeDrawer();
         } else {
             super.onBackPressed();
