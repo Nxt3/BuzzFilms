@@ -294,7 +294,8 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 //FIXME broken af--waiting for Volley Rewrite
-                URL url = StringHelper.searchURL(search);
+//                URL url = StringHelper.searchURL(search);
+                URL url = new URL(null);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
