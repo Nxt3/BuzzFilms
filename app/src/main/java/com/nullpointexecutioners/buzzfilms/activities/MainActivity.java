@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
                         Log.v("Response", response);
-                        Gson
                     }
                 }, new Response.ErrorListener() {
             @Override
