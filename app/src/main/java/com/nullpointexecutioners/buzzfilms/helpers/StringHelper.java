@@ -123,23 +123,30 @@ public class StringHelper extends Activity {
      * @param args a Lits of things to append to the URL, to be separated by slashes.
      * @return a String to use as the URL
      */
-    public static URL tomatoURI(List<String> args) throws IOException {
+    public static String tomatoURI(List<String> args) throws IOException {
         Uri.Builder builder = new Uri.Builder();
-        String API_KEY = "vbhetn4chdpudf7mqhckacca";
+        //https://api.themoviedb.org/3/search/movie?api_key=54d159d13a8918dcb7bba43e27770cd8
+        String API_KEY = "54d159d13a8918dcb7bba43e27770cd8";
 
-        builder.scheme("http")
-                .authority("api.rottentomatoes.com")
-                .appendPath("api")
-                .appendPath("public")
-                .appendPath("v1.0");
+        builder.scheme("https")
+                .authority("api.themoviedb.org")
+                .appendPath("3");
         for (String p: args) {
             builder.appendPath(p);
         }
         builder.appendQueryParameter("apikey", API_KEY);
-        return new URL(builder.build().toString());
+        return builder.build().toString();
     }
 
-    public static URL searchURL(String search) throws IOException {
-        return new URL("http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=vbhetn4chdpudf7mqhckacca&q=" + search);
+    /**
+     * Simplify searching, since we'll do it a lot
+     * @param search the movie query to search for
+     * @return A String that will return JSON search result
+     */
+    public static String searchURL(String search) {
+        return "https://api.themoviedb.org/3/search/movie" +
+                "?api_key=" + API_KEY + "&query=" + search;
     }
+
+
 }

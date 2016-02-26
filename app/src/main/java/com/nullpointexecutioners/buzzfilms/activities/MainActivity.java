@@ -15,6 +15,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -44,6 +49,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -96,28 +103,30 @@ public class MainActivity extends AppCompatActivity {
                 new ArrayList<String>());
         mSearchList.setAdapter(mSearchAdapter);
 
-//        // Testing Volley
-//        this.tomato = TomatoVolley.getInstance(this);
-//        RequestQueue queue = this.tomato.getRequestQueue();
-//
-//        List<String> search = Arrays.asList("lists", "movies", "in_theaters.json");
-//        String url = StringHelper.tomatoURI(search);
-//        // Request a string response from the provided URL.
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        // Display the first 500 characters of the response string.
-//                        Log.v("Response", response);
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e("Volley Error", error.toString());
-//            }
-//        });
-//        // Add the request to the RequestQueue.
-//        queue.add(stringRequest);
+        // Testing Volley
+        this.tomato = TomatoVolley.getInstance(this);
+        RequestQueue queue = this.tomato.getRequestQueue();
+
+        String search = "Fight Club";
+        String url = StringHelper.searchURL(search);
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.v("Response", response);
+                        Gson
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error", error.toString());
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
     }
 
     @Override
