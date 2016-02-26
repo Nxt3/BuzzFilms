@@ -90,6 +90,8 @@ public class RecentReleasesFragment extends Fragment {
         mRecentDVDsList.setAdapter(mDVDAdapter);
     }
 
+    // TODO, redo the below AsyncTasks with Volley and TheMovieDB API
+
     /**
      * Class for Fetching data (JSON) using RottenTomatoes API asynchronously
      */
