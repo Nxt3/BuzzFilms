@@ -1,12 +1,14 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -17,11 +19,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -36,7 +33,6 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.TomatoVolley;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
-import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +56,6 @@ import butterknife.ButterKnife;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @Bind(R.id.action_search) SearchView mSearchView;
     @Bind(R.id.listview_movie_search) ListView mSearchList;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
@@ -73,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     Drawer mNavDrawer;
     private SessionManager mSession;
     private TomatoVolley tomato;
+    SearchView mSearchView;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
@@ -80,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     final private int SETTINGS = 4;
 
     private ArrayAdapter<String> mSearchAdapter;
-    private String search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,27 +95,25 @@ public class MainActivity extends AppCompatActivity {
         mSearchList.setAdapter(mSearchAdapter);
 
         // Testing Volley
-        this.tomato = TomatoVolley.getInstance(this);
-        RequestQueue queue = this.tomato.getRequestQueue();
+//        this.tomato = TomatoVolley.getInstance(this);
+//        RequestQueue queue = this.tomato.getRequestQueue();
 
-        String search = "Fight Club";
-        String url = StringHelper.searchURL(search);
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Log.v("Response", response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Volley Error", error.toString());
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        // Display the first 500 characters of the response string.
+//                        Log.v("Response", response);
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.e("Volley Error", error.toString());
+//            }
+//        });
+//        // Add the request to the RequestQueue.
+//        queue.add(stringRequest);
 
     }
 
@@ -214,10 +207,12 @@ public class MainActivity extends AppCompatActivity {
                 .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
                 .paddingDp(4));
 
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        ComponentName componentName = getComponentName();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
 
         return true;
     }
