@@ -1,11 +1,14 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -57,6 +60,7 @@ import butterknife.ButterKnife;
  */
 public class MainActivity extends AppCompatActivity {
 
+    @Bind(R.id.action_search) SearchView mSearchView;
     @Bind(R.id.listview_movie_search) ListView mSearchList;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
@@ -209,6 +213,11 @@ public class MainActivity extends AppCompatActivity {
                 .color(Color.WHITE)
                 .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
                 .paddingDp(4));
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         return true;
     }
