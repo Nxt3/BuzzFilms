@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
+    private SearchView mSearchView;
     private SessionManager mSession;
     private TomatoVolley tomato;
 
@@ -71,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         createNavDrawer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
+        searchItem.collapseActionView();
     }
 
     @Override
@@ -139,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Helper method that inits all of the Toolbar stuff.
      * Specifically:
-     * sets Toolbar title, enables the visibility of the overflow menu, shows a back arrow for navigation, and handles what to do if a user presses the back button in the Toolbar.
+     * sets Toolbar title, enables the visibility of the overflow menu
      */
     private void initToolbar() {
         toolbar.setTitle(dashboard);
@@ -158,10 +167,10 @@ public class MainActivity extends AppCompatActivity {
                 .paddingDp(4));
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         return true;
     }

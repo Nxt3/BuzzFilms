@@ -313,18 +313,13 @@ public class ProfileActivity extends AppCompatActivity {
     /**
      * Helper method that inits all of the Toolbar stuff.
      * Specifically:
-     * sets Toolbar title, enables the visibility of the overflow menu, shows a back arrow for navigation, and handles what to do if a user presses the back button in the Toolbar.
+     * sets Toolbar title, shows a back arrow for navigation, and handles what to do if a user presses the back button in the Toolbar.
      */
     private void initToolbar() {
-        toolbar.setTitle(mUsername);
-        toolbar.showOverflowMenu();
+        assert getSupportActionBar() != null;
         setSupportActionBar(toolbar);
-        Drawable backArrowIcon = new IconicsDrawable(this)
-                .icon(GoogleMaterial.Icon.gmd_arrow_back)
-                .color(Color.WHITE)
-                .sizeDp(IconicsDrawable.ANDROID_ACTIONBAR_ICON_SIZE_DP)
-                .paddingDp(4);
-        toolbar.setNavigationIcon(backArrowIcon);
+        getSupportActionBar().setTitle(mUsername);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -49,6 +50,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
         ButterKnife.bind(this);
+
+        initToolbar();
 
         //TODO, redo with Volley
 //        FetchSearch search = new FetchSearch();
@@ -88,7 +91,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            toolbar.setTitle(query);
+            assert getSupportActionBar() != null;
+            getSupportActionBar().setTitle(query);
 //            doSearch(query);
         }
     }
@@ -114,6 +118,22 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
 //        });
 //        // Add the request to the RequestQueue.
 //        queue.add(stringRequest);
+    }
+
+    /**
+     * Helper method that inits all of the Toolbar stuff
+     */
+    private void initToolbar() {
+        assert getSupportActionBar() != null;
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed(); //Simulate a system's "Back" button functionality.
+            }
+        });
     }
 
     @Override
