@@ -144,7 +144,7 @@ public class StringHelper {
      */
     public static String searchURL(String search) {
         return "https://api.themoviedb.org/3/search/movie" +
-                "?api_key=" + API_KEY + "&query=" + search;
+                "?api_key=" + API_KEY + "&query=" + search.replaceAll(" ", "\\+");
     }
 
 

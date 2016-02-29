@@ -20,6 +20,7 @@ import android.widget.ListView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +33,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,6 +45,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private ArrayAdapter<String> mSearchAdapter;
     private SearchView mSearchView;
 
+    private String mSearchTerm;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,20 +55,16 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
 
         initToolbar();
 
-        //TODO, redo with Volley
-//        FetchSearch search = new FetchSearch();
-//        search.execute();
-
         mSearchAdapter = new ArrayAdapter<>(this,
                 R.layout.list_item_film,
                 R.id.list_item_film,
                 new ArrayList<String>());
         mSearchList.setAdapter(mSearchAdapter);
 
-        List<Integer> x = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
-        for (int i : x) {
-            mSearchAdapter.add("Dummy data " + i);
-        }
+//        List<Integer> x = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+//        for (int i : x) {
+//            mSearchAdapter.add("Dummy data " + i);
+//        }
 
         handleIntent(getIntent());
     }
@@ -93,8 +90,12 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
+            mSearchTerm = query;
             assert getSupportActionBar() != null;
             getSupportActionBar().setTitle(query);
+            //TODO, redo with Volley
+            FetchSearch search = new FetchSearch();
+            search.execute();
 //            doSearch(query);
         }
     }
@@ -172,12 +173,11 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         private String[] getDataFromJson(String FilmJsonStr, int num)
                 throws JSONException {
 
-            JSONObject forecastJson = new JSONObject(FilmJsonStr);
-            JSONArray FilmArray = forecastJson.getJSONArray("movies");
+            JSONObject filmJson = new JSONObject(FilmJsonStr);
+            JSONArray FilmArray = filmJson.getJSONArray("results");
 
             String[] resultStrs = new String[FilmArray.length()];
             for (int i = 0; i < FilmArray.length(); i++) {
-
                 // Get the JSON object representing the title
                 JSONObject titleObject = FilmArray.getJSONObject(i);
                 resultStrs[i] = titleObject.getString("title");
@@ -204,7 +204,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             try {
                 //FIXME broken af--waiting for Volley Rewrite
 //                URL url = StringHelper.searchURL(search);
-                URL url = new URL("");
+                URL url = new URL(StringHelper.searchURL(mSearchTerm));
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
