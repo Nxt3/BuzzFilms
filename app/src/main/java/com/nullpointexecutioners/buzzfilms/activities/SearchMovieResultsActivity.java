@@ -44,6 +44,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     @Bind(R.id.search_toolbar) Toolbar toolbar;
 
     private ArrayAdapter<String> mSearchAdapter;
+    private SearchView mSearchView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        toolbar.getMenu().findItem(R.id.action_search).collapseActionView();
         setIntent(intent);
         handleIntent(intent);
     }
@@ -148,10 +150,14 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 .paddingDp(4));
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        //Removes the line under the search text
+        View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+        searchPlate.setBackgroundColor(getColor(R.color.primary));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         return true;
     }

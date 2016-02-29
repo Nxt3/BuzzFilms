@@ -77,9 +77,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
+        //Close the searchview when we leave the MainActivity
         MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
-        searchItem.collapseActionView();
+        if (searchItem.isActionViewExpanded()) {
+            searchItem.collapseActionView();
+        }
     }
 
     @Override
@@ -168,6 +170,10 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        //Removes the line under the search text
+        View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+        searchPlate.setBackgroundColor(getColor(R.color.primary));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
