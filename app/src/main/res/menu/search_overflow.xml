@@ -6,12 +6,4 @@
         android:title="@string/action_search"
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
-
-    <item
-        android:id="@+id/logout"
-        android:orderInCategory="100"
-        android:title="@string/logout"
-        app:showAsAction="never"
-        android:visible="true"/>
-
 </menu>

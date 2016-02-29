@@ -54,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Bind(R.id.currentMajor) TextView profileMajor;
     @Bind(R.id.currentName) TextView profileName;
     @Bind(R.id.profile_fab) FloatingActionButton floatingActionButton;
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.profile_toolbar) Toolbar toolbar;
     @BindInt(R.color.accent) int accentColor;
     @BindInt(R.color.primary_text_light) int primaryTextLightColor;
     @BindString(R.string.cancel) String cancel;

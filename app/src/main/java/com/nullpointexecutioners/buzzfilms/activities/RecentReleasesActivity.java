@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 
 public class RecentReleasesActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.recent_releases_toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;

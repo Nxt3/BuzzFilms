@@ -32,15 +32,17 @@
             android:name=".activities.MainActivity"
             android:label="@string/dashboard"
             android:theme="@style/DrawerTheme_Dark">
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".activities.SearchMovieResultsActivity" />
+        </activity>
+        <activity android:name=".activities.SearchMovieResultsActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
-        </activity>
-        <activity android:name=".activities.SearchMovieResultsActivity"
-            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activities.ProfileActivity"
