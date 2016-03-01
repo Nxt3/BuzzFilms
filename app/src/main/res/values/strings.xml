@@ -17,6 +17,8 @@
     <string name="interests_hint">interests</string>
     <string name="invalid_email">Invalid email</string>
     <string name="invalid_login">Invalid login, please try again</string>
+    <string name="leave_review_title">Leave review</string>
+    <string name="leaving_review_as">Leaving review as</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="major">Major</string>
@@ -46,6 +48,4 @@
     <string name="search_movie_hint">Search for a movie</string>
     <string name="settings">Settings</string>
     <string name="username_hint">username</string>
-    <string name="leaving_review_as">Leaving review as</string>
-    <string name="leave_review_title">Leave review</string>
 </resources>
