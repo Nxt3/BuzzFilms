@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -27,6 +29,8 @@ import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -35,6 +39,7 @@ import butterknife.OnClick;
 public class MovieDetailActivity extends AppCompatActivity {
 
     @Bind(R.id.movie_detail_toolbar) Toolbar toolbar;
+    @Bind(R.id.movie_reviews_list) ListView mMovieReviewsList;
     @Bind(R.id.movie_title) TextView mTempMovieTitle;
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
     @BindString(R.string.cancel) String cancel;
@@ -44,6 +49,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     final private Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
     private String mMovieTitle;
+
+    private ArrayAdapter<String> mReviewAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +75,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             mMovieTitle = (String) bundle.get("title");
             mTempMovieTitle.setText(mMovieTitle);
         }
+
+        mReviewAdapter = new ArrayAdapter<>(this,
+                R.layout.review_list_item,
+                R.id.movie_reviews_list,
+                new ArrayList<String>());
+        mMovieReviewsList.setAdapter(mReviewAdapter);
+
+        setupReviews();
     }
 
     @Override
@@ -114,6 +129,21 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView reviewee = ButterKnife.findById(reviewDialog, R.id.reviewee);
         reviewee.append(" " + (Html.fromHtml("<b>" + currentUser + "</b>"))); //bold the username text
         reviewDialog.show();
+    }
+
+    private void setupReviews() {
+        mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> reviewList =  dataSnapshot.getChildren();
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     /**
