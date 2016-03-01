@@ -64,12 +64,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         initToolbar();
 
-        Drawable editIcon = new IconicsDrawable(this)
+        Drawable addReviewIcon = new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_add)
                 .color(Color.BLACK)
                 .sizeDp(24)
                 .paddingDp(2);
-        floatingActionButton.setImageDrawable(editIcon);
+        floatingActionButton.setImageDrawable(addReviewIcon);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -255,17 +255,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
     }
-
-    public static int getIndex(Set<? extends Object> set, Object value) {
-        int result = 0;
-        for (Object entry:set) {
-            if (entry.equals(value)) return result;
-            result++;
-        }
-        return -1;
-    }
-
-
 
     /**
      * Helper method that inits all of the Toolbar stuff
