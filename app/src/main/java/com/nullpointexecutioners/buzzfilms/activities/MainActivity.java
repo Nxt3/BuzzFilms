@@ -26,7 +26,7 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
-import com.nullpointexecutioners.buzzfilms.TomatoVolley;
+import com.nullpointexecutioners.buzzfilms.Volley;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 
 import butterknife.Bind;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     Drawer mNavDrawer;
     private SearchView mSearchView;
     private SessionManager mSession;
-    private TomatoVolley tomato;
+    private Volley tomato;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;

@@ -4,23 +4,29 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 
-/**
- * Created by Matthew on 2/26/2016.
- */
+/**/
 public class Movie {
-    private String title;
-    private int year;
+    public String title;
+    private String releaseDate;
     private String synopsis;
     private String posterUrl;
-    private int criticsScore;
+    private float criticsScore;
     private ArrayList<String> castList;
+
+    public Movie(String title, String releaseDate, String synopsis, String posterUrl, float criticsScore) {
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.synopsis = synopsis;
+        this.posterUrl = posterUrl;
+        this.criticsScore = criticsScore;
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public int getYear() {
-        return year;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
     public String getSynopsis() {
@@ -31,7 +37,7 @@ public class Movie {
         return posterUrl;
     }
 
-    public int getCriticsScore() {
+    public float getCriticsScore() {
         return criticsScore;
     }
 

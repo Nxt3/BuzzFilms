@@ -61,11 +61,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 new ArrayList<String>());
         mSearchList.setAdapter(mSearchAdapter);
 
-//        List<Integer> x = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
-//        for (int i : x) {
-//            mSearchAdapter.add("Dummy data " + i);
-//        }
-
         handleIntent(getIntent());
     }
 
@@ -96,13 +91,12 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             //TODO, redo with Volley
             FetchSearch search = new FetchSearch();
             search.execute();
-//            doSearch(query);
         }
     }
 
     private void doSearch(String query) {
         // Testing Volley
-//        this.tomato = TomatoVolley.getInstance(this);
+//        this.tomato = Volley.getInstance(this);
 //        RequestQueue queue = this.tomato.getRequestQueue();
 
         // Request a string response from the provided URL.
@@ -183,10 +177,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 resultStrs[i] = titleObject.getString("title");
             }
 
-            //Disable logging for debugging TODO re-enable
-//            for (String s : resultStrs) {
-//                Log.v(LOG_TAG, "Movie: " + s);
-//            }
             return resultStrs;
 
         }
@@ -202,8 +192,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             String FilmJsonStr = null;
 
             try {
-                //FIXME broken af--waiting for Volley Rewrite
-//                URL url = StringHelper.searchURL(search);
                 URL url = new URL(StringHelper.searchURL(mSearchTerm));
 
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -221,9 +209,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
                     buffer.append(line + "\n");
                 }
 
@@ -232,9 +217,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                     return null;
                 }
                 FilmJsonStr = buffer.toString();
-
-                //Disable logging for debugging, TODO re-enable this
-//                Log.v(LOG_TAG, "Forecast JSON String: " + FilmJsonStr);
 
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
