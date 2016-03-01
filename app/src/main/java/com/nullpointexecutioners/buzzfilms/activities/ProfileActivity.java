@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
     String mName;
     String mUsername;
 
-    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    final private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
