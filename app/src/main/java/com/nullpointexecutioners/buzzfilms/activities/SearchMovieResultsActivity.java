@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -75,6 +76,14 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 new ArrayList<String>());
         mSearchList.setAdapter(mSearchAdapter);
 
+        mSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+                String value = (String) adapter.getItemAtPosition(position);
+                startActivity(new Intent(SearchMovieResultsActivity.this, MovieDetailActivity.class).putExtra("title", value));
+            }
+        });
+
         handleIntent(getIntent());
         doSearch("hello");
     }
@@ -103,6 +112,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             mSearchTerm = query;
             assert getSupportActionBar() != null;
             getSupportActionBar().setTitle(query);
+
             //TODO, redo with Volley
             FetchSearch search = new FetchSearch();
             search.execute();

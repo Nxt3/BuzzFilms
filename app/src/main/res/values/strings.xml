@@ -17,11 +17,14 @@
     <string name="interests_hint">interests</string>
     <string name="invalid_email">Invalid email</string>
     <string name="invalid_login">Invalid login, please try again</string>
+    <string name="leave_review_title">Leave review</string>
+    <string name="leaving_review_as">Leaving review as</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="major">Major</string>
     <string name="major_hint">major</string>
     <string name="major_not_specified">Not specified</string>
+    <string name="movie_details">Movie Details</string>
     <string name="name">Name</string>
     <string name="name_hint">name</string>
     <string name="need_to_register">Don\'t have an account? Create one</string>

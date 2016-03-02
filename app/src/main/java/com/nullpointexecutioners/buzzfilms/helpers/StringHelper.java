@@ -147,5 +147,13 @@ public class StringHelper {
                 "?api_key=" + API_KEY + "&query=" + search.replaceAll(" ", "\\+");
     }
 
-
+    /**
+     * Simplify updating the movie's reviews
+     * @param movieTitle of movie to review
+     * @param username of currently logged in user
+     * @return Firebase format for updating the children in Firebase
+     */
+    public static String reviewHelper(String movieTitle, String username) {
+        return movieTitle + "/" + username;
+    }
 }

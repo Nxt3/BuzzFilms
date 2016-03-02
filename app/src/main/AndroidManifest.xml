@@ -52,5 +52,9 @@
             android:name=".activities.RecentReleasesActivity"
             android:label="@string/recent_releases"
             android:theme="@style/DrawerTheme_Dark" />
+        <activity
+            android:name=".activities.MovieDetailActivity"
+            android:label="@string/movie_details"
+            android:theme="@style/AppTheme" />
     </application>
 </manifest>
