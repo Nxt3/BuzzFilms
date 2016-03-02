@@ -17,10 +17,20 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.Volley;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.nullpointexecutioners.buzzfilms.util.MovieList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +56,10 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private SearchView mSearchView;
 
     private String mSearchTerm;
+    private Volley volley;
+
+    private String volleyResponse;
+    private MovieList movies;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +76,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         mSearchList.setAdapter(mSearchAdapter);
 
         handleIntent(getIntent());
+        doSearch("hello");
     }
 
     @Override
@@ -95,26 +110,31 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     }
 
     private void doSearch(String query) {
-        // Testing Volley
-//        this.tomato = Volley.getInstance(this);
-//        RequestQueue queue = this.tomato.getRequestQueue();
+        this.volley = Volley.getInstance(this);
+        RequestQueue queue = this.volley.getRequestQueue();
 
-        // Request a string response from the provided URL.
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        // Display the first 500 characters of the response string.
-//                        Log.v("Response", response);
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e("Volley Error", error.toString());
-//            }
-//        });
-//        // Add the request to the RequestQueue.
-//        queue.add(stringRequest);
+        String url = StringHelper.searchURL(query);
+
+        //Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        volleyResponse = response;
+                        Log.v("Response", response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error", error.toString());
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+        Gson gson = new Gson();
+        Movie newmovie = gson.fromJson(volleyResponse, Movie.class);
+        System.out.println(newmovie.getTitle());
     }
 
     /**
