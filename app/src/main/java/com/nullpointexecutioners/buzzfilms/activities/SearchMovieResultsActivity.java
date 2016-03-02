@@ -144,7 +144,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
 
         Gson gson = new Gson();
         Movie newmovie = gson.fromJson(volleyResponse, Movie.class);
-        System.out.println(newmovie.getTitle());
+        //System.out.println(newmovie.getTitle());
     }
 
     /**
