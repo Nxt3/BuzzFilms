@@ -6,14 +6,22 @@ import java.util.ArrayList;
 
 /**/
 public class Movie {
-    public String title;
+    private String title;
     private String releaseDate;
     private String synopsis;
     private String posterUrl;
-    private float criticsScore;
+    private double criticsScore;
     private ArrayList<String> castList;
 
-    public Movie(String title, String releaseDate, String synopsis, String posterUrl, float criticsScore) {
+    /**
+     * Constructor for Movie object
+     * @param title of movie
+     * @param releaseDate of movie
+     * @param synopsis of movie
+     * @param posterUrl of movie
+     * @param criticsScore of movie
+     */
+    public Movie(String title, String releaseDate, String synopsis, String posterUrl, double criticsScore) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.synopsis = synopsis;
@@ -37,11 +45,16 @@ public class Movie {
         return posterUrl;
     }
 
-    public float getCriticsScore() {
+    public double getCriticsScore() {
         return criticsScore;
     }
 
     public String getCastList() {
         return TextUtils.join(", ", castList);
+    }
+
+    @Override
+    public String toString() {
+        return title + ", " + synopsis + ", " + criticsScore;
     }
 }

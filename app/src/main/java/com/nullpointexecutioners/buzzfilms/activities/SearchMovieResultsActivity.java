@@ -24,7 +24,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.Movie;
@@ -117,7 +116,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Helper method that inits all of the Toolbar stuff
      */
@@ -161,36 +159,50 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     /**
      * Class for Fetching data (JSON) using RottenTomatoes API asynchronously
      */
-    public class FetchSearch extends AsyncTask<String, Void, String[]> {
+    public class FetchSearch extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         private final String LOG_TAG = FetchSearch.class.getSimpleName();
 
-        private String[] getDataFromJson(String FilmJsonStr, int num)
+        private ArrayList<Movie> getDataFromJson(String FilmJsonStr, int num)
                 throws JSONException {
 
             JSONObject filmJson = new JSONObject(FilmJsonStr);
             JSONArray FilmArray = filmJson.getJSONArray("results");
 
-            String[] resultStrs = new String[FilmArray.length()];
+            ArrayList<Movie> movies = new ArrayList<>();
             for (int i = 0; i < FilmArray.length(); i++) {
                 // Get the JSON object representing the title
                 JSONObject titleObject = FilmArray.getJSONObject(i);
-                resultStrs[i] = titleObject.getString("title");
+                JSONObject releaseDateObject = FilmArray.getJSONObject(i);
+                JSONObject overviewObject = FilmArray.getJSONObject(i);
+                JSONObject posterObject = FilmArray.getJSONObject(i);
+                JSONObject criticsScoreObject = FilmArray.getJSONObject(i);
+
+                Movie movie = new Movie(
+                        titleObject.getString("title"),
+                        releaseDateObject.getString("release_date"),
+                        overviewObject.getString("overview"),
+                        posterObject.getString("poster_path"),
+                        criticsScoreObject.getDouble("vote_average"));
+
+                movies.add(movie);
             }
 
-            return resultStrs;
-
+//            for (Movie x : movies) {
+//                Log.v("Movies ", x.toString());
+//            }
+            return movies;
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String FilmJsonStr = null;
+            String filmJsonStr = null;
 
             try {
                 URL url = new URL(StringHelper.searchURL(mSearchTerm));
@@ -217,7 +229,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                FilmJsonStr = buffer.toString();
+                filmJsonStr = buffer.toString();
+
 
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
@@ -238,7 +251,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             }
 
             try {
-                return getDataFromJson(FilmJsonStr, 10);
+                return getDataFromJson(filmJsonStr, 10);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -248,11 +261,11 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
+        protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
                 mSearchAdapter.clear();
-                for (String movie : result) {
-                    mSearchAdapter.add(movie);
+                for (Movie movie : result) {
+                    mSearchAdapter.add(movie.getTitle());
                 }
             }
         }

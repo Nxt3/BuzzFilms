@@ -79,8 +79,10 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         //Close the searchview when we leave the MainActivity
         MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
-        if (searchItem.isActionViewExpanded()) {
-            searchItem.collapseActionView();
+        if (searchItem != null) {
+            if (searchItem.isActionViewExpanded()) {
+                searchItem.collapseActionView();
+            }
         }
     }
 
