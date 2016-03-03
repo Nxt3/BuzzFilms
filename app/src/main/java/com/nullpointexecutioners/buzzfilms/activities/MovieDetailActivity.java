@@ -32,7 +32,6 @@ import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -177,10 +176,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                     mReviewAdapter = new ReviewAdapter(MovieDetailActivity.this,
                             R.layout.review_list_item, reviews);
                     mMovieReviewsList.setAdapter(mReviewAdapter);
+                    mReviewAdapter.addAll(reviews);
                 } else {
                     try {
                         mReviewAdapter.addAll(reviews);
-                        mMovieReviewsList.setAdapter(mReviewAdapter);
+                        Firebase mUserRevRef = new Firebase("https://buzz-films.firebaseio.com/reviews/" + dataSnapshot.getKey());
+                        mUserRevRef.setValue(ratings.get(ratings.size() - 1));
                         mReviewAdapter.notifyDataSetChanged();
                     } catch (NullPointerException npe) {
                     }
@@ -189,58 +190,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildKey) {
-                ArrayList<String> usernames = new ArrayList<>();
-                ArrayList<String> majors = new ArrayList<>();
-                ArrayList<Double> ratings = new ArrayList<>();
-                ArrayList<Review> reviews = new ArrayList<>();
-
-                //iterate through all of the reviews for the movie
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    //I'm either dumb or tired--but there isn't a way to do this all at once
-                    //So, we have an switch block for determining when we're at a particular child,
-                    //then we add it to a running list of values to parse later.
-                    switch(child.getKey()) {
-                        case ("username"):
-                            usernames.add(child.getValue(String.class));
-                            System.out.println("username " + child.getValue(String.class));
-                            break;
-                        case ("major"):
-                            majors.add(child.getValue(String.class));
-                            System.out.println("major " + child.getValue(String.class));
-                            break;
-                        case ("rating"):
-                            ratings.add(child.getValue(Double.class));
-                            break;
-                    }
-                }
-                if (mReviewAdapter != null) {
-                    mReviewAdapter.clear();
-                }
-
-                //Literally the hackiest of workarounds; I'm not even proud of it.
-                //However, this is God-tier shit
-                if (!usernames.isEmpty()) {
-                    for (int i = 0; i < usernames.size(); ++i) {
-                        try { //I hate that checking if Usernames != empty isn't enough, and this is
-                            //the only way I could get it to work...
-                            reviews.add(new Review(usernames.get(i), majors.get(i), ratings.get(i)));
-                        } catch (IndexOutOfBoundsException ioobe) {
-                        }
-                    }
-                }
-
-                if (mReviewAdapter == null) {
-                    mReviewAdapter = new ReviewAdapter(MovieDetailActivity.this,
-                            R.layout.review_list_item, reviews);
-                    mMovieReviewsList.setAdapter(mReviewAdapter);
-                } else {
-                    try {
-                        mReviewAdapter.addAll(reviews); //this might break it
-                        mMovieReviewsList.setAdapter(mReviewAdapter);
-                        mReviewAdapter.notifyDataSetChanged();
-                    } catch (NullPointerException npe) {
-                    }
-                }
+                mReviewAdapter.notifyDataSetChanged();
             }
 
             @Override
