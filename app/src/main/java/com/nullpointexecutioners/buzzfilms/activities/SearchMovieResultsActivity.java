@@ -31,6 +31,7 @@ import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.Volley;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.nullpointexecutioners.buzzfilms.util.GsonRequest;
 import com.nullpointexecutioners.buzzfilms.util.MovieList;
 
 import org.json.JSONArray;
@@ -85,7 +86,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         });
 
         handleIntent(getIntent());
-        doSearch("hello");
+        //doSearch("hello");
     }
 
     @Override
@@ -119,32 +120,39 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         }
     }
 
-    private void doSearch(String query) {
-        this.volley = Volley.getInstance(this);
-        RequestQueue queue = this.volley.getRequestQueue();
+//    private void doSearch(String query) {
+//        this.volley = Volley.getInstance(this);
+//        RequestQueue queue = this.volley.getRequestQueue();
+//
+//        String url = StringHelper.searchURL(query);
+//
+//        GsonRequest<String> myReq = new GsonRequest<String>(url,
+//                String.class,
+//                Request.Method.GET,
+//                createMyReqSuccessListener(),
+//                createMyReqErrorListener());
+//
+//        queue.add(myReq);
+//
+//    }
 
-        String url = StringHelper.searchURL(query);
+    private Response.Listener<String> createMyReqSuccessListener() {
+        return new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Do whatever you want to do with response;
+                // Like response.tags.getListing_count(); etc. etc.
+            }
+        };
+    }
 
-        //Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        volleyResponse = response;
-                        Log.v("Response", response);
-                    }
-                }, new Response.ErrorListener() {
+    private Response.ErrorListener createMyReqErrorListener() {
+        return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Volley Error", error.toString());
+                // Do whatever you want to do with error.getMessage();
             }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-        Gson gson = new Gson();
-        Movie newmovie = gson.fromJson(volleyResponse, Movie.class);
-        //System.out.println(newmovie.getTitle());
+        };
     }
 
     /**
