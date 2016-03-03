@@ -58,9 +58,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private SearchView mSearchView;
 
     private String mSearchTerm;
-    private Volley volley;
-
-    private String volleyResponse;
     private MovieList movies;
 
     @Override
@@ -120,40 +117,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         }
     }
 
-//    private void doSearch(String query) {
-//        this.volley = Volley.getInstance(this);
-//        RequestQueue queue = this.volley.getRequestQueue();
-//
-//        String url = StringHelper.searchURL(query);
-//
-//        GsonRequest<String> myReq = new GsonRequest<String>(url,
-//                String.class,
-//                Request.Method.GET,
-//                createMyReqSuccessListener(),
-//                createMyReqErrorListener());
-//
-//        queue.add(myReq);
-//
-//    }
-
-    private Response.Listener<String> createMyReqSuccessListener() {
-        return new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                // Do whatever you want to do with response;
-                // Like response.tags.getListing_count(); etc. etc.
-            }
-        };
-    }
-
-    private Response.ErrorListener createMyReqErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Do whatever you want to do with error.getMessage();
-            }
-        };
-    }
 
     /**
      * Helper method that inits all of the Toolbar stuff
