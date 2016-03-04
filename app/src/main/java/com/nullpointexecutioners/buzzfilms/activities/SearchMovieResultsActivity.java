@@ -72,7 +72,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         });
 
         handleIntent(getIntent());
-        //doSearch("hello");
     }
 
     @Override
