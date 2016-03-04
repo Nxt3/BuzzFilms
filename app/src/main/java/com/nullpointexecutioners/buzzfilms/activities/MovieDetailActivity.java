@@ -11,9 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -44,6 +46,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.movie_reviews_list) ListView mMovieReviewsList;
     @Bind(R.id.movie_title) TextView mTempMovieTitle;
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
+    @Bind(R.id.movie_poster) ImageView moviePoster;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
     @BindString(R.string.save) String save;
@@ -77,6 +80,9 @@ public class MovieDetailActivity extends AppCompatActivity {
             mMovieTitle = (String) bundle.get("title");
             mTempMovieTitle.setText(mMovieTitle);
         }
+
+        moviePoster.bringToFront();
+        //Picasso.with(context).load("http://i.imgur.com/DvpvklR.png").into(imageView);
 
         setupReviews();
     }

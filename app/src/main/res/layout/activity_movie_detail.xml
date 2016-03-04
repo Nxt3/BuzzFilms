@@ -29,7 +29,9 @@
             android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="10dp"
-            android:layout_below="@+id/movie_detail_toolbar">
+            android:layout_marginTop="150dp"
+            android:layout_below="@+id/movie_detail_toolbar"
+            android:layout_alignParentStart="true">
         </ListView>
 
         <TextView
@@ -42,6 +44,14 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_poster"
+            android:layout_below="@+id/movie_detail_toolbar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="33dp" />
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
