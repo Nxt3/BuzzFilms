@@ -48,7 +48,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private SearchView mSearchView;
 
     private ArrayList<Movie> searchResults;
-    private Bundle movieDetailBundle;
 
     private String mSearchTerm;
 
@@ -66,14 +65,21 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 new ArrayList<String>());
         mSearchList.setAdapter(mSearchAdapter);
 
+        //Handle passing the details of the selected movie over to the Movie Details Activity
         mSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-                movieDetailBundle = new Bundle();
+                Bundle movieDetailBundle = new Bundle();
                 String value = (String) adapter.getItemAtPosition(position);
-                String path = searchResults.get(position).getPosterUrl();
+                String posterPath = searchResults.get(position).getPosterUrl();
+                String synopsis = searchResults.get(position).getSynopsis();
+                String releaseDate = searchResults.get(position).getReleaseDate();
+                Double criticsScore = searchResults.get(position).getCriticsScore();
                 movieDetailBundle.putString("title", value);
-                movieDetailBundle.putString("poster_path", path);
+                movieDetailBundle.putString("poster_path", posterPath);
+                movieDetailBundle.putString("synopsis", synopsis);
+                movieDetailBundle.putString("release_date", releaseDate);
+                movieDetailBundle.putDouble("critics_score", criticsScore);
                 startActivity(new Intent(SearchMovieResultsActivity.this, MovieDetailActivity.class).putExtras(movieDetailBundle));
             }
         });
