@@ -90,8 +90,6 @@ public class RecentReleasesFragment extends Fragment {
         mRecentDVDsList.setAdapter(mDVDAdapter);
     }
 
-    // TODO, redo the below AsyncTasks with Volley and TheMovieDB API
-
     /**
      * Class for Fetching data (JSON) using RottenTomatoes API asynchronously
      */
@@ -132,7 +130,8 @@ public class RecentReleasesFragment extends Fragment {
             String movieJsonString = null;
 
             try {
-                URL urlMovie = new URL("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apikey=vbhetn4chdpudf7mqhckacca");
+                URL urlMovie = new URL("http://api.rottentomatoes.com/api/public/v1.0/" +
+                        "lists/movies/in_theaters.json?apikey=vbhetn4chdpudf7mqhckacca");
 
                 // Create the request to RottenTomatoes, and open the connection
                 urlConnectionMovie = (HttpURLConnection) urlMovie.openConnection();

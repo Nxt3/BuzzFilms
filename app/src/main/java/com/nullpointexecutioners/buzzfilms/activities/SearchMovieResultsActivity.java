@@ -47,6 +47,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private ArrayAdapter<String> mSearchAdapter;
     private SearchView mSearchView;
 
+    private Bundle movieDetailBundle;
+
     private String mSearchTerm;
 
     @Override
@@ -67,6 +69,9 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
                 String value = (String) adapter.getItemAtPosition(position);
+                //movieDetailBundle.putString("title", value);
+                // Pass in poster path?
+                //movieDetailBundle.putString("poster_path",
                 startActivity(new Intent(SearchMovieResultsActivity.this, MovieDetailActivity.class).putExtra("title", value));
             }
         });
@@ -99,7 +104,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             assert getSupportActionBar() != null;
             getSupportActionBar().setTitle(query);
 
-            //TODO, redo with Volley
             FetchSearch search = new FetchSearch();
             search.execute();
         }
@@ -171,7 +175,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                         titleObject.getString("title"),
                         releaseDateObject.getString("release_date"),
                         overviewObject.getString("overview"),
-                        StringHelper.getPosterUrl(posterObject.getString("poster_path")),
+                        posterObject.getString("poster_path"),
                         criticsScoreObject.getDouble("vote_average"));
 
                 movies.add(movie);

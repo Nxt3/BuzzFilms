@@ -1,5 +1,6 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -32,6 +33,7 @@ import com.nullpointexecutioners.buzzfilms.Review;
 import com.nullpointexecutioners.buzzfilms.adapters.ReviewAdapter;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -82,7 +84,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
         moviePoster.bringToFront();
-        //Picasso.with(context).load("http://i.imgur.com/DvpvklR.png").into(imageView);
+        String posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
+        Picasso.with(moviePoster.getContext()).load(posterURL).into(moviePoster);
+        System.out.println(bundle.get("poster_path"));
 
         setupReviews();
     }
