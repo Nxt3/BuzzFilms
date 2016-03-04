@@ -1,6 +1,5 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -10,14 +9,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -86,9 +83,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         moviePoster.bringToFront();
         String posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
-        Log.v("Poster URL: ", posterURL);
         Picasso.with(moviePoster.getContext()).load(posterURL).into(moviePoster);
-        //System.out.println(bundle.get("poster_path"));
 
         setupReviews();
     }
