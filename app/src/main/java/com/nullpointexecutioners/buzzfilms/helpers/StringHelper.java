@@ -156,4 +156,13 @@ public class StringHelper {
     public static String reviewHelper(String movieTitle, String username) {
         return movieTitle + "/" + username;
     }
+
+    /**
+     * Returns the URL of a movie poster, given its location on the server
+     * @param location the location
+     * @return the URL
+     */
+    public static String getPosterUrl(String location) {
+        return "http://image.tmdb.org/t/p/w5000" + location;
+    }
 }

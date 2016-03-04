@@ -18,20 +18,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
-import com.nullpointexecutioners.buzzfilms.Volley;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
-import com.nullpointexecutioners.buzzfilms.util.GsonRequest;
-import com.nullpointexecutioners.buzzfilms.util.MovieList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +48,6 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private SearchView mSearchView;
 
     private String mSearchTerm;
-    private MovieList movies;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -182,7 +172,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                         titleObject.getString("title"),
                         releaseDateObject.getString("release_date"),
                         overviewObject.getString("overview"),
-                        posterObject.getString("poster_path"),
+                        StringHelper.getPosterUrl(posterObject.getString("poster_path")),
                         criticsScoreObject.getDouble("vote_average"));
 
                 movies.add(movie);
