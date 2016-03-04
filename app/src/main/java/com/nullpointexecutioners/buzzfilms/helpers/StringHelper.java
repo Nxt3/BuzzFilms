@@ -163,6 +163,6 @@ public class StringHelper {
      * @return the URL
      */
     public static String getPosterUrl(String location) {
-        return "http://image.tmdb.org/t/p/w5000" + location;
+        return "http://image.tmdb.org/t/p/w1000" + location;
     }
 }
