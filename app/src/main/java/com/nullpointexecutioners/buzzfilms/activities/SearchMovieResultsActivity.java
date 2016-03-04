@@ -69,11 +69,12 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         mSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+                movieDetailBundle = new Bundle();
                 String value = (String) adapter.getItemAtPosition(position);
-                //movieDetailBundle.putString("title", value);
-                // Pass in poster path?
-                //movieDetailBundle.putString("poster_path",
-                startActivity(new Intent(SearchMovieResultsActivity.this, MovieDetailActivity.class).putExtra("title", value));
+                String path = searchResults.get(position).getPosterUrl();
+                movieDetailBundle.putString("title", value);
+                movieDetailBundle.putString("poster_path", path);
+                startActivity(new Intent(SearchMovieResultsActivity.this, MovieDetailActivity.class).putExtras(movieDetailBundle));
             }
         });
 

@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -85,8 +86,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         moviePoster.bringToFront();
         String posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
+        Log.v("Poster URL: ", posterURL);
         Picasso.with(moviePoster.getContext()).load(posterURL).into(moviePoster);
-        System.out.println(bundle.get("poster_path"));
+        //System.out.println(bundle.get("poster_path"));
 
         setupReviews();
     }
