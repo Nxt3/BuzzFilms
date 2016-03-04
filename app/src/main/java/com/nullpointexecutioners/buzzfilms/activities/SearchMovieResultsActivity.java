@@ -47,6 +47,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     private ArrayAdapter<String> mSearchAdapter;
     private SearchView mSearchView;
 
+    private ArrayList<Movie> searchResults;
     private Bundle movieDetailBundle;
 
     private String mSearchTerm;
@@ -257,6 +258,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
                 mSearchAdapter.clear();
+                // Access the results outside this inner class
+                searchResults = result;
                 for (Movie movie : result) {
                     mSearchAdapter.add(movie.getTitle());
                 }
