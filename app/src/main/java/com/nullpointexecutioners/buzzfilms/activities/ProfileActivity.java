@@ -76,7 +76,6 @@ public class ProfileActivity extends AppCompatActivity {
     String mUsername;
 
     final private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
-    final private Firebase mRRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,6 +320,7 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(mUsername);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

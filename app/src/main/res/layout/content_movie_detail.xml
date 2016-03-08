@@ -8,43 +8,55 @@
     android:padding="@dimen/activity_horizontal_margin"
     android:clipToPadding="false"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_profile">
+    tools:showIn="@layout/activity_movie_detail">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/movie_title"
+            android:text="{Movie title here}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/primary_text_dark" />
+
+        <include layout="@layout/item_divider" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
-                android:id="@+id/nameIcon"
-                app:iiv_icon="gmd-person-outline"
+                android:id="@+id/release_date_icon"
+                app:iiv_icon="gmd-date-range"
                 app:iiv_color="@color/icons_dark"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin" />
 
             <TextView
-                android:id="@+id/currentName"
+                android:id="@+id/movie_release_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/nameIcon"
+                android:layout_toEndOf="@id/release_date_icon"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/primary_text_dark" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/currentName"
+                android:layout_below="@id/movie_release_date"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/nameIcon"
-                android:text="@string/name"
+                android:layout_toEndOf="@id/release_date_icon"
+                android:text="@string/release_date"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/secondary_text_dark" />
         </RelativeLayout>
@@ -57,30 +69,30 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
-                android:id="@+id/majorIcon"
-                app:iiv_icon="gmd-school"
+                android:id="@+id/movie_critic_score_icon"
+                app:iiv_icon="gmd-group"
                 app:iiv_color="@color/icons_dark"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin" />
 
             <TextView
-                android:id="@+id/currentMajor"
+                android:id="@+id/movie_critic_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/majorIcon"
+                android:layout_toEndOf="@id/movie_critic_score_icon"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/primary_text_dark" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/currentMajor"
+                android:layout_below="@id/movie_critic_score"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/majorIcon"
-                android:text="@string/major"
+                android:layout_toEndOf="@id/movie_critic_score_icon"
+                android:text="@string/critics_score"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/secondary_text_dark" />
         </RelativeLayout>
@@ -93,43 +105,7 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <com.mikepenz.iconics.view.IconicsImageView
-                android:id="@+id/emailIcon"
-                app:iiv_icon="gmd-email"
-                app:iiv_color="@color/icons_dark"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-            <TextView
-                android:id="@+id/currentEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/emailIcon"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/primary_text_dark" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/currentEmail"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/emailIcon"
-                android:text="@string/email"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/secondary_text_dark" />
-        </RelativeLayout>
-
-        <include layout="@layout/item_divider" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin">
-
-            <com.mikepenz.iconics.view.IconicsImageView
-                android:id="@+id/interestsIcon"
+                android:id="@+id/movie_synopsis_icon"
                 app:iiv_icon="gmd-description"
                 app:iiv_color="@color/icons_dark"
                 android:layout_width="24dp"
@@ -137,22 +113,22 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin" />
 
             <TextView
-                android:id="@+id/currentInterests"
+                android:id="@+id/movie_synopsis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/interestsIcon"
+                android:layout_toEndOf="@id/movie_synopsis_icon"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/primary_text_dark" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/currentInterests"
+                android:layout_below="@id/movie_synopsis"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/interestsIcon"
-                android:text="@string/interests"
+                android:layout_toEndOf="@id/movie_synopsis_icon"
+                android:text="@string/synopsis"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/secondary_text_dark" />
         </RelativeLayout>
