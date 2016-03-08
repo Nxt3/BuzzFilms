@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -61,6 +62,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.release_date_icon) IconicsImageView releaseDateIcon;
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
     @Bind(R.id.user_reviews_button) Button userReviewsButton;
+    @Bind(R.id.toolbar_layout) CollapsingToolbarLayout collapsingToolbarLayout;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
     @BindString(R.string.neat) String neat;
@@ -89,8 +91,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if (bundle != null) {
             mMovieId = (String) bundle.get("id");
+
             mMovieTitle = (String) bundle.get("title");
             movieTitle.setText(mMovieTitle);
+
             String releaseDate = (String) bundle.get("release_date");
             try { //try to parse the release dates to be the Locale default (in our case, 'murica)
                 SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -101,6 +105,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
             movieCriticScore.setText(String.format(Locale.getDefault(), "%1$.2f", (Double) bundle.get("critics_score")));
             movieCriticScore.append(" / 10"); //outta ten
+
             movieSynopsis.setText((String) bundle.get("synopsis"));
 
             posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
@@ -117,8 +122,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                                     movieCriticScoreIcon.setColor(movieColor);
                                     movieSynopsisIcon.setColor(movieColor);
                                     userReviewsButton.setTextColor(movieColor);
+
+                                    collapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(getColor(R.color.primary)));
+                                    collapsingToolbarLayout.setStatusBarScrimColor(palette.getDarkMutedColor(getColor(R.color.primary_dark)));
                                 }
                             }));
+            //Hide the title until the toolbar is collapsed
+            collapsingToolbarLayout.setTitle(mMovieTitle);
+            collapsingToolbarLayout.setExpandedTitleColor(Color.TRANSPARENT);
         }
 
         Drawable addReviewIcon = new IconicsDrawable(this)
