@@ -1,14 +1,14 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -23,6 +23,8 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.Review;
 import com.nullpointexecutioners.buzzfilms.adapters.ReviewAdapter;
@@ -44,6 +46,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.movie_release_date) TextView movieReleaseDate;
     @Bind(R.id.movie_synopsis) TextView movieSynopsis;
     @Bind(R.id.movie_title) TextView movieTitle;
+    @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
     @BindString(R.string.save) String save;
@@ -67,12 +70,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-//        Drawable addReviewIcon = new IconicsDrawable(this)
-//                .icon(GoogleMaterial.Icon.gmd_add)
-//                .color(Color.BLACK)
-//                .sizeDp(24)
-//                .paddingDp(2);
-//        floatingActionButton.setImageDrawable(addReviewIcon);
+        Drawable addReviewIcon = new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_add)
+                .color(Color.BLACK)
+                .sizeDp(24)
+                .paddingDp(2);
+        floatingActionButton.setImageDrawable(addReviewIcon);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -232,38 +235,5 @@ public class MovieDetailActivity extends AppCompatActivity {
                 onBackPressed(); //Simulate a system's "Back" button functionality.
             }
         });
-    }
-
-    /**
-     * Helper method for determining which color to use for the toolbar
-     * @param palette of generate colors from the movie poster
-     * @return selected color
-     */
-    private int colorSelector(Palette palette) {
-        int defaultColor = getThemePrimaryColor(this); //primary color
-        int vibrantDark = palette.getDarkVibrantColor(defaultColor);
-        int mutedDark = palette.getDarkMutedColor(defaultColor);
-        int vibrant = palette.getVibrantColor(defaultColor);
-
-        if (vibrantDark != defaultColor) {
-            return vibrantDark;
-        } else if (mutedDark != defaultColor) {
-            return mutedDark;
-        } else if (vibrant != defaultColor) {
-            return vibrant;
-        } else {
-            return defaultColor;
-        }
-    }
-
-    /**
-     * Helper method for getting the current app's primary color
-     * @param context from which to get the color
-     * @return int value of color
-     */
-    private int getThemePrimaryColor(final Context context) {
-        final TypedValue value = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorPrimary, value, true);
-        return value.data;
     }
 }
