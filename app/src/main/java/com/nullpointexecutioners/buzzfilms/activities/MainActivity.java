@@ -3,6 +3,7 @@ package com.nullpointexecutioners.buzzfilms.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -27,6 +30,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -62,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
+        LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
+        for (int i = 0; i < 10; i++) {
+            ImageView imageView = new ImageView(this);
+            imageView.setId(i);
+            imageView.setPadding(2, 2, 2, 2);
+            imageView.setImageBitmap(BitmapFactory.decodeResource(
+                    getResources(), R.drawable.buzzfilms_app_logo));
+            imageView.setMaxHeight(150);
+            imageView.setMaxWidth(100);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            layout.addView(imageView);
+        }
+
         initToolbar();
         createNavDrawer();
     }
@@ -89,6 +106,14 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         ButterKnife.unbind(this);
     }
+
+    private void setupRecommendations() {
+
+
+
+        Picasso.with(this).load(posterURL).into(moviePoster);
+    }
+
 
     /**
      * Helper method to create the nav drawer for the MainActivity
@@ -170,10 +195,6 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        //for debugging
-        MenuItemCompat.expandActionView(searchItem);
-        mSearchView.setQuery("Star Wars The Force Awakens", true);
 
         //Removes the line under the search text
         View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);

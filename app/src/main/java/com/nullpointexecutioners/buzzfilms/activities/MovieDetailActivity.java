@@ -67,6 +67,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     final private Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
     private int movieColor;
     private String mMovieTitle;
+    private String posterURL;
 
     private ReviewAdapter mReviewAdapter;
 
@@ -96,7 +97,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             movieCriticScore.append(" / 10"); //outta ten
             movieSynopsis.setText((String) bundle.get("synopsis"));
 
-            String posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
+            posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
             //used for getting colors from the movie poster
             Picasso.with(this).load(posterURL).into(moviePoster,
                     PicassoPalette.with(posterURL, moviePoster)
@@ -134,6 +135,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     public void leaveReview() {
         //get current username
         final String currentUser = SessionManager.getInstance(MovieDetailActivity.this).getLoggedInUsername();
+
         final MaterialDialog reviewDialog = new MaterialDialog.Builder(MovieDetailActivity.this)
                 .title(leaveReviewTitle)
                 .customView(R.layout.rating_movie_dialog, true)
@@ -152,6 +154,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                         mUserRef.child(currentUser).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+                                //store this movies posterURL
+                                final Firebase posterRef = mReviewRef.child(mMovieTitle + "/posterURL");
+                                posterRef.setValue(posterURL);
+
                                 String major = dataSnapshot.child("major").getValue(String.class);
                                 final Firebase reviewRef = mReviewRef.child(StringHelper.reviewHelper(mMovieTitle, currentUser));
                                 reviewRef.child("username").setValue(currentUser);
@@ -196,6 +202,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                 //iterate through all of the reviews for the movie
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey().equals("posterURL")) {
+                        continue;
+                    }
                     String username = child.child("username").getValue(String.class);
                     String major = child.child("major").getValue(String.class);
                     Double rating = child.child("rating").getValue(Double.class);
@@ -208,6 +217,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                     movieReviewsList.setAdapter(mReviewAdapter);
                     mReviewAdapter.addAll(reviews);
                     reviews.clear();
+                } else {
+                    //Display a hint stating there are no reviews
+                    TextView noReviewsHint = ButterKnife.findById(reviewsDialog, R.id.no_reviews_hint);
+                    movieReviewsList.setVisibility(View.GONE);
+                    noReviewsHint.setVisibility(View.VISIBLE);
                 }
             }
 
