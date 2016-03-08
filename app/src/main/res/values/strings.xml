@@ -53,4 +53,5 @@
     <string name="release_date">Release Date</string>
     <string name="title">Title</string>
     <string name="movie_poster_desc">Movie poster</string>
+    <string name="read_user_reviews">Read user reviews</string>
 </resources>

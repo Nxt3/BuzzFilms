@@ -1,16 +1,22 @@
 package com.nullpointexecutioners.buzzfilms.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -23,6 +29,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.github.florent37.picassopalette.PicassoPalette;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.R;
@@ -32,11 +39,15 @@ import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -47,6 +58,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.movie_synopsis) TextView movieSynopsis;
     @Bind(R.id.movie_title) TextView movieTitle;
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
+    @Bind(R.id.user_reviews_button) Button userReviewsButton;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
     @BindString(R.string.save) String save;
@@ -70,6 +82,39 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
+        if (bundle != null) {
+            mMovieTitle = (String) bundle.get("title");
+            movieTitle.setText(mMovieTitle);
+            String releaseDate = (String) bundle.get("release_date");
+            try { //try to parse the release dates to be the Locale default (in our case, 'murica)
+                SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat toDate = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                movieReleaseDate.setText(toDate.format(fromDate.parse(releaseDate)));
+            } catch (ParseException pe) {
+                movieReleaseDate.setText(releaseDate);
+            }
+            movieCriticScore.setText(String.format(Locale.getDefault(), "%1$.2f", (Double) bundle.get("critics_score")));
+            movieCriticScore.append(" / 10"); //outta ten
+            movieSynopsis.setText((String) bundle.get("synopsis"));
+
+            String posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
+            //used for getting colors from the movie poster
+            Picasso.with(this).load(posterURL).into(moviePoster,
+                    PicassoPalette.with(posterURL, moviePoster)
+                            .intoCallBack(new PicassoPalette.CallBack() {
+                                @Override
+                                public void onPaletteLoaded(Palette palette) {
+                                    int color = palette.getLightVibrantColor(getThemeAccentColor(MovieDetailActivity.this));
+                                    //because the support library doesn't allow us to change the background color of the FAB, we just tint it instead
+                                    floatingActionButton.setBackgroundTintList(new ColorStateList(new int[][]{new int[]{0}}, new int[]{color}));
+                                    userReviewsButton.setTextColor(color);
+                                }
+                            }));
+        }
+
         Drawable addReviewIcon = new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_add)
                 .color(Color.BLACK)
@@ -77,28 +122,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .paddingDp(2);
         floatingActionButton.setImageDrawable(addReviewIcon);
 
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-
-        if (bundle != null) {
-            mMovieTitle = (String) bundle.get("title");
-            movieTitle.setText(mMovieTitle);
-            movieReleaseDate.setText((String) bundle.get("release_date"));
-            movieCriticScore.setText(Double.toString((Double) bundle.get("critics_score")));
-            movieSynopsis.setText((String) bundle.get("synopsis"));
-
-            String posterURL = StringHelper.getPosterUrl((String) bundle.get("poster_path"));
-            Picasso.with(this).load(posterURL).into(moviePoster);
-            //used for getting colors from the movie poster; we don't need it now, but might later
-//            Picasso.with(this).load(posterURL).into(moviePoster,
-//                    PicassoPalette.with(posterURL, moviePoster)
-//                            .intoCallBack(new PicassoPalette.CallBack() {
-//                                @Override
-//                                public void onPaletteLoaded(Palette palette) {
-//                                    int statusBarColor = colorSelector(palette);
-//                                }
-//                            }));
-        }
         initToolbar();
     }
 
@@ -111,6 +134,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     /**
      * Handles leaving a review
      */
+    @OnClick(R.id.review_fab)
     public void leaveReview() {
         //get current username
         final String currentUser = SessionManager.getInstance(MovieDetailActivity.this).getLoggedInUsername();
@@ -135,7 +159,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 reviewRef.child("username").setValue(currentUser);
                                 reviewRef.child("major").setValue(major);
                                 reviewRef.child("rating").setValue(rating);
-                                setupReviews();
                             }
                             @Override
                             public void onCancelled(FirebaseError firebaseError) {
@@ -145,7 +168,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }).build();
         //Leave review as {current_username}
         TextView reviewee = ButterKnife.findById(reviewDialog, R.id.reviewee);
-        reviewee.append(" " + (Html.fromHtml("<b>" + currentUser + "</b>"))); //bold the username text
+        final Spannable revUsername = new SpannableString(currentUser);
+        revUsername.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, revUsername.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        reviewee.append(" " + revUsername); //bold the username text
+
         reviewDialog.show();
     }
 
@@ -153,7 +179,8 @@ public class MovieDetailActivity extends AppCompatActivity {
      * This entire method is literally Hitler.
      * *ATTEMPTS* to add and update the reviews list per each movie. It's hacky and I hate it.
      */
-    private void setupReviews() {
+    @OnClick(R.id.user_reviews_button)
+    public void setupReviews() {
         mReviewRef.child(mMovieTitle).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
@@ -235,5 +262,38 @@ public class MovieDetailActivity extends AppCompatActivity {
                 onBackPressed(); //Simulate a system's "Back" button functionality.
             }
         });
+    }
+
+    /**
+     * Helper method for determining which color to use for the toolbar
+     * @param palette of generate colors from the movie poster
+     * @return selected color
+     */
+    private int colorSelector(Palette palette) {
+        int defaultColor = getThemeAccentColor(MovieDetailActivity.this); //primary color
+        int vibrantDark = palette.getDarkVibrantColor(defaultColor);
+        int mutedDark = palette.getDarkMutedColor(defaultColor);
+        int vibrant = palette.getVibrantColor(defaultColor);
+
+        if (vibrantDark != defaultColor) {
+            return vibrantDark;
+        } else if (mutedDark != defaultColor) {
+            return mutedDark;
+        } else if (vibrant != defaultColor) {
+            return vibrant;
+        } else {
+            return defaultColor;
+        }
+    }
+
+    /**
+     * Helper method for getting the current app's accent color
+     * @param context from which to get the color
+     * @return int value of color
+     */
+    private int getThemeAccentColor(final Context context) {
+        final TypedValue value = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
+        return value.data;
     }
 }

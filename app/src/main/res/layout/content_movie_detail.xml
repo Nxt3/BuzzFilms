@@ -94,7 +94,19 @@
                 android:layout_toEndOf="@id/movie_critic_score_icon"
                 android:text="@string/critics_score"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/secondary_text_dark" />
+                android:textColor="@color/secondary_text_dark"
+                android:id="@+id/textView" />
+
+            <Button
+                android:id="@+id/user_reviews_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/secondary_text_dark"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:text="@string/read_user_reviews"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true" />
         </RelativeLayout>
 
         <include layout="@layout/item_divider" />
@@ -133,5 +145,6 @@
                 android:textColor="@color/secondary_text_dark" />
         </RelativeLayout>
     </LinearLayout>
+
 
 </android.support.v4.widget.NestedScrollView>
