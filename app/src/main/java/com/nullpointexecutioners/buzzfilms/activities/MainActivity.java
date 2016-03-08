@@ -3,7 +3,6 @@ package com.nullpointexecutioners.buzzfilms.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,9 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -30,7 +31,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
-import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -50,8 +52,10 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
+    final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     private SearchView mSearchView;
     private SessionManager mSession;
+    private String mMajor;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
@@ -66,19 +70,20 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
-        for (int i = 0; i < 10; i++) {
-            ImageView imageView = new ImageView(this);
-            imageView.setId(i);
-            imageView.setPadding(2, 2, 2, 2);
-            imageView.setImageBitmap(BitmapFactory.decodeResource(
-                    getResources(), R.drawable.buzzfilms_app_logo));
-            imageView.setMaxHeight(150);
-            imageView.setMaxWidth(100);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            layout.addView(imageView);
-        }
+//        LinearLayout layout = (LinearLayout) findViewById(R.id.major_recommendations);
+//        for (int i = 0; i < 10; i++) {
+//            ImageView imageView = new ImageView(this);
+//            imageView.setId(i);
+//            imageView.setPadding(2, 2, 2, 2);
+//            imageView.setImageBitmap(BitmapFactory.decodeResource(
+//                    getResources(), R.drawable.buzzfilms_app_logo));
+//            imageView.setMaxHeight(150);
+//            imageView.setMaxWidth(100);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//            layout.addView(imageView);
+//        }
 
+        setupRecommendations();
         initToolbar();
         createNavDrawer();
     }
@@ -108,12 +113,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecommendations() {
+         /*Get current User's major*/
+        mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> posters = new ArrayList<>();
 
+                String currentMajor = mSession.getLoggedInMajor();
+                System.out.println(currentMajor);
 
+                //iterate through all of the reviews for the movie
+                for (DataSnapshot childA : dataSnapshot.getChildren()) {
+                    for (DataSnapshot childB : childA.getChildren()) {
+//                        System.out.println(childB.child("major").getValue(String.class));
+                        if (childB.child("major").equals(mMajor)) {
+                            String posterURL = childA.child("posterURL").getValue(String.class);
+                            System.out.println(posterURL);
+                            posters.add(posterURL);
+                        }
+                    }
+                }
+            }
 
-        Picasso.with(this).load(posterURL).into(moviePoster);
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+//        Picasso.with(this).load(posterURL).into(moviePoster);
     }
-
 
     /**
      * Helper method to create the nav drawer for the MainActivity
