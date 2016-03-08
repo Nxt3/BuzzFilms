@@ -11,20 +11,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -61,16 +59,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.user_reviews_button) Button userReviewsButton;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
+    @BindString(R.string.neat) String neat;
     @BindString(R.string.save) String save;
+    @BindString(R.string.user_reviews) String userReviewsTitle;
 
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     final private Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private int movieColor;
     private String mMovieTitle;
-
-    ArrayList<String> usernames = new ArrayList<>();
-    ArrayList<String> majors = new ArrayList<>();
-    ArrayList<Double> ratings = new ArrayList<>();
-    ArrayList<Review> reviews = new ArrayList<>();
 
     private ReviewAdapter mReviewAdapter;
 
@@ -107,10 +103,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                             .intoCallBack(new PicassoPalette.CallBack() {
                                 @Override
                                 public void onPaletteLoaded(Palette palette) {
-                                    int color = palette.getLightVibrantColor(getThemeAccentColor(MovieDetailActivity.this));
+                                    movieColor = palette.getLightVibrantColor(getThemeAccentColor(MovieDetailActivity.this));
                                     //because the support library doesn't allow us to change the background color of the FAB, we just tint it instead
-                                    floatingActionButton.setBackgroundTintList(new ColorStateList(new int[][]{new int[]{0}}, new int[]{color}));
-                                    userReviewsButton.setTextColor(color);
+                                    floatingActionButton.setBackgroundTintList(new ColorStateList(new int[][]{new int[]{0}}, new int[]{movieColor}));
+                                    userReviewsButton.setTextColor(movieColor);
                                 }
                             }));
         }
@@ -144,6 +140,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .theme(Theme.DARK)
                 .positiveText(save)
                 .negativeText(cancel)
+                .positiveColor(movieColor)
+                .negativeColor(movieColor)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog reviewDialog, @NonNull DialogAction which) {
@@ -168,83 +166,122 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }).build();
         //Leave review as {current_username}
         TextView reviewee = ButterKnife.findById(reviewDialog, R.id.reviewee);
-        final Spannable revUsername = new SpannableString(currentUser);
-        revUsername.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, revUsername.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        reviewee.append(" " + revUsername); //bold the username text
+        //TODO, trying to bold the username text, but I can't get it to work...
+//        SpannableStringBuilder usernameBold = new SpannableStringBuilder(currentUser);
+//        usernameBold.setSpan(new StyleSpan(Typeface.BOLD), 0, usernameBold.length(), 0);
+        reviewee.append(" " + currentUser); //bold the username text
 
         reviewDialog.show();
     }
 
     /**
-     * This entire method is literally Hitler.
-     * *ATTEMPTS* to add and update the reviews list per each movie. It's hacky and I hate it.
+     * Gets all reviews for a particular movie and displays them in a dialog box
      */
     @OnClick(R.id.user_reviews_button)
     public void setupReviews() {
-        mReviewRef.child(mMovieTitle).addChildEventListener(new ChildEventListener() {
+        final MaterialDialog reviewsDialog = new MaterialDialog.Builder(MovieDetailActivity.this)
+                .title(userReviewsTitle)
+                .customView(R.layout.movie_reviews_dialog, false)
+                .theme(Theme.DARK)
+                .positiveText(neat)
+                .positiveColor(movieColor)
+                .build();
+
+        final ListView movieReviewsList = ButterKnife.findById(reviewsDialog, R.id.movie_reviews_list);
+
+        mReviewRef.child(mMovieTitle).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Review> reviews = new ArrayList<>();
+
                 //iterate through all of the reviews for the movie
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    //I'm either dumb or tired--but there isn't a way to do this all at once
-                    //So, we have an switch block for determining when we're at a particular child,
-                    //then we add it to a running list of values to parse later.
-                    switch(child.getKey()) {
-                        case ("username"):
-                            usernames.add(child.getValue(String.class));
-                            break;
-                        case ("major"):
-                            majors.add(child.getValue(String.class));
-                            break;
-                        case ("rating"):
-                            ratings.add(child.getValue(Double.class));
-                            break;
-                    }
-                }
+                    String username = child.child("username").getValue(String.class);
+                    String major = child.child("major").getValue(String.class);
+                    Double rating = child.child("rating").getValue(Double.class);
 
-                //Literally the hackiest of workarounds; I'm not even proud of it.
-                //However, this is God-tier shit
-                if (!usernames.isEmpty()) { //only want to iterate if we're rating a movie that already has reviews
-                    for (int i = 0; i < usernames.size(); ++i) {
-                        try { //I hate that checking if Usernames != empty isn't enough, and this is
-                            // the only way I could get it to work...
-                            reviews.add(new Review(usernames.get(i), majors.get(i), ratings.get(i)));
-                        } catch (IndexOutOfBoundsException ioobe) {
-                        }
-                    }
+                    reviews.add(new Review(username, major, rating));
                 }
-
-                if (mReviewAdapter == null) {
+                if (!reviews.isEmpty()) {
                     mReviewAdapter = new ReviewAdapter(MovieDetailActivity.this,
-                            R.layout.review_list_item, reviews);
-//                    mMovieReviewsList.setAdapter(mReviewAdapter);
-                } else {
-                    try {
-                        mReviewAdapter.addAll(reviews);
-                        Firebase mUserRevRef = new Firebase("https://buzz-films.firebaseio.com/reviews/" + dataSnapshot.getKey());
-                        mUserRevRef.setValue(ratings.get(ratings.size() - 1));
-                        mReviewAdapter.notifyDataSetChanged();
-                    } catch (NullPointerException npe) {
-                    }
+                            R.layout.review_list_item, new ArrayList<Review>());
+                    movieReviewsList.setAdapter(mReviewAdapter);
+                    mReviewAdapter.addAll(reviews);
+                    reviews.clear();
                 }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildKey) {
-                mReviewAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildKey) {
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
+
+//        mReviewRef.child(mMovieTitle).addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
+//                ArrayList<String> usernames = new ArrayList<>();
+//                ArrayList<String> majors = new ArrayList<>();
+//                ArrayList<Double> ratings = new ArrayList<>();
+//                ArrayList<Review> reviews = new ArrayList<>();
+//
+//                //iterate through all of the reviews for the movie
+//                for (DataSnapshot child : dataSnapshot.getChildren()) {
+//                    //I'm either dumb or tired--but there isn't a way to do this all at once
+//                    //So, we have an switch block for determining when we're at a particular child,
+//                    //then we add it to a running list of values to parse later.
+//                    switch(child.getKey()) {
+//                        case ("username"):
+//                            usernames.add(child.getValue(String.class));
+//                            System.out.println("username: " + child.getValue(String.class));
+//                            break;
+//                        case ("major"):
+//                            majors.add(child.getValue(String.class));
+//                            break;
+//                        case ("rating"):
+//                            ratings.add(child.getValue(Double.class));
+//                            break;
+//                    }
+//                    System.out.println("How many times? Should just be once.");
+//                }
+//
+//                //Literally the hackiest of workarounds; I'm not even proud of it.
+//                //However, this is God-tier shit
+//                if (!usernames.isEmpty()) { //only want to iterate if we're rating a movie that already has reviews
+//                    for (int i = 0; i < usernames.size(); ++i) {
+//                        try { //I hate that checking if Usernames != empty isn't enough, and this is
+//                            // the only way I could get it to work...
+//                            System.out.println("reviewUser: " + usernames.get(i));
+//                            reviews.add(new Review(usernames.get(i), majors.get(i), ratings.get(i)));
+//                        } catch (IndexOutOfBoundsException ioobe) {
+//                        }
+//                    }
+//                }
+//
+//                mReviewAdapter = new ReviewAdapter(MovieDetailActivity.this,
+//                        R.layout.review_list_item, new ArrayList<Review>());
+//                movieReviewsList.setAdapter(mReviewAdapter);
+//                mReviewAdapter.addAll(reviews);
+//                reviews.clear();
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildKey) {
+//                mReviewAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//            }
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildKey) {
+//            }
+//
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//            }
+//        });
+        reviewsDialog.show(); //finally show the dialog
     }
 
     /**

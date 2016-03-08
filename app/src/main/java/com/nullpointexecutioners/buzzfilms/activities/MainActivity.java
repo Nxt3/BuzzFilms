@@ -171,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
+        //for debugging
+        MenuItemCompat.expandActionView(searchItem);
+        mSearchView.setQuery("Star Wars The Force Awakens", true);
+
         //Removes the line under the search text
         View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
         searchPlate.setBackgroundColor(getColor(R.color.primary));
