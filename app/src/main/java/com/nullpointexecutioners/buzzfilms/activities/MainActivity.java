@@ -37,7 +37,7 @@ import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
     @Bind(R.id.major_recommendations) LinearLayout majorRecommendations;
+    @Bind(R.id.rating_recommendations) LinearLayout ratingRecommendations;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
-    private ArrayList<String> majorPosters = new ArrayList<>();
+    private HashSet<String> majorPosters = new HashSet<>();
+    private HashSet<String> ratingPosters = new HashSet<>();
     private SearchView mSearchView;
     private SessionManager mSession;
     private String mMajor;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
         setupMajorRecommendations();
+        setupRatingRecommendations();
         initToolbar();
         createNavDrawer();
     }
@@ -147,11 +150,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Gets movies that have been rated highly by other users
+     */
+    private void setupRatingRecommendations() {
+        ratingPosters.clear();
+        ratingRecommendations.removeAllViews();
+
+        mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //iterate through all of the reviews for the movie
+                for (DataSnapshot childA : dataSnapshot.getChildren()) {
+                    double ratingAverage = 0;
+                    for (DataSnapshot childB : childA.getChildren()) {
+                        if (childB.getKey().equals("posterURL")) {
+                            continue;
+                        }
+                        ratingAverage += childB.child("rating").getValue(Double.class);
+                    }
+                    ratingAverage /= childA.getChildrenCount() - 1;
+                    //If the average rating is >= 4, we'll add it to the recommendations
+                    if (ratingAverage >= 4.0) {
+                        String posterURL = childA.child("posterURL").getValue(String.class);
+                        ratingPosters.add(posterURL);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+
+        //We have to delay this or else posters will be empty
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                populateImages(ratingPosters, ratingRecommendations);
+            }
+        }, 2500);
+    }
+
+    /**
      * Iterates through the given list of URLs and adds the images to the view
      * @param posters URLs to iterate through
      * @param layout to insert images into
      */
-    private void populateImages(ArrayList<String> posters, LinearLayout layout) {
+    private void populateImages(HashSet<String> posters, LinearLayout layout) {
         for (String s : posters) {
             insertImage(layout, s);
         }
@@ -268,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case (R.id.refresh):
                 setupMajorRecommendations();
+                setupRatingRecommendations();
                 break;
             case (R.id.logout):
                 onLogoutClick();

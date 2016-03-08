@@ -25,6 +25,7 @@
     <string name="major">Major</string>
     <string name="major_hint">major</string>
     <string name="major_not_specified">Not specified</string>
+    <string name="major_recommendations_section_title">Major Recommendations</string>
     <string name="movie_details">Movie Details</string>
     <string name="movie_poster_desc">Movie poster</string>
     <string name="name">Name</string>
@@ -35,16 +36,19 @@
     <string name="new_password_confirm_hint">confirm new password</string>
     <string name="new_password_hint">new password</string>
     <string name="new_password_mismatch">Passwords do not match</string>
+    <string name="no_reviews_yet">No reviews yet</string>
     <string name="old_password_hint">old password</string>
     <string name="password_change_success">Password successfully changed</string>
     <string name="password_hint">password</string>
     <string name="password_incorrect">Incorrect password, please try again</string>
     <string name="profile">Profile</string>
     <string name="profile_settings">Profile Settings</string>
+    <string name="ratings_recommendations_section_title">Highly Rated by Users</string>
     <string name="read_user_reviews">Read user reviews</string>
     <string name="recent_dvds_title">Recent DVDs</string>
     <string name="recent_movies_title">Recent Movies</string>
     <string name="recent_releases">Recent Releases</string>
+    <string name="refresh">Refresh</string>
     <string name="register">Register</string>
     <string name="register_dialog_title">Create an account</string>
     <string name="register_username_taken">Username is taken</string>
@@ -56,8 +60,4 @@
     <string name="title">Title</string>
     <string name="user_reviews">User reviews</string>
     <string name="username_hint">username</string>
-    <string name="no_reviews_yet">No reviews yet</string>
-    <string name="major_recommendations_section_title">Major Recommendations</string>
-    <string name="ratings_recommendations_section_title">Highly Rated by Users</string>
-    <string name="refresh">Refresh</string>
 </resources>
