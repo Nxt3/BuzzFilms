@@ -6,13 +6,17 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -31,6 +35,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -45,6 +50,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
+    @Bind(R.id.major_recommendations) LinearLayout majorRecommendations;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
@@ -53,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
+    private ArrayList<String> majorPosters = new ArrayList<>();
     private SearchView mSearchView;
     private SessionManager mSession;
     private String mMajor;
@@ -70,20 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-//        LinearLayout layout = (LinearLayout) findViewById(R.id.major_recommendations);
-//        for (int i = 0; i < 10; i++) {
-//            ImageView imageView = new ImageView(this);
-//            imageView.setId(i);
-//            imageView.setPadding(2, 2, 2, 2);
-//            imageView.setImageBitmap(BitmapFactory.decodeResource(
-//                    getResources(), R.drawable.buzzfilms_app_logo));
-//            imageView.setMaxHeight(150);
-//            imageView.setMaxWidth(100);
-//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//            layout.addView(imageView);
-//        }
-
-        setupRecommendations();
+        setupMajorRecommendations();
         initToolbar();
         createNavDrawer();
     }
@@ -112,24 +106,27 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
-    private void setupRecommendations() {
-         /*Get current User's major*/
+    /**
+     * Gets movies that have been rated by other users of the same major
+     */
+    private void setupMajorRecommendations() {
+        majorPosters.clear();
+        majorRecommendations.removeAllViews();
+
         mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> posters = new ArrayList<>();
-
-                String currentMajor = mSession.getLoggedInMajor();
-                System.out.println(currentMajor);
+                mMajor = mSession.getLoggedInMajor();
 
                 //iterate through all of the reviews for the movie
                 for (DataSnapshot childA : dataSnapshot.getChildren()) {
                     for (DataSnapshot childB : childA.getChildren()) {
-//                        System.out.println(childB.child("major").getValue(String.class));
-                        if (childB.child("major").equals(mMajor)) {
+                        if (childB.getKey().equals("posterURL")) {
+                            continue;
+                        }
+                        if (childB.child("major").getValue(String.class).equals(mMajor)) {
                             String posterURL = childA.child("posterURL").getValue(String.class);
-                            System.out.println(posterURL);
-                            posters.add(posterURL);
+                            majorPosters.add(posterURL);
                         }
                     }
                 }
@@ -139,7 +136,40 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
-//        Picasso.with(this).load(posterURL).into(moviePoster);
+
+        //We have to delay this or else posters will be empty
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                populateImages(majorPosters, majorRecommendations);
+            }
+        }, 2500);
+    }
+
+    /**
+     * Iterates through the given list of URLs and adds the images to the view
+     * @param posters URLs to iterate through
+     * @param layout to insert images into
+     */
+    private void populateImages(ArrayList<String> posters, LinearLayout layout) {
+        for (String s : posters) {
+            insertImage(layout, s);
+        }
+    }
+
+    /**
+     * Puts images into the layout
+     * @param layout to insert images into
+     * @param url of poster image
+     * @return newly added ImageView
+     */
+    public View insertImage(LinearLayout layout, String url) {
+        layout.setGravity(Gravity.CENTER);
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setPadding(8, 8, 8, 8);
+        Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView);
+        layout.addView(imageView);
+        return layout;
     }
 
     /**
@@ -236,6 +266,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case (R.id.refresh):
+                setupMajorRecommendations();
+                break;
             case (R.id.logout):
                 onLogoutClick();
                 break;
