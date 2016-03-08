@@ -45,10 +45,8 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
     @Bind(R.id.search_toolbar) Toolbar toolbar;
 
     private ArrayAdapter<String> mSearchAdapter;
-    private SearchView mSearchView;
-
     private ArrayList<Movie> searchResults;
-
+    private SearchView mSearchView;
     private String mSearchTerm;
 
     @Override
@@ -71,10 +69,12 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
                 Bundle movieDetailBundle = new Bundle();
                 String value = (String) adapter.getItemAtPosition(position);
+                String movieId = searchResults.get(position).getId();
                 String posterPath = searchResults.get(position).getPosterUrl();
                 String synopsis = searchResults.get(position).getSynopsis();
                 String releaseDate = searchResults.get(position).getReleaseDate();
                 Double criticsScore = searchResults.get(position).getCriticsScore();
+                movieDetailBundle.putString("id", movieId);
                 movieDetailBundle.putString("title", value);
                 movieDetailBundle.putString("poster_path", posterPath);
                 movieDetailBundle.putString("synopsis", synopsis);
@@ -172,20 +172,16 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
 
             ArrayList<Movie> movies = new ArrayList<>();
             for (int i = 0; i < FilmArray.length(); i++) {
-                // Get the JSON object representing the title
-                JSONObject titleObject = FilmArray.getJSONObject(i);
-                JSONObject releaseDateObject = FilmArray.getJSONObject(i);
-                JSONObject overviewObject = FilmArray.getJSONObject(i);
-                JSONObject posterObject = FilmArray.getJSONObject(i);
-                JSONObject criticsScoreObject = FilmArray.getJSONObject(i);
+                // Get the JSON object representing the movie
+                JSONObject movieObject = FilmArray.getJSONObject(i);
 
                 Movie movie = new Movie(
-                        titleObject.getString("title"),
-                        releaseDateObject.getString("release_date"),
-                        overviewObject.getString("overview"),
-                        posterObject.getString("poster_path"),
-                        criticsScoreObject.getDouble("vote_average"));
-
+                        movieObject.getString("id"),
+                        movieObject.getString("title"),
+                        movieObject.getString("release_date"),
+                        movieObject.getString("overview"),
+                        movieObject.getString("poster_path"),
+                        movieObject.getDouble("vote_average"));
                 movies.add(movie);
             }
 

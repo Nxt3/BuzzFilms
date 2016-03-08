@@ -30,6 +30,7 @@ import com.firebase.client.ValueEventListener;
 import com.github.florent37.picassopalette.PicassoPalette;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.Review;
 import com.nullpointexecutioners.buzzfilms.adapters.ReviewAdapter;
@@ -50,11 +51,14 @@ import butterknife.OnClick;
 public class MovieDetailActivity extends AppCompatActivity {
 
     @Bind(R.id.movie_critic_score) TextView movieCriticScore;
+    @Bind(R.id.movie_critic_score_icon) IconicsImageView movieCriticScoreIcon;
     @Bind(R.id.movie_detail_toolbar) Toolbar toolbar;
     @Bind(R.id.movie_poster) ImageView moviePoster;
     @Bind(R.id.movie_release_date) TextView movieReleaseDate;
     @Bind(R.id.movie_synopsis) TextView movieSynopsis;
+    @Bind(R.id.movie_synopsis_icon) IconicsImageView movieSynopsisIcon;
     @Bind(R.id.movie_title) TextView movieTitle;
+    @Bind(R.id.release_date_icon) IconicsImageView releaseDateIcon;
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
     @Bind(R.id.user_reviews_button) Button userReviewsButton;
     @BindString(R.string.cancel) String cancel;
@@ -66,6 +70,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     final private Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
     private int movieColor;
+    private String mMovieId;
     private String mMovieTitle;
     private String posterURL;
 
@@ -83,6 +88,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
+            mMovieId = (String) bundle.get("id");
             mMovieTitle = (String) bundle.get("title");
             movieTitle.setText(mMovieTitle);
             String releaseDate = (String) bundle.get("release_date");
@@ -104,9 +110,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                             .intoCallBack(new PicassoPalette.CallBack() {
                                 @Override
                                 public void onPaletteLoaded(Palette palette) {
-                                    movieColor = palette.getLightVibrantColor(getThemeAccentColor(MovieDetailActivity.this));
+                                    movieColor = colorSelector(palette);
                                     //because the support library doesn't allow us to change the background color of the FAB, we just tint it instead
                                     floatingActionButton.setBackgroundTintList(new ColorStateList(new int[][]{new int[]{0}}, new int[]{movieColor}));
+                                    releaseDateIcon.setColor(movieColor);
+                                    movieCriticScoreIcon.setColor(movieColor);
+                                    movieSynopsisIcon.setColor(movieColor);
                                     userReviewsButton.setTextColor(movieColor);
                                 }
                             }));
@@ -158,6 +167,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 final Firebase posterRef = mReviewRef.child(mMovieTitle + "/posterURL");
                                 posterRef.setValue(posterURL);
 
+                                //store unique movieId
+                                final Firebase idRef = mReviewRef.child(mMovieTitle + "/movieId");
+                                idRef.setValue(mMovieId);
+
                                 String major = dataSnapshot.child("major").getValue(String.class);
                                 final Firebase reviewRef = mReviewRef.child(StringHelper.reviewHelper(mMovieTitle, currentUser));
                                 reviewRef.child("username").setValue(currentUser);
@@ -202,7 +215,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                 //iterate through all of the reviews for the movie
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.getKey().equals("posterURL")) {
+                    if (child.getKey().equals("posterURL") || child.getKey().equals("movieId")) {
                         continue;
                     }
                     String username = child.child("username").getValue(String.class);
@@ -227,74 +240,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
             }
         });
 
-//        mReviewRef.child(mMovieTitle).addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
-//                ArrayList<String> usernames = new ArrayList<>();
-//                ArrayList<String> majors = new ArrayList<>();
-//                ArrayList<Double> ratings = new ArrayList<>();
-//                ArrayList<Review> reviews = new ArrayList<>();
-//
-//                //iterate through all of the reviews for the movie
-//                for (DataSnapshot child : dataSnapshot.getChildren()) {
-//                    //I'm either dumb or tired--but there isn't a way to do this all at once
-//                    //So, we have an switch block for determining when we're at a particular child,
-//                    //then we add it to a running list of values to parse later.
-//                    switch(child.getKey()) {
-//                        case ("username"):
-//                            usernames.add(child.getValue(String.class));
-//                            System.out.println("username: " + child.getValue(String.class));
-//                            break;
-//                        case ("major"):
-//                            majors.add(child.getValue(String.class));
-//                            break;
-//                        case ("rating"):
-//                            ratings.add(child.getValue(Double.class));
-//                            break;
-//                    }
-//                    System.out.println("How many times? Should just be once.");
-//                }
-//
-//                //Literally the hackiest of workarounds; I'm not even proud of it.
-//                //However, this is God-tier shit
-//                if (!usernames.isEmpty()) { //only want to iterate if we're rating a movie that already has reviews
-//                    for (int i = 0; i < usernames.size(); ++i) {
-//                        try { //I hate that checking if Usernames != empty isn't enough, and this is
-//                            // the only way I could get it to work...
-//                            System.out.println("reviewUser: " + usernames.get(i));
-//                            reviews.add(new Review(usernames.get(i), majors.get(i), ratings.get(i)));
-//                        } catch (IndexOutOfBoundsException ioobe) {
-//                        }
-//                    }
-//                }
-//
-//                mReviewAdapter = new ReviewAdapter(MovieDetailActivity.this,
-//                        R.layout.review_list_item, new ArrayList<Review>());
-//                movieReviewsList.setAdapter(mReviewAdapter);
-//                mReviewAdapter.addAll(reviews);
-//                reviews.clear();
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildKey) {
-//                mReviewAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//            }
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildKey) {
-//            }
-//
-//            @Override
-//            public void onCancelled(FirebaseError firebaseError) {
-//            }
-//        });
         reviewsDialog.show(); //finally show the dialog
     }
 
@@ -317,21 +265,23 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     /**
      * Helper method for determining which color to use for the toolbar
+     * Since the palette won't always be able to get one of each color--this method returns the one
+     * that isn't the default color (in this case, @color/accent)
      * @param palette of generate colors from the movie poster
      * @return selected color
      */
     private int colorSelector(Palette palette) {
         int defaultColor = getThemeAccentColor(MovieDetailActivity.this); //primary color
-        int vibrantDark = palette.getDarkVibrantColor(defaultColor);
-        int mutedDark = palette.getDarkMutedColor(defaultColor);
         int vibrant = palette.getVibrantColor(defaultColor);
+        int vibrantLight = palette.getLightVibrantColor(defaultColor);
+        int mutedLight = palette.getLightMutedColor(defaultColor);
 
-        if (vibrantDark != defaultColor) {
-            return vibrantDark;
-        } else if (mutedDark != defaultColor) {
-            return mutedDark;
-        } else if (vibrant != defaultColor) {
+        if (vibrant != defaultColor) {
             return vibrant;
+        } else if (vibrantLight != defaultColor) {
+            return vibrantLight;
+        } else if (mutedLight != defaultColor) {
+            return mutedLight;
         } else {
             return defaultColor;
         }

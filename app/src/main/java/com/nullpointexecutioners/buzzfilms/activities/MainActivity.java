@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,11 +35,23 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashSet;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -60,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
-    private HashSet<String> majorPosters = new HashSet<>();
-    private HashSet<String> ratingPosters = new HashSet<>();
-    private SearchView mSearchView;
+    private Hashtable<String, String> majorPosters = new Hashtable<>();
+    private Hashtable<String, String> ratingPosters = new Hashtable<>();
     private SessionManager mSession;
     private String mMajor;
+    private String mMovieID;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
@@ -110,6 +124,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Handles what to do when a movie poster is clicked
+     * @param imageView to set Listener for
+     */
+    private void setupOnImageClick(ImageView imageView) {
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMovieID = (String) v.getTag();
+                FetchMovieData fetchMovieData = new FetchMovieData();
+                fetchMovieData.execute();
+            }
+        });
+    }
+
+    /**
      * Gets movies that have been rated by other users of the same major
      */
     private void setupMajorRecommendations() {
@@ -124,12 +153,13 @@ public class MainActivity extends AppCompatActivity {
                 //iterate through all of the reviews for the movie
                 for (DataSnapshot childA : dataSnapshot.getChildren()) {
                     for (DataSnapshot childB : childA.getChildren()) {
-                        if (childB.getKey().equals("posterURL")) {
+                        if (childB.getKey().equals("posterURL") || childB.getKey().equals("movieId")) {
                             continue;
                         }
                         if (childB.child("major").getValue(String.class).equals(mMajor)) {
                             String posterURL = childA.child("posterURL").getValue(String.class);
-                            majorPosters.add(posterURL);
+                            String movieId = childA.child("movieId").getValue(String.class);
+                            majorPosters.put(movieId, posterURL);
                         }
                     }
                 }
@@ -163,16 +193,17 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot childA : dataSnapshot.getChildren()) {
                     double ratingAverage = 0;
                     for (DataSnapshot childB : childA.getChildren()) {
-                        if (childB.getKey().equals("posterURL")) {
+                        if (childB.getKey().equals("posterURL") || childB.getKey().equals("movieId")) {
                             continue;
                         }
                         ratingAverage += childB.child("rating").getValue(Double.class);
                     }
-                    ratingAverage /= childA.getChildrenCount() - 1;
+                    ratingAverage /= childA.getChildrenCount() - 2;
                     //If the average rating is >= 4, we'll add it to the recommendations
                     if (ratingAverage >= 4.0) {
                         String posterURL = childA.child("posterURL").getValue(String.class);
-                        ratingPosters.add(posterURL);
+                        String movieId = childA.child("movieId").getValue(String.class);
+                        ratingPosters.put(movieId, posterURL);
                     }
                 }
             }
@@ -196,21 +227,27 @@ public class MainActivity extends AppCompatActivity {
      * @param posters URLs to iterate through
      * @param layout to insert images into
      */
-    private void populateImages(HashSet<String> posters, LinearLayout layout) {
-        for (String s : posters) {
-            insertImage(layout, s);
+    private void populateImages(Hashtable<String, String> posters, LinearLayout layout) {
+        for (Map.Entry<String, String> entry : posters.entrySet()) {
+            String id = entry.getKey();
+            String url = entry.getValue();
+
+            insertImage(layout, id, url);
         }
     }
 
     /**
      * Puts images into the layout
      * @param layout to insert images into
+     * @param id of movie
      * @param url of poster image
      * @return newly added ImageView
      */
-    public View insertImage(LinearLayout layout, String url) {
+    public View insertImage(LinearLayout layout, String id, String url) {
         layout.setGravity(Gravity.CENTER);
         ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setTag(id); //store the movieId per ImageView
+        setupOnImageClick(imageView);
         imageView.setPadding(8, 8, 8, 8);
         Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView);
         layout.addView(imageView);
@@ -296,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                 .paddingDp(4));
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchView mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
         //Removes the line under the search text
         View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
@@ -345,6 +382,113 @@ public class MainActivity extends AppCompatActivity {
             mNavDrawer.closeDrawer();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /**
+     * Class for Fetching data (JSON) using TheMovieDB Asynchronously
+     */
+    public class FetchMovieData extends AsyncTask<String, Void, Movie> {
+
+        private final String LOG_TAG = FetchMovieData.class.getSimpleName();
+
+        private Movie getDataFromJson(String FilmJsonStr, int num)
+                throws JSONException {
+
+            // Get the JSON object representing the movie
+            JSONObject movieObject = new JSONObject(FilmJsonStr);
+
+            return new Movie(
+                    movieObject.getString("id"),
+                    movieObject.getString("title"),
+                    movieObject.getString("release_date"),
+                    movieObject.getString("overview"),
+                    movieObject.getString("poster_path"),
+                    movieObject.getDouble("vote_average"));
+        }
+
+        @Override
+        protected Movie doInBackground(String... params) {
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // Will contain the raw JSON response as a string.
+            String filmJsonStr = null;
+
+            try {
+                URL url = new URL(StringHelper.uniqueMovie(mMovieID));
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                filmJsonStr = buffer.toString();
+
+
+            } catch (IOException e) {
+                Log.e("PlaceholderFragment", "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attemping
+                // to parse it.
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getDataFromJson(filmJsonStr, 1);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Movie result) {
+            if (result != null) {
+                Bundle movieDetailBundle = new Bundle();
+                String title = result.getTitle();
+                String posterPath = result.getPosterUrl();
+                String synopsis = result.getSynopsis();
+                String releaseDate = result.getReleaseDate();
+                Double criticsScore = result.getCriticsScore();
+                movieDetailBundle.putString("title", title);
+                movieDetailBundle.putString("poster_path", posterPath);
+                movieDetailBundle.putString("synopsis", synopsis);
+                movieDetailBundle.putString("release_date", releaseDate);
+                movieDetailBundle.putDouble("critics_score", criticsScore);
+                startActivity(new Intent(MainActivity.this, MovieDetailActivity.class).putExtras(movieDetailBundle));
+            }
         }
     }
 }
