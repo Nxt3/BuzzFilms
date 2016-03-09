@@ -125,7 +125,6 @@ public class StringHelper {
      */
     public static String themovieURI(List<String> args) throws IOException {
         Uri.Builder builder = new Uri.Builder();
-        //https://api.themoviedb.org/3/search/movie?api_key=54d159d13a8918dcb7bba43e27770cd8
 
         builder.scheme("https")
                 .authority("api.themoviedb.org")
@@ -140,11 +139,21 @@ public class StringHelper {
     /**
      * Simplify searching, since we'll do it a lot
      * @param search the movie query to search for
-     * @return A String that will return JSON search result
+     * @return String that will return JSON search result
      */
     public static String searchURL(String search) {
         return "https://api.themoviedb.org/3/search/movie" +
                 "?api_key=" + API_KEY + "&query=" + search.replaceAll(" ", "\\+");
+    }
+
+    /**
+     * Simplify getting a specific movie
+     * @param id of movie to get
+     * @return String that will return JSON of the specific movie details
+     */
+    public static String uniqueMovie(String id) {
+        return "https://api.themoviedb.org/3/movie/" + id +
+                "?api_key=" + API_KEY;
     }
 
     /**

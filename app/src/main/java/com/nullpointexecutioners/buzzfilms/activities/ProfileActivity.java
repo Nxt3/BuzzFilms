@@ -76,7 +76,6 @@ public class ProfileActivity extends AppCompatActivity {
     String mUsername;
 
     final private Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
-    final private Firebase mRRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,28 +106,19 @@ public class ProfileActivity extends AppCompatActivity {
         mUsername = mSession.getLoggedInUsername();
         mName = mSession.getLoggedInName();
         mEmail = mSession.getLoggedInEmail();
+        String major = mSession.getLoggedInMajor();
 
         //Set the current user's attributes
         profileName.setText(mName);
         profileEmail.setText(mEmail);
 
-        /*Get Major from Firebase*/
-        mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String major = dataSnapshot.child("major").getValue(String.class);
-
-                if (!major.equals("NONE")) {
-                    mMajor = Major.fromString(major);
-                    profileMajor.setText(mMajor.toString());
-                } else {
-                    profileMajor.setText(majorNotSpecified);
-                }
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
+        //Get current user's major and set the field accordingly
+        if (!major.equals("NONE")) {
+            mMajor = Major.fromString(major);
+            profileMajor.setText(mMajor.toString());
+        } else {
+            profileMajor.setText(majorNotSpecified);
+        }
 
         /*Get Interests from Firebase*/
         mRef.child(mUsername).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -194,7 +184,7 @@ public class ProfileActivity extends AppCompatActivity {
                         if (NEW_MAJOR != Major.NONE) {
                             mMajor = NEW_MAJOR;
                         }
-                        mSession.updateSession(mName, mEmail);
+                        mSession.updateSession(mName, mEmail, NEW_MAJOR.toString());
 
                         (ProfileActivity.this).passThrough(editName, editEmail, editInterests);
                         if (mMajor != null && mMajor != Major.NONE) {
@@ -321,6 +311,7 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(mUsername);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -219,7 +219,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                                     //User was created successfully--so take them to the MainActivity
                                                     mAuthProgressDialog.dismiss();
                                                     registerUser(USERNAME, NAME, EMAIL);
-                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL);
+                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL, Major.NONE.toString());
 
                                                     //Go to the MainActivity
                                                     Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
@@ -327,9 +327,10 @@ public class WelcomeActivity extends AppCompatActivity {
         mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final String NAME = dataSnapshot.child("name").getValue().toString();
-                final String EMAIL = dataSnapshot.child("email").getValue().toString();
-                mSession.createLoginSession(USERNAME, NAME, EMAIL);
+                final String NAME = dataSnapshot.child("name").getValue(String.class);
+                final String EMAIL = dataSnapshot.child("email").getValue(String.class);
+                final String MAJOR = dataSnapshot.child("major").getValue(String.class);
+                mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

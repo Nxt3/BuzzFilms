@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.firebase.client.Firebase;
+import com.nullpointexecutioners.buzzfilms.Major;
 
 /**
  * Helper class for managing a session (i.e. persistence across launches of the app
@@ -29,6 +30,9 @@ public class SessionManager {
 
     //Email
     public static final String KEY_EMAIL = "email";
+
+    //Major
+    public static final String KEY_MAJOR = "major";
 
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
@@ -58,12 +62,17 @@ public class SessionManager {
      * @param username to store in SharedPrefs
      * @param email to store in SharedPrefs
      */
-    public void createLoginSession(String username, String name, String email) {
+    public void createLoginSession(String username, String name, String email, String major) {
         /*Store each value into SharedPrefs*/
         editor.putBoolean(IS_LOGIN, true);
         editor.putString(KEY_USERNAME, username);
         editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
+        if (major.equals(Major.NONE.toString())) {
+            editor.putString(KEY_MAJOR, "NONE");
+        } else {
+            editor.putString(KEY_MAJOR, major);
+        }
 
         //Commit changes to SharedPrefs
         editor.apply();
@@ -73,11 +82,17 @@ public class SessionManager {
      * Update the current Session's values
      * @param name to update
      * @param email to update
+     * @param major to update
      */
-    public void updateSession(String name, String email) {
+    public void updateSession(String name, String email, String major) {
         /*Store the updated values into SharedPrefs*/
         editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
+        if (major.equals(Major.NONE.toString())) {
+            editor.putString(KEY_MAJOR, "NONE");
+        } else {
+            editor.putString(KEY_MAJOR, major);
+        }
 
         //Commit changes to SharedPrefs
         editor.apply();
@@ -126,6 +141,18 @@ public class SessionManager {
             email = pref.getString(KEY_EMAIL, null);
         }
         return email;
+    }
+
+    /**
+     * Getter for currently logged in user's major
+     * @return current user's major
+     */
+    public String getLoggedInMajor() {
+        String major = null;
+        if (pref.contains(KEY_MAJOR) && pref.getBoolean(IS_LOGIN, false)) {
+            major = pref.getString(KEY_MAJOR, null);
+        }
+        return major;
     }
 
     /**
