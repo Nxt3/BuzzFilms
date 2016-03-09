@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 import com.squareup.picasso.Picasso;
@@ -354,6 +356,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case (R.id.logout):
                 onLogoutClick();
+                break;
+            case (R.id.clearSearch):
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                        RecentSuggestionsProvider.AUTHORITY, RecentSuggestionsProvider.MODE);
+                suggestions.clearHistory();
                 break;
         }
         return super.onOptionsItemSelected(item);

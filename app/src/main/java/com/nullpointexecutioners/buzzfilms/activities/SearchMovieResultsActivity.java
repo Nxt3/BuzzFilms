@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -22,6 +23,7 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 
 import org.json.JSONArray;
@@ -111,6 +113,12 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             mSearchTerm = query;
             assert getSupportActionBar() != null;
             getSupportActionBar().setTitle(query);
+
+            SearchRecentSuggestions suggestions =
+                    new SearchRecentSuggestions(this,
+                            RecentSuggestionsProvider.AUTHORITY,
+                            RecentSuggestionsProvider.MODE);
+            suggestions.saveRecentQuery(mSearchTerm, null);
 
             FetchSearch search = new FetchSearch();
             search.execute();
@@ -270,3 +278,5 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
         }
     }
 }
+
+

@@ -21,4 +21,11 @@
         app:showAsAction="never"
         android:visible="true"/>
 
+    <item
+        android:id="@+id/clearSearch"
+        android:orderInCategory="200"
+        android:title="Clear search history"
+        app:showAsAction="never"
+        android:visible="true"/>
+
 </menu>
