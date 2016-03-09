@@ -56,5 +56,9 @@
             android:name=".activities.MovieDetailActivity"
             android:label="@string/movie_details"
             android:theme="@style/AppTheme" />
+        <provider
+            android:authorities="com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider"
+            android:name=".helpers.RecentSuggestionsProvider" >
+        </provider>
     </application>
 </manifest>

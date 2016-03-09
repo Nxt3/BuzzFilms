@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -26,6 +27,7 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 
 import butterknife.Bind;
@@ -186,6 +188,11 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case (R.id.logout):
                 onLogoutClick();
+                break;
+            case (R.id.clearSearch):
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                        RecentSuggestionsProvider.AUTHORITY, RecentSuggestionsProvider.MODE);
+                suggestions.clearHistory();
                 break;
         }
         return super.onOptionsItemSelected(item);
