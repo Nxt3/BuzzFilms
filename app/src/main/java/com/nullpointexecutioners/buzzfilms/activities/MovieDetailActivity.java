@@ -103,7 +103,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             } catch (ParseException pe) {
                 movieReleaseDate.setText(releaseDate);
             }
-            movieCriticScore.setText(String.format(Locale.getDefault(), "%1$.2f", (Double) bundle.get("critics_score")));
+            movieCriticScore.setText(String.format(Locale.getDefault(), "%1$.1f", (Double) bundle.get("critics_score")));
             movieCriticScore.append(" / 10"); //outta ten
 
             movieSynopsis.setText((String) bundle.get("synopsis"));
@@ -153,8 +153,9 @@ public class MovieDetailActivity extends AppCompatActivity {
      */
     @OnClick(R.id.review_fab)
     public void leaveReview() {
-        //get current username
-        final String currentUser = SessionManager.getInstance(MovieDetailActivity.this).getLoggedInUsername();
+        //get current username and major
+        final String CURRENT_USER = SessionManager.getInstance(MovieDetailActivity.this).getLoggedInUsername();
+        final String MAJOR = SessionManager.getInstance(MovieDetailActivity.this).getLoggedInMajor();
 
         final MaterialDialog reviewDialog = new MaterialDialog.Builder(MovieDetailActivity.this)
                 .title(leaveReviewTitle)
@@ -170,23 +171,25 @@ public class MovieDetailActivity extends AppCompatActivity {
                         final RatingBar ratingBar = ButterKnife.findById(reviewDialog, R.id.rating_bar);
                         final double rating = ratingBar.getRating(); //get the rating
 
-                        /*Get Major from Firebase, and also store the review while we're at it*/
-                        mUserRef.child(currentUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                        /*Store the review to Firebase, using the movieId*/
+                        mReviewRef.child(mMovieId).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                //store this movies posterURL
-                                final Firebase posterRef = mReviewRef.child(mMovieTitle + "/posterURL");
-                                posterRef.setValue(posterURL);
+                                final Firebase movieReviewRef = mReviewRef.child(mMovieId);
+                                //store unique movieId if there isn't one already
+                                if (dataSnapshot.child("movieId").getValue(String.class) == null) {
+                                    movieReviewRef.child("movieId").setValue(mMovieId);
+                                }
 
-                                //store unique movieId
-                                final Firebase idRef = mReviewRef.child(mMovieTitle + "/movieId");
-                                idRef.setValue(mMovieId);
+                                //store posterURL if there isn't one already
+                                if (dataSnapshot.child("posterURL").getValue(String.class) == null) {
+                                    movieReviewRef.child("posterURL").setValue(posterURL);
+                                }
 
-                                String major = dataSnapshot.child("major").getValue(String.class);
-                                final Firebase reviewRef = mReviewRef.child(StringHelper.reviewHelper(mMovieTitle, currentUser));
-                                reviewRef.child("username").setValue(currentUser);
-                                reviewRef.child("major").setValue(major);
-                                reviewRef.child("rating").setValue(rating);
+                                final Firebase userReviewRef = movieReviewRef.child(CURRENT_USER);
+                                userReviewRef.child("username").setValue(CURRENT_USER);
+                                userReviewRef.child("major").setValue(MAJOR);
+                                userReviewRef.child("rating").setValue(rating);
                             }
                             @Override
                             public void onCancelled(FirebaseError firebaseError) {
@@ -199,7 +202,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         //TODO, trying to bold the username text, but I can't get it to work...
 //        SpannableStringBuilder usernameBold = new SpannableStringBuilder(currentUser);
 //        usernameBold.setSpan(new StyleSpan(Typeface.BOLD), 0, usernameBold.length(), 0);
-        reviewee.append(" " + currentUser); //bold the username text
+        reviewee.append(" " + CURRENT_USER); //bold the username text
 
         reviewDialog.show();
     }
@@ -219,7 +222,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         final ListView movieReviewsList = ButterKnife.findById(reviewsDialog, R.id.movie_reviews_list);
 
-        mReviewRef.child(mMovieTitle).addListenerForSingleValueEvent(new ValueEventListener() {
+        mReviewRef.child(mMovieId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Review> reviews = new ArrayList<>();

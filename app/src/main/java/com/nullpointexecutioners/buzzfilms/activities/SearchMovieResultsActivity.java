@@ -70,14 +70,14 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
                 Bundle movieDetailBundle = new Bundle();
-                String value = (String) adapter.getItemAtPosition(position);
+                String title = (String) adapter.getItemAtPosition(position);
                 String movieId = searchResults.get(position).getId();
                 String posterPath = searchResults.get(position).getPosterUrl();
                 String synopsis = searchResults.get(position).getSynopsis();
                 String releaseDate = searchResults.get(position).getReleaseDate();
                 Double criticsScore = searchResults.get(position).getCriticsScore();
                 movieDetailBundle.putString("id", movieId);
-                movieDetailBundle.putString("title", value);
+                movieDetailBundle.putString("title", title);
                 movieDetailBundle.putString("poster_path", posterPath);
                 movieDetailBundle.putString("synopsis", synopsis);
                 movieDetailBundle.putString("release_date", releaseDate);

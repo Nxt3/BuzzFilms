@@ -7,8 +7,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
 import android.os.Handler;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -484,11 +484,13 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Movie result) {
             if (result != null) {
                 Bundle movieDetailBundle = new Bundle();
+                String id = result.getId();
                 String title = result.getTitle();
                 String posterPath = result.getPosterUrl();
                 String synopsis = result.getSynopsis();
                 String releaseDate = result.getReleaseDate();
                 Double criticsScore = result.getCriticsScore();
+                movieDetailBundle.putString("id", id);
                 movieDetailBundle.putString("title", title);
                 movieDetailBundle.putString("poster_path", posterPath);
                 movieDetailBundle.putString("synopsis", synopsis);
