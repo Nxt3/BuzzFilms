@@ -61,8 +61,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.movie_title) TextView movieTitle;
     @Bind(R.id.release_date_icon) IconicsImageView releaseDateIcon;
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
-    @Bind(R.id.user_reviews_button) Button userReviewsButton;
     @Bind(R.id.toolbar_layout) CollapsingToolbarLayout collapsingToolbarLayout;
+    @Bind(R.id.user_reviews_button) Button userReviewsButton;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
     @BindString(R.string.neat) String neat;
@@ -71,10 +71,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     private int movieColor;
+    private ReviewAdapter mReviewAdapter;
     private String mMovieId;
     private String posterURL;
-
-    private ReviewAdapter mReviewAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
