@@ -98,7 +98,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             String releaseDate = (String) bundle.get("release_date");
             try { //try to parse the release dates to be the Locale default (in our case, 'murica)
                 SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                SimpleDateFormat toDate = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                SimpleDateFormat toDate = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
                 movieReleaseDate.setText(toDate.format(fromDate.parse(releaseDate)));
             } catch (ParseException pe) {
                 movieReleaseDate.setText(releaseDate);
