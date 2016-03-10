@@ -46,15 +46,14 @@ import butterknife.ButterKnife;
 
 public class SearchMovieResultsActivity extends AppCompatActivity {
 
+    @Bind(android.R.id.content) View thisActivity;
     @Bind(R.id.listview_movie_search) ListView mSearchList;
     @Bind(R.id.search_toolbar) Toolbar toolbar;
-    @Bind(android.R.id.content) View thisActivity;
     @BindInt(R.color.accent) int accentColor;
     @BindInt(R.color.primary_text_light) int primaryTextLightColor;
 
     private ArrayAdapter<String> mSearchAdapter;
     private ArrayList<Movie> searchResults;
-    private SearchView mSearchView;
     private String mSearchTerm;
 
     @Override
@@ -159,7 +158,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 .paddingDp(4));
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchView mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
         //Removes the line under the search text
         View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);

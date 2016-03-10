@@ -70,7 +70,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     @BindString(R.string.user_reviews) String userReviewsTitle;
 
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
-    final private Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
     private int movieColor;
     private String mMovieId;
     private String mMovieTitle;
@@ -98,7 +97,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             String releaseDate = (String) bundle.get("release_date");
             try { //try to parse the release dates to be the Locale default (in our case, 'murica)
                 SimpleDateFormat fromDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                SimpleDateFormat toDate = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+                SimpleDateFormat toDate = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
                 movieReleaseDate.setText(toDate.format(fromDate.parse(releaseDate)));
             } catch (ParseException pe) {
                 movieReleaseDate.setText(releaseDate);
