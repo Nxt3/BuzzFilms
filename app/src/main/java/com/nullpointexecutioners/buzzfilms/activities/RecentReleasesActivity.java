@@ -57,7 +57,7 @@ public class RecentReleasesActivity extends AppCompatActivity {
 
         createNavDrawer();
 
-        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        // Get the ViewPager and set its PagerAdapter so that it can display items
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new RecentReleasesFragmentPagerAdapter(getSupportFragmentManager(),
                 RecentReleasesActivity.this));

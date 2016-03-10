@@ -55,6 +55,7 @@
     <string name="register_dialog_title">Create an account</string>
     <string name="register_username_taken">Username is taken</string>
     <string name="release_date">Release Date</string>
+    <string name="review_submitted">Review submitted successfully!</string>
     <string name="save">Save</string>
     <string name="search_movie_hint">Search for a movie</string>
     <string name="settings">Settings</string>
