@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -25,6 +26,7 @@ import com.nullpointexecutioners.buzzfilms.Movie;
 import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,12 +41,16 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import butterknife.Bind;
+import butterknife.BindInt;
 import butterknife.ButterKnife;
 
 public class SearchMovieResultsActivity extends AppCompatActivity {
 
     @Bind(R.id.listview_movie_search) ListView mSearchList;
     @Bind(R.id.search_toolbar) Toolbar toolbar;
+    @Bind(android.R.id.content) View thisActivity;
+    @BindInt(R.color.accent) int accentColor;
+    @BindInt(R.color.primary_text_light) int primaryTextLightColor;
 
     private ArrayAdapter<String> mSearchAdapter;
     private ArrayList<Movie> searchResults;
@@ -273,6 +279,10 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                 searchResults = result;
                 for (Movie movie : result) {
                     mSearchAdapter.add(movie.getTitle());
+                }
+                if (searchResults.isEmpty()) {
+                    ViewHelper.makeSnackbar(thisActivity, getString(R.string.empty_search), Snackbar.LENGTH_LONG,
+                            accentColor, primaryTextLightColor).show();
                 }
             }
         }
