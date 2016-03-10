@@ -280,7 +280,7 @@ public class SearchMovieResultsActivity extends AppCompatActivity {
                     mSearchAdapter.add(movie.getTitle());
                 }
                 if (searchResults.isEmpty()) {
-                    ViewHelper.makeSnackbar(thisActivity, getString(R.string.review_submitted), Snackbar.LENGTH_LONG,
+                    ViewHelper.makeSnackbar(thisActivity, getString(R.string.empty_search), Snackbar.LENGTH_LONG,
                             accentColor, primaryTextLightColor).show();
                 }
             }
