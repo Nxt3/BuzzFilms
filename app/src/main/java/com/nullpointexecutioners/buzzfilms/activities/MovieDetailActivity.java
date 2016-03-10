@@ -72,7 +72,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     private int movieColor;
     private String mMovieId;
-    private String mMovieTitle;
     private String posterURL;
 
     private ReviewAdapter mReviewAdapter;
@@ -91,7 +90,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (bundle != null) {
             mMovieId = (String) bundle.get("id");
 
-            mMovieTitle = (String) bundle.get("title");
+            String mMovieTitle = (String) bundle.get("title");
             movieTitle.setText(mMovieTitle);
 
             String releaseDate = (String) bundle.get("release_date");
