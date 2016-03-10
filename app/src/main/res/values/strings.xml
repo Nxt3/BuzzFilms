@@ -7,6 +7,7 @@
     <string name="auth_progress_dialog_title">Logging in…</string>
     <string name="cancel">Cancel</string>
     <string name="change_password">Change password</string>
+    <string name="clear_search_history">Clear search history</string>
     <string name="critics_score">Critics Score</string>
     <string name="dashboard">Dashboard</string>
     <string name="edit">Edit</string>
