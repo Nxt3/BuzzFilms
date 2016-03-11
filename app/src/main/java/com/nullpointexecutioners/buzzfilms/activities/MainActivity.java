@@ -95,8 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.mSession = SessionManager.getInstance(getApplicationContext());
 
-        setupMajorRecommendations();
-        setupRatingRecommendations();
+        refreshRecommendations();
         initToolbar();
         createNavDrawer();
     }
@@ -247,10 +246,12 @@ public class MainActivity extends AppCompatActivity {
      */
     public View insertImage(LinearLayout layout, String id, String url) {
         layout.setGravity(Gravity.CENTER);
+
         ImageView imageView = new ImageView(getApplicationContext());
         imageView.setTag(id); //store the movieId per ImageView
-        setupOnImageClick(imageView);
+        setupOnImageClick(imageView); //setup what to do when we click on one of the posters
         imageView.setPadding(8, 8, 8, 8);
+
         Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView);
         layout.addView(imageView);
         return layout;
@@ -323,6 +324,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    /**
+     * Refreshes the posters that are displayed for recommendations
+     */
+    private void refreshRecommendations() {
+        setupRatingRecommendations();
+        setupMajorRecommendations();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard_overflow, menu);
@@ -351,8 +360,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.refresh):
-                setupMajorRecommendations();
-                setupRatingRecommendations();
+                refreshRecommendations();
                 break;
             case (R.id.logout):
                 onLogoutClick();
