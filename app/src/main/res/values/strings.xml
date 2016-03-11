@@ -63,4 +63,10 @@
     <string name="title">Title</string>
     <string name="user_reviews">User reviews</string>
     <string name="username_hint">username</string>
+
+    <string name="title_activity_movie_poster">MoviePosterActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
 </resources>

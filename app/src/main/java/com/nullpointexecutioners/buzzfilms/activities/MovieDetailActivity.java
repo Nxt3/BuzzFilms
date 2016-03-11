@@ -267,6 +267,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * Expands the poster when user clicks on it
+     */
+    @OnClick(R.id.movie_poster)
+    public void showFullMoviePoster() {
+        startActivity(new Intent(MovieDetailActivity.this, MoviePosterActivity.class).putExtra("posterURL", posterURL));
+    }
+
+    /**
      * Helper method that inits all of the Toolbar stuff
      */
     private void initToolbar() {
