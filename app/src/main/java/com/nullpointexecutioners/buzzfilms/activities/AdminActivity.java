@@ -3,6 +3,7 @@ package com.nullpointexecutioners.buzzfilms.activities;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -10,11 +11,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.github.channguyen.rsv.RangeSliderView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -138,6 +141,12 @@ public class AdminActivity extends AppCompatActivity {
                 .customView(R.layout.user_view_dialog, true)
                 .positiveText(R.string.okay)
                 .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //TODO, handle updating user's status
+                    }
+                })
                 .build();
 
         TextView nameText = ButterKnife.findById(userDialog, R.id.user_view_name);
@@ -146,7 +155,33 @@ public class AdminActivity extends AppCompatActivity {
         emailText.setText(email);
         TextView majorText = ButterKnife.findById(userDialog, R.id.user_view_major);
         majorText.setText(major);
+        final TextView statusText = ButterKnife.findById(userDialog, R.id.current_status);
+        statusText.setText(status);
 
+        final RangeSliderView currentStatus = ButterKnife.findById(userDialog, R.id.current_status_bar);
+        if (status.equals(active)) {
+            currentStatus.setInitialIndex(0);
+        } else if (status.equals(locked)) {
+            currentStatus.setInitialIndex(1);
+        } else if (status.equals(banned)) {
+            currentStatus.setInitialIndex(2);
+        }
+        currentStatus.setOnSlideListener(new RangeSliderView.OnSlideListener() {
+            @Override
+            public void onSlide(int index) {
+                switch (index) {
+                    case 0:
+                        statusText.setText(active);
+                        break;
+                    case 1:
+                        statusText.setText(locked);
+                        break;
+                    case 2:
+                        statusText.setText(banned);
+                        break;
+                }
+            }
+        });
         userDialog.show();
     }
 
@@ -172,8 +207,9 @@ public class AdminActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
-                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
+                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD).withSelectable(false),
                         new PrimaryDrawerItem().withName(recentReleases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
+                        new PrimaryDrawerItem().withName(admin).withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN),
                         new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -206,10 +242,7 @@ public class AdminActivity extends AppCompatActivity {
                         return false;
                     }
                 }).build();
-        mNavDrawer.setSelection(DASHBOARD);
-        if (mSession.checkAdmin()) { //if the user is an Admin, we need the Admin drawer item
-            mNavDrawer.addItem(new PrimaryDrawerItem().withName(admin).withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
-        }
+        mNavDrawer.setSelection(ADMIN);
     }
 
     @Override
