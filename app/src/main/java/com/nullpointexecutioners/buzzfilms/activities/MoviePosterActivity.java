@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.nullpointexecutioners.buzzfilms.R;
@@ -93,6 +94,7 @@ public class MoviePosterActivity extends Activity {
 
     private String posterURL;
     @Bind(R.id.fullscreen_poster) ImageView fullscreenPoster;
+    @Bind(R.id.poster_background) FrameLayout mPosterBackground;
 
 
     @Override
@@ -113,21 +115,14 @@ public class MoviePosterActivity extends Activity {
             }
         });
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-
-
-
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
             posterURL = (String) bundle.get("posterURL");
+            mPosterBackground.setBackgroundColor((int) bundle.get("color"));
         }
         Picasso.with(this).load(posterURL).into(fullscreenPoster);
-
 
     }
 

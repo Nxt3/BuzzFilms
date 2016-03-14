@@ -271,7 +271,7 @@ public class MovieDetailActivity extends AppCompatActivity {
      */
     @OnClick(R.id.movie_poster)
     public void showFullMoviePoster() {
-        startActivity(new Intent(MovieDetailActivity.this, MoviePosterActivity.class).putExtra("posterURL", posterURL));
+        startActivity(new Intent(MovieDetailActivity.this, MoviePosterActivity.class).putExtra("posterURL", posterURL).putExtra("color", movieColor));
     }
 
     /**
