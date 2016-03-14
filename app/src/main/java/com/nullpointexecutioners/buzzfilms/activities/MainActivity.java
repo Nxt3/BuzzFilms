@@ -85,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
     final private int RECENT_RELEASES = 3;
-    final private int SETTINGS = 4;
+    final private int ADMIN = 4;
+    final private int SETTINGS = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -303,6 +304,8 @@ public class MainActivity extends AppCompatActivity {
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return true;
+                                case ADMIN:
+                                    return false;
                                 case SETTINGS:
                                     //TODO, handle Settings
                                     return false;
@@ -312,6 +315,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).build();
         mNavDrawer.setSelection(DASHBOARD);
+        if (mSession.checkAdmin()) {
+            mNavDrawer.addItem(new PrimaryDrawerItem().withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
+        }
     }
 
     /**
