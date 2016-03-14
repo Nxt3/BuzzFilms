@@ -44,6 +44,7 @@ public class UsersAdapter extends ArrayAdapter<Users> {
 
             holder = new UsersHolder();
             holder.userUsername = (TextView) row.findViewById(R.id.user);
+            holder.userName = (TextView) row.findViewById(R.id.name);
             holder.userStatus = (TextView) row.findViewById(R.id.user_status);
 
             row.setTag(holder);
@@ -53,6 +54,7 @@ public class UsersAdapter extends ArrayAdapter<Users> {
 
         Users user = users.get(position);
         holder.userUsername.setText(user.getUsername());
+        holder.userName.setText(user.getName());
         holder.userStatus.setText(user.getStatus());
 
         return row;
@@ -60,6 +62,7 @@ public class UsersAdapter extends ArrayAdapter<Users> {
 
     static class UsersHolder {
         TextView userUsername;
+        TextView userName;
         TextView userStatus;
     }
 }

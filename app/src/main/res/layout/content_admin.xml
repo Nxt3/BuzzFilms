@@ -19,8 +19,10 @@
         android:id="@+id/users_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        android:paddingStart="@dimen/activity_vertical_margin"
+        android:paddingEnd="@dimen/activity_vertical_margin"
+        android:divider="@null"
+        android:clipToPadding="false"
         android:layout_below="@id/user_list_text">
     </ListView>
 </RelativeLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/accent"
+        android:text="@string/name" />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/user_view_name"
+        android:layout_height="wrap_content"
+        android:text="Jack Daniels"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:textColor="@color/accent"
+        android:text="@string/email" />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/user_view_email"
+        android:layout_height="wrap_content"
+        android:text="dummyemail@gmail.com"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:textColor="@color/accent"
+        android:text="@string/major" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_view_major"
+        android:text="Computer Science"/>
+</LinearLayout>

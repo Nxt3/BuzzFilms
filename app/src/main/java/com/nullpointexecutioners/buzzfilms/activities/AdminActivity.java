@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -37,8 +40,10 @@ import butterknife.ButterKnife;
 public class AdminActivity extends AppCompatActivity {
 
     @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
+    @Bind(R.id.users_list) ListView mUsersList;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.admin) String admin;
+    @BindString(R.string.admin_controls) String adminControls;
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
@@ -49,6 +54,7 @@ public class AdminActivity extends AppCompatActivity {
 
     Drawer mNavDrawer;
     final private Firebase mUsersRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private ArrayList<Users> users = new ArrayList<>();
     private SessionManager mSession;
     private UsersAdapter mUsersAdapter;
 
@@ -68,6 +74,7 @@ public class AdminActivity extends AppCompatActivity {
 
         initToolbar();
         createNavDrawer();
+        setupUsersList();
     }
 
     @Override
@@ -80,32 +87,27 @@ public class AdminActivity extends AppCompatActivity {
      * Populates list of users
      */
     private void setupUsersList() {
-        final ListView usersList = ButterKnife.findById(this, R.id.users_list);
-
         mUsersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Users> users = new ArrayList<>();
-
                 //iterate through all of the reviews for the movie
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     if (child.getKey().equals("is_admin")) {
                         continue;
                     }
                     String username = child.child("username").getValue(String.class);
-                    String status;
-                    if (child.child("status").getValue() != null) {
-                        status = child.child("status").getValue(String.class);
-                    } else {
-                        status = active;
-                    }
+                    String name = child.child("name").getValue(String.class);
+                    String email = child.child("email").getValue(String.class);
+                    String major = child.child("major").getValue(String.class);
+                    String status = child.child("status").getValue() != null
+                            ? child.child("status").getValue(String.class) : active;
 
-                    users.add(new Users(username, status));
+                    users.add(new Users(username, name, email, major, status));
                 }
                 if (!users.isEmpty()) {
                     mUsersAdapter = new UsersAdapter(AdminActivity.this,
-                            R.layout.user_list_item, new ArrayList<Users>());
-                    usersList.setAdapter(mUsersAdapter);
+                            R.layout.user_list_item, users);
+                    mUsersList.setAdapter(mUsersAdapter);
                     mUsersAdapter.addAll(users);
                     users.clear();
                 }
@@ -115,8 +117,34 @@ public class AdminActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+
+        //Handle passing the selected user in the list
+        mUsersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+                String username = users.get(position).getUsername();
+                String name = users.get(position).getName();
+                String email = users.get(position).getEmail();
+                String major = users.get(position).getMajor();
+                String status = users.get(position).getStatus();
+
+                TextView nameText = ButterKnife.findById(AdminActivity.this, R.id.user_view_name);
+                nameText.setText(name);
+                TextView emailText = ButterKnife.findById(AdminActivity.this, R.id.user_view_email);
+                emailText.setText(email);
+                TextView majorText = ButterKnife.findById(AdminActivity.this, R.id.user_view_major);
+                majorText.setText(major);
+                userView(username, name, email, major, status);
+            }
+        });
     }
 
+    private void userView(String username, String name, String email, String major, String status) {
+        final MaterialDialog userDialog = new MaterialDialog.Builder(this)
+                .title(username)
+                .customView(R.layout.user_view_dialog, true)
+                .build();
+    }
 
     /**
      * Helper method to create the nav drawer for the MainActivity
@@ -195,7 +223,7 @@ public class AdminActivity extends AppCompatActivity {
      * sets Toolbar title, enables the visibility of the overflow menu
      */
     private void initToolbar() {
-        toolbar.setTitle(dashboard);
+        toolbar.setTitle(adminControls);
         setSupportActionBar(toolbar);
     }
 }
