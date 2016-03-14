@@ -219,7 +219,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                                     //User was created successfully--so take them to the MainActivity
                                                     mAuthProgressDialog.dismiss();
                                                     registerUser(USERNAME, NAME, EMAIL);
-                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL, Major.NONE.toString());
+                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL, Major.NONE.toString(), false);
 
                                                     //Go to the MainActivity
                                                     Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
@@ -315,6 +315,8 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("email").setValue(email);
         userRef.child("major").setValue(Major.NONE);
         userRef.child("interests").setValue("");
+        userRef.child("is_admin").setValue(false); //users who register from the app can't be an Admin
+        //Making a user an Admin requires editing the User at the Firebase level
     }
 
     /**
@@ -330,7 +332,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 final String NAME = dataSnapshot.child("name").getValue(String.class);
                 final String EMAIL = dataSnapshot.child("email").getValue(String.class);
                 final String MAJOR = dataSnapshot.child("major").getValue(String.class);
-                mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR);
+                boolean isAdmin = false;
+                if (dataSnapshot.child("is_admin").getValue() != null) {
+                    isAdmin = dataSnapshot.child("is_admin").getValue(Boolean.class);
+                }
+                mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR, isAdmin);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
