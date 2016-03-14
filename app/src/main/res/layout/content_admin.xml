@@ -15,12 +15,12 @@
         android:padding="16dp"
         android:text="@string/list_of_users"/>
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
+        android:id="@+id/users_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_vertical_margin"
         android:layout_below="@id/user_list_text">
-
-    </android.support.v7.widget.RecyclerView>
+    </ListView>
 </RelativeLayout>

@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -19,7 +23,11 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.Users;
+import com.nullpointexecutioners.buzzfilms.adapters.UsersAdapter;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -30,14 +38,19 @@ public class AdminActivity extends AppCompatActivity {
 
     @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
+    @BindString(R.string.admin) String admin;
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
+    @BindString(R.string.status_active) String active;
+    @BindString(R.string.status_banned) String banned;
+    @BindString(R.string.status_locked) String locked;
 
     Drawer mNavDrawer;
     final private Firebase mUsersRef = new Firebase("https://buzz-films.firebaseio.com/users");
     private SessionManager mSession;
+    private UsersAdapter mUsersAdapter;
 
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
@@ -62,6 +75,48 @@ public class AdminActivity extends AppCompatActivity {
         super.onDestroy();
         ButterKnife.unbind(this);
     }
+
+    /**
+     * Populates list of users
+     */
+    private void setupUsersList() {
+        final ListView usersList = ButterKnife.findById(this, R.id.users_list);
+
+        mUsersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Users> users = new ArrayList<>();
+
+                //iterate through all of the reviews for the movie
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (child.getKey().equals("is_admin")) {
+                        continue;
+                    }
+                    String username = child.child("username").getValue(String.class);
+                    String status;
+                    if (child.child("status").getValue() != null) {
+                        status = child.child("status").getValue(String.class);
+                    } else {
+                        status = active;
+                    }
+
+                    users.add(new Users(username, status));
+                }
+                if (!users.isEmpty()) {
+                    mUsersAdapter = new UsersAdapter(AdminActivity.this,
+                            R.layout.user_list_item, new ArrayList<Users>());
+                    usersList.setAdapter(mUsersAdapter);
+                    mUsersAdapter.addAll(users);
+                    users.clear();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+    }
+
 
     /**
      * Helper method to create the nav drawer for the MainActivity
@@ -121,7 +176,7 @@ public class AdminActivity extends AppCompatActivity {
                 }).build();
         mNavDrawer.setSelection(DASHBOARD);
         if (mSession.checkAdmin()) { //if the user is an Admin, we need the Admin drawer item
-            mNavDrawer.addItem(new PrimaryDrawerItem().withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
+            mNavDrawer.addItem(new PrimaryDrawerItem().withName(admin).withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
         }
     }
 
