@@ -69,6 +69,14 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_movie_poster"
             android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".activities.AdminActivity"
+            android:label="@string/title_activity_admin"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.nullpointexecutioners.buzzfilms.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

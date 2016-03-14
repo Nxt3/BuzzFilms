@@ -69,4 +69,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="list_of_users">List of Users</string>
+    <string name="admin">Admin</string>
 </resources>

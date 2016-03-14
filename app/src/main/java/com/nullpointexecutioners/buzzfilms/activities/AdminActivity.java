@@ -1,0 +1,146 @@
+package com.nullpointexecutioners.buzzfilms.activities;
+
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import com.firebase.client.Firebase;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.nullpointexecutioners.buzzfilms.R;
+import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
+
+import butterknife.Bind;
+import butterknife.BindDrawable;
+import butterknife.BindString;
+import butterknife.ButterKnife;
+
+public class AdminActivity extends AppCompatActivity {
+
+    @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
+    @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
+    @BindString(R.string.dashboard) String dashboard;
+    @BindString(R.string.profile) String profile;
+    @BindString(R.string.recent_releases) String recentReleases;
+    @BindString(R.string.settings) String settings;
+
+    Drawer mNavDrawer;
+    final private Firebase mUsersRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private SessionManager mSession;
+
+    final private int PROFILE = 1;
+    final private int DASHBOARD = 2;
+    final private int RECENT_RELEASES = 3;
+    final private int ADMIN = 4;
+    final private int SETTINGS = 5;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_admin);
+        ButterKnife.bind(this);
+
+        this.mSession = SessionManager.getInstance(getApplicationContext());
+
+        initToolbar();
+        createNavDrawer();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    /**
+     * Helper method to create the nav drawer for the MainActivity
+     */
+    private void createNavDrawer() {
+        //Create the AccountHeader for the nav drawer
+        final AccountHeader accountHeader = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.accent)
+                .addProfiles(
+                        new ProfileDrawerItem()
+                                .withName(mSession.getLoggedInName())
+                                .withEmail(mSession.getLoggedInEmail())
+                                .withIcon(mProfileDrawerIcon))
+                .withSelectionListEnabledForSingleProfile(false)
+                .build();
+        //Create the nav drawer
+        mNavDrawer = new DrawerBuilder()
+                .withAccountHeader(accountHeader)
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
+                        new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
+                        new PrimaryDrawerItem().withName(recentReleases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
+                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem != null && drawerItem instanceof Nameable) {
+                            Intent intent;
+
+                            switch(drawerItem.getIdentifier()) {
+                                case PROFILE:
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(AdminActivity.this, ProfileActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    return true;
+                                case DASHBOARD:
+                                    return false;
+                                case RECENT_RELEASES:
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(AdminActivity.this, RecentReleasesActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    return true;
+                                case ADMIN:
+                                    return false;
+                                case SETTINGS:
+                                    //TODO, handle Settings
+                                    return false;
+                            }
+                        }
+                        return false;
+                    }
+                }).build();
+        mNavDrawer.setSelection(DASHBOARD);
+        if (mSession.checkAdmin()) { //if the user is an Admin, we need the Admin drawer item
+            mNavDrawer.addItem(new PrimaryDrawerItem().withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mNavDrawer != null && mNavDrawer.isDrawerOpen()) {
+            mNavDrawer.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * Helper method that inits all of the Toolbar stuff.
+     * Specifically:
+     * sets Toolbar title, enables the visibility of the overflow menu
+     */
+    private void initToolbar() {
+        toolbar.setTitle(dashboard);
+        setSupportActionBar(toolbar);
+    }
+}

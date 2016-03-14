@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
+    @BindString(R.string.admin) String admin;
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
@@ -305,6 +306,10 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     return true;
                                 case ADMIN:
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(MainActivity.this, AdminActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
                                     return false;
                                 case SETTINGS:
                                     //TODO, handle Settings
@@ -315,8 +320,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).build();
         mNavDrawer.setSelection(DASHBOARD);
-        if (mSession.checkAdmin()) {
-            mNavDrawer.addItem(new PrimaryDrawerItem().withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
+        if (mSession.checkAdmin()) { //if the user is an Admin, we need the Admin drawer item
+            mNavDrawer.addItem(new PrimaryDrawerItem().withName(admin).withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
         }
     }
 
