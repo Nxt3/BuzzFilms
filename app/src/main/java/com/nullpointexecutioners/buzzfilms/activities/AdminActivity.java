@@ -106,10 +106,9 @@ public class AdminActivity extends AppCompatActivity {
                 }
                 if (!users.isEmpty()) {
                     mUsersAdapter = new UsersAdapter(AdminActivity.this,
-                            R.layout.user_list_item, users);
+                            R.layout.user_list_item, new ArrayList<Users>());
                     mUsersList.setAdapter(mUsersAdapter);
                     mUsersAdapter.addAll(users);
-                    users.clear();
                 }
             }
 
@@ -128,12 +127,6 @@ public class AdminActivity extends AppCompatActivity {
                 String major = users.get(position).getMajor();
                 String status = users.get(position).getStatus();
 
-                TextView nameText = ButterKnife.findById(AdminActivity.this, R.id.user_view_name);
-                nameText.setText(name);
-                TextView emailText = ButterKnife.findById(AdminActivity.this, R.id.user_view_email);
-                emailText.setText(email);
-                TextView majorText = ButterKnife.findById(AdminActivity.this, R.id.user_view_major);
-                majorText.setText(major);
                 userView(username, name, email, major, status);
             }
         });
@@ -143,7 +136,18 @@ public class AdminActivity extends AppCompatActivity {
         final MaterialDialog userDialog = new MaterialDialog.Builder(this)
                 .title(username)
                 .customView(R.layout.user_view_dialog, true)
+                .positiveText(R.string.okay)
+                .negativeText(R.string.cancel)
                 .build();
+
+        TextView nameText = ButterKnife.findById(userDialog, R.id.user_view_name);
+        nameText.setText(name);
+        TextView emailText = ButterKnife.findById(userDialog, R.id.user_view_email);
+        emailText.setText(email);
+        TextView majorText = ButterKnife.findById(userDialog, R.id.user_view_major);
+        majorText.setText(major);
+
+        userDialog.show();
     }
 
     /**

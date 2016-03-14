@@ -37,4 +37,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/user_view_major"
         android:text="Computer Science"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:textColor="@color/accent"
+        android:text="@string/status" />
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:max="2"
+        android:id="@+id/seekBar" />
 </LinearLayout>
