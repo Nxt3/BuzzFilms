@@ -34,6 +34,7 @@ import com.nullpointexecutioners.buzzfilms.adapters.UsersAdapter;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.BindDrawable;
@@ -103,7 +104,7 @@ public class AdminActivity extends AppCompatActivity {
                     String email = child.child("email").getValue(String.class);
                     String major = child.child("major").getValue(String.class);
                     String status = child.child("status").getValue() != null
-                            ? child.child("status").getValue(String.class) : active;
+                            ? child.child("status").getValue(String.class) : "Active";
 
                     users.add(new Users(username, name, email, major, status));
                 }
@@ -129,13 +130,26 @@ public class AdminActivity extends AppCompatActivity {
                 String email = users.get(position).getEmail();
                 String major = users.get(position).getMajor();
                 String status = users.get(position).getStatus();
+                //Want the value in Firebase to remain one of "Active", "Locked", or "Banned";
+                //but if we decide to display it differently on the UI-side, then we need to translate those Strings
+                switch (status) {
+                    case ("Active"):
+                        status = active;
+                        break;
+                    case ("Locked"):
+                        status = locked;
+                        break;
+                    case ("Banned"):
+                        status = banned;
+                        break;
+                }
 
                 userView(username, name, email, major, status);
             }
         });
     }
 
-    private void userView(String username, String name, String email, String major, String status) {
+    private void userView(final String username, String name, String email, String major, String status) {
         final MaterialDialog userDialog = new MaterialDialog.Builder(this)
                 .title(username)
                 .customView(R.layout.user_view_dialog, true)
@@ -143,8 +157,22 @@ public class AdminActivity extends AppCompatActivity {
                 .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        //TODO, handle updating user's status
+                    public void onClick(@NonNull MaterialDialog userDialog, @NonNull DialogAction which) {
+                        final TextView statusText = ButterKnife.findById(userDialog, R.id.current_status);
+                        String selectedStatus = statusText.getText().toString();
+                        if (selectedStatus.equals(active)) {
+                            selectedStatus = "Active";
+                        } else if (selectedStatus.equals(locked)) {
+                            selectedStatus = "Locked";
+                        } else if (selectedStatus.equals(banned)) {
+                            selectedStatus = "Banned";
+                        }
+
+                        Firebase userRef = mUsersRef.child(username);
+                        HashMap<String, Object> updateValues = new HashMap<>();
+                        updateValues.put("status", selectedStatus);
+
+                        userRef.updateChildren(updateValues); //Update Firebase with new user status
                     }
                 })
                 .build();
