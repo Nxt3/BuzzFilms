@@ -67,6 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @BindString(R.string.register_username_taken) String usernameTaken;
 
     final Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private boolean onlyOnce; //we only want to LOCK an account once, as to avoid DB calls
     private int mNumOfAttempts = 0;
     private MaterialDialog mAuthProgressDialog;
     private SessionManager mSession;
@@ -179,18 +180,16 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     //if the user attempts three invalid passwords to login... lock their account
                     if (firebaseError.getCode() == FirebaseError.INVALID_PASSWORD) {
-                        if (mNumOfAttempts >= 3) {
-                            if (mNumOfAttempts == 3) {
-                                statusOkay = false;
+                        if (mNumOfAttempts == 3 && !onlyOnce) {
+                            statusOkay = false;
+                            onlyOnce = true;
 
-                                Firebase userRef = mUserRef.child(USERNAME);
-                                HashMap<String, Object> updateValues = new HashMap<>();
-                                updateValues.put("status", "LOCKED");
-                                userRef.updateChildren(updateValues); //Lock user account
-
-                            }
-                            statusCheck("LOCKED");
+                            Firebase userRef = mUserRef.child(USERNAME);
+                            HashMap<String, Object> updateValues = new HashMap<>();
+                            updateValues.put("status", "LOCKED");
+                            userRef.updateChildren(updateValues); //Lock user account
                         }
+                        statusCheck("LOCKED");
                     }
                 }
             });
