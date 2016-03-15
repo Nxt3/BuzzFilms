@@ -298,7 +298,11 @@ public class AdminActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     return true;
                                 case DASHBOARD:
-                                    return false;
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(AdminActivity.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    return true;
                                 case RECENT_RELEASES:
                                     mNavDrawer.closeDrawer();
                                     intent = new Intent(AdminActivity.this, RecentReleasesActivity.class);
