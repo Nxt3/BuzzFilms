@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -72,17 +74,22 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.progress_major_posters) ProgressBar progressMajorPosters;
     @Bind(R.id.progress_rating_posters) ProgressBar progressRatingsPosters;
     @Bind(R.id.rating_recommendations) LinearLayout ratingRecommendations;
+    @Bind(R.id.rating_section_text) TextView ratingSelectionText;
+    @Bind(R.id.rating_seekbar) SeekBar ratingSeekbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.admin) String admin;
     @BindString(R.string.dashboard) String dashboard;
+    @BindString(R.string.filter_by_rating) String filterByRating;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
+    @BindString(R.string.stars) String stars;
 
     Drawer mNavDrawer;
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     private Hashtable<String, String> majorPosters = new Hashtable<>();
     private Hashtable<String, String> ratingPosters = new Hashtable<>();
+    private int mRatingFilter = 3; //default is three star ratings
     private SessionManager mSession;
     private String mMajor;
     private String mMovieID;
@@ -104,6 +111,29 @@ public class MainActivity extends AppCompatActivity {
         refreshRecommendations();
         initToolbar();
         createNavDrawer();
+
+        ratingSeekbar.setProgress(2); //default is three star ratings
+        ratingSelectionText.setText(filterByRating);
+        ratingSelectionText.append(", " + mRatingFilter + " " + stars);
+
+        ratingSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mRatingFilter = progress + 1;
+                ratingSelectionText.setText(filterByRating);
+                ratingSelectionText.append(", " + mRatingFilter + " " + stars);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mRatingFilter = seekBar.getProgress() + 1;
+                setupRatingRecommendations(mRatingFilter);
+            }
+        });
     }
 
     @Override
@@ -145,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupMajorRecommendations() {
         majorPosters.clear();
         majorRecommendations.removeAllViews();
+        progressMajorPosters.setVisibility(View.VISIBLE);
 
         mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -183,9 +214,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Gets movies that have been rated highly by other users
      */
-    private void setupRatingRecommendations() {
+    private void setupRatingRecommendations(final int ratingFilter) {
         ratingPosters.clear();
         ratingRecommendations.removeAllViews();
+        progressRatingsPosters.setVisibility(View.VISIBLE);
 
         mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -200,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
                         ratingAverage += childB.child("rating").getValue(Double.class);
                     }
                     ratingAverage /= childA.getChildrenCount() - 2;
-                    //If the average rating is >= 4, we'll add it to the recommendations
-                    if (ratingAverage >= 4.0) {
+                    //If the average rating is >= ratingFilter, we'll add it to the recommendations
+                    if (ratingAverage >= ratingFilter) {
                         String posterURL = childA.child("posterURL").getValue(String.class);
                         String movieId = childA.child("movieId").getValue(String.class);
                         ratingPosters.put(movieId, posterURL);
@@ -348,9 +380,7 @@ public class MainActivity extends AppCompatActivity {
      * Refreshes the posters that are displayed for recommendations
      */
     private void refreshRecommendations() {
-        progressMajorPosters.setVisibility(View.VISIBLE);
-        setupRatingRecommendations();
-        progressRatingsPosters.setVisibility(View.VISIBLE);
+        setupRatingRecommendations(mRatingFilter);
         setupMajorRecommendations();
     }
 

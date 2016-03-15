@@ -8,6 +8,7 @@
         android:id="@+id/card_view"
         android:layout_gravity="center"
         android:layout_width="match_parent"
+        card_view:cardBackgroundColor="@color/primary_dark"
         android:layout_height="64dp"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -15,7 +16,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">Now
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/review_user"
@@ -23,7 +24,7 @@
                 android:paddingEnd="@dimen/activity_vertical_margin"
                 android:text="Username"
                 android:textSize="16sp"
-                android:textColor="@color/primary_text_light"
+                android:textColor="@color/primary_text_dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/review_rating"
@@ -34,7 +35,7 @@
                 android:paddingEnd="@dimen/activity_vertical_margin"
                 android:text="Major"
                 android:textSize="16sp"
-                android:textColor="@color/secondary_text_light"
+                android:textColor="@color/secondary_text_dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/review_rating"
@@ -43,7 +44,7 @@
                 android:id="@+id/review_rating"
                 android:text="5.0"
                 android:textSize="32sp"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/primary_light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
