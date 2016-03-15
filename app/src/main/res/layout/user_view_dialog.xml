@@ -61,11 +61,4 @@
         app:rangeCount="3"
         app:filledColor="@color/accent"
         app:emptyColor="@color/primary_dark" />
-    <!--<SeekBar-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:paddingTop="16dp"-->
-        <!--android:max="2"-->
-        <!--android:id="@+id/current_status_bar" />-->
-
 </LinearLayout>
