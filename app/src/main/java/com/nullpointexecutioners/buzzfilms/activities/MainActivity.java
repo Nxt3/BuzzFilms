@@ -232,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
                         ratingAverage += childB.child("rating").getValue(Double.class);
                     }
                     ratingAverage /= childA.getChildrenCount() - 2;
-                    //If the average rating is <= ratingFilter, we'll add it to the recommendations
-                    if (ratingAverage <= ratingFilter) {
+                    //If the average rating is >= ratingFilter, we'll add it to the recommendations
+                    if (ratingAverage >= ratingFilter) {
                         String posterURL = childA.child("posterURL").getValue(String.class);
                         String movieId = childA.child("movieId").getValue(String.class);
                         ratingPosters.put(movieId, posterURL);
