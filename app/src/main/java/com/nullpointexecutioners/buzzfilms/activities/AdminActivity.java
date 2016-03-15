@@ -104,7 +104,7 @@ public class AdminActivity extends AppCompatActivity {
                     String email = child.child("email").getValue(String.class);
                     String major = child.child("major").getValue(String.class);
                     String status = child.child("status").getValue() != null
-                            ? child.child("status").getValue(String.class) : "Active";
+                            ? child.child("status").getValue(String.class) : "ACTIVE";
 
                     users.add(new Users(username, name, email, major, status));
                 }
@@ -133,13 +133,13 @@ public class AdminActivity extends AppCompatActivity {
                 //Want the value in Firebase to remain one of "Active", "Locked", or "Banned";
                 //but if we decide to display it differently on the UI-side, then we need to translate those Strings
                 switch (status) {
-                    case ("Active"):
+                    case ("ACTIVE"):
                         status = active;
                         break;
-                    case ("Locked"):
+                    case ("LOCKED"):
                         status = locked;
                         break;
-                    case ("Banned"):
+                    case ("BANNED"):
                         status = banned;
                         break;
                 }
@@ -161,11 +161,11 @@ public class AdminActivity extends AppCompatActivity {
                         final TextView statusText = ButterKnife.findById(userDialog, R.id.current_status);
                         String selectedStatus = statusText.getText().toString();
                         if (selectedStatus.equals(active)) {
-                            selectedStatus = "Active";
+                            selectedStatus = "ACTIVE";
                         } else if (selectedStatus.equals(locked)) {
-                            selectedStatus = "Locked";
+                            selectedStatus = "LOCKED";
                         } else if (selectedStatus.equals(banned)) {
-                            selectedStatus = "Banned";
+                            selectedStatus = "BANNED";
                         }
 
                         Firebase userRef = mUsersRef.child(username);

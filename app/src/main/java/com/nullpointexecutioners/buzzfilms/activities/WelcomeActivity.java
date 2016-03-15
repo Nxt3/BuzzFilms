@@ -44,26 +44,30 @@ import butterknife.OnClick;
  */
 public class WelcomeActivity extends AppCompatActivity {
 
+    @Bind(android.R.id.content) View thisActivity;
     @Bind(R.id.login_button) Button mLoginButton;
     @Bind(R.id.login_password) EditText mLoginPasswordInput;
     @Bind(R.id.login_username) EditText mLoginUsernameInput;
-    @Bind(android.R.id.content) View thisActivity;
     @BindInt(R.color.accent) int accentColor;
     @BindInt(R.color.primary_text_light) int primaryTextLightColor;
+    @BindString(R.string.account_banned_content) String bannedContent;
+    @BindString(R.string.account_banned_title) String bannedTitle;
+    @BindString(R.string.account_locked_content) String lockedContent;
+    @BindString(R.string.account_locked_title) String lockedTitle;
     @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
     @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.network_not_available) String invalidEmail;
     @BindString(R.string.network_not_available) String networkNotAvailable;
+    @BindString(R.string.okay) String okay;
     @BindString(R.string.register) String register;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
     @BindString(R.string.register_username_taken) String usernameTaken;
 
-    private MaterialDialog mAuthProgressDialog;
-
-    private SessionManager mSession;
-
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private volatile boolean statusOkay;
+    private MaterialDialog mAuthProgressDialog;
+    private SessionManager mSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,19 +143,23 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     getUserInfoForLogin(USERNAME);
-                    /*This delay of 500ms must be present or else we run into issues with setting the
-                    * navdrawer info in the MainActivity. Makes sense. ¯\_(ツ)_/¯
-                    */
+
+                    //We need to delay this code from running...
                     new Handler().postDelayed(new Runnable() {
+                        @Override
                         public void run() {
-                            mAuthProgressDialog.dismiss();
-                            //We successfully logged in, go to MainActivity
-                            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(loginIntent);
-                            finish(); //We're done with logging in
+                            if (statusOkay) {
+                                mAuthProgressDialog.dismiss();
+                                //We successfully logged in, go to MainActivity
+                                Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(loginIntent);
+                                finish(); //We're done with logging in
+                            } else {
+                                mAuthProgressDialog.dismiss();
+                            }
                         }
-                    }, 500);
+                    }, 700);
                 }
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
@@ -317,6 +325,7 @@ public class WelcomeActivity extends AppCompatActivity {
         userRef.child("interests").setValue("");
         userRef.child("is_admin").setValue(false); //users who register from the app can't be an Admin
         //Making a user an Admin requires editing the User at the Firebase level
+        userRef.child("status").setValue("ACTIVE");
     }
 
     /**
@@ -336,11 +345,50 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (dataSnapshot.child("is_admin").getValue() != null) {
                     isAdmin = dataSnapshot.child("is_admin").getValue(Boolean.class);
                 }
-                mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR, isAdmin);
+                String status;
+                if (dataSnapshot.child("status").getValue() != null) {
+                    status = dataSnapshot.child("status").getValue(String.class);
+                } else {
+                    status = "ACTIVE";
+                }
+
+                statusOkay = statusCheck(status);
+
+                if (statusOkay) {
+                    mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR, isAdmin);
+                }
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+    }
+
+    /**
+     * Shows a dialog for when the user's account is either LOCKED or BANNED
+     * @param status of user attempting to login
+     */
+    private boolean statusCheck(String status) {
+        switch (status) {
+            case ("ACTIVE"):
+                return true;
+            case ("LOCKED"):
+                final MaterialDialog lockedDialog = new MaterialDialog.Builder(WelcomeActivity.this)
+                        .title(lockedTitle)
+                        .content(lockedContent)
+                        .positiveText(okay)
+                        .build();
+                lockedDialog.show();
+                return false;
+            case ("BANNED"):
+                final MaterialDialog bannedDialog = new MaterialDialog.Builder(WelcomeActivity.this)
+                        .title(bannedTitle)
+                        .content(bannedContent)
+                        .positiveText(okay)
+                        .build();
+                bannedDialog.show();
+                return false;
+        }
+        return false;
     }
 }
