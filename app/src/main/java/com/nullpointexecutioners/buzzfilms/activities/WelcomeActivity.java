@@ -33,6 +33,8 @@ import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 
+import java.util.HashMap;
+
 import butterknife.Bind;
 import butterknife.BindInt;
 import butterknife.BindString;
@@ -64,10 +66,11 @@ public class WelcomeActivity extends AppCompatActivity {
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
     @BindString(R.string.register_username_taken) String usernameTaken;
 
-    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
-    private volatile boolean statusOkay;
+    final Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private int mNumOfAttempts = 0;
     private MaterialDialog mAuthProgressDialog;
     private SessionManager mSession;
+    private volatile boolean statusOkay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +142,7 @@ public class WelcomeActivity extends AppCompatActivity {
         /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
         if (NetworkHelper.isInternetAvailable()) {
-            mRef.authWithPassword(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
+            mUserRef.authWithPassword(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     getUserInfoForLogin(USERNAME);
@@ -164,12 +167,31 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     //Invalid login credentials
-                    Log.e("authenticateLogin", firebaseError.toString());
+//                    Log.e("authenticateLogin", firebaseError.toString());
                     mAuthProgressDialog.dismiss();
-                    ViewHelper.makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                            accentColor, primaryTextLightColor).show();
+                    if (mNumOfAttempts != 3) {
+                        ViewHelper.makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                                accentColor, primaryTextLightColor).show();
+                        ++mNumOfAttempts;
+                    }
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                    //if the user attempts three invalid passwords to login... lock their account
+                    if (firebaseError.getCode() == FirebaseError.INVALID_PASSWORD) {
+                        if (mNumOfAttempts >= 3) {
+                            if (mNumOfAttempts == 3) {
+                                statusOkay = false;
+
+                                Firebase userRef = mUserRef.child(USERNAME);
+                                HashMap<String, Object> updateValues = new HashMap<>();
+                                updateValues.put("status", "LOCKED");
+                                userRef.updateChildren(updateValues); //Lock user account
+
+                            }
+                            statusCheck("LOCKED");
+                        }
+                    }
                 }
             });
         } else {
@@ -211,7 +233,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             PASSWORD = registerPasswordInput.getText().toString();
 
                             if (NetworkHelper.isInternetAvailable()) {
-                                mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                                mUserRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() != null) {
@@ -221,7 +243,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                         } else {
                                             registerDialog.dismiss();
                                             mAuthProgressDialog.show();
-                                            mRef.createUser(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
+                                            mUserRef.createUser(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
                                                     //User was created successfully--so take them to the MainActivity
@@ -317,7 +339,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param username to register
      */
     private void registerUser(String username, String name, String email) {
-        Firebase userRef = mRef.child(username);
+        Firebase userRef = mUserRef.child(username);
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
@@ -335,7 +357,7 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private void getUserInfoForLogin(String username) {
         final String USERNAME = username;
-        mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+        mUserRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String NAME = dataSnapshot.child("name").getValue(String.class);
@@ -367,6 +389,7 @@ public class WelcomeActivity extends AppCompatActivity {
     /**
      * Shows a dialog for when the user's account is either LOCKED or BANNED
      * @param status of user attempting to login
+     * @return true or false if the status would allow the user to login
      */
     private boolean statusCheck(String status) {
         switch (status) {

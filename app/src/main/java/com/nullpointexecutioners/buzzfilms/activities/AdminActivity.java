@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,12 +45,14 @@ import butterknife.ButterKnife;
 
 public class AdminActivity extends AppCompatActivity {
 
-    @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
+    @Bind(R.id.admin_toolbar) Toolbar toolbar;
+    @Bind(R.id.refresh_container) SwipeRefreshLayout refreshContainer;
     @Bind(R.id.users_list) ListView mUsersList;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
     @BindString(R.string.admin) String admin;
     @BindString(R.string.admin_controls) String adminControls;
     @BindString(R.string.dashboard) String dashboard;
+    @BindString(R.string.list_of_users) String listOfUsers;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
@@ -79,6 +83,35 @@ public class AdminActivity extends AppCompatActivity {
         initToolbar();
         createNavDrawer();
         setupUsersList();
+
+        //This is necessary to allow us to scroll up since we have a SwipeRefreshlayout
+        mUsersList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int topRowVerticalPosition =
+                        (mUsersList == null || mUsersList.getChildCount() == 0) ?
+                                0 : mUsersList.getChildAt(0).getTop();
+                refreshContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+            }
+        });
+
+        refreshContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshContainer.setRefreshing(true);
+                setupUsersList();
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setupUsersList();
+//                    }
+//                }, 700);
+            }
+        });
     }
 
     @Override
@@ -91,6 +124,11 @@ public class AdminActivity extends AppCompatActivity {
      * Populates list of users
      */
     private void setupUsersList() {
+        if (users != null && mUsersAdapter != null) {
+            users.clear();
+            mUsersAdapter.clear();
+        }
+
         mUsersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -120,6 +158,7 @@ public class AdminActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+        refreshContainer.setRefreshing(false);
 
         //Handle passing the selected user in the list
         mUsersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -143,7 +182,6 @@ public class AdminActivity extends AppCompatActivity {
                         status = banned;
                         break;
                 }
-
                 userView(username, name, email, major, status);
             }
         });
@@ -173,6 +211,8 @@ public class AdminActivity extends AppCompatActivity {
                         updateValues.put("status", selectedStatus);
 
                         userRef.updateChildren(updateValues); //Update Firebase with new user status
+                        refreshContainer.setRefreshing(true);
+                        setupUsersList();
                     }
                 })
                 .build();
@@ -289,6 +329,7 @@ public class AdminActivity extends AppCompatActivity {
      */
     private void initToolbar() {
         toolbar.setTitle(adminControls);
+        toolbar.setSubtitle(listOfUsers);
         setSupportActionBar(toolbar);
     }
 }
