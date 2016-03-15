@@ -18,7 +18,7 @@
             android:id="@+id/admin_toolbar"
             android:layout_width="match_parent"
             android:layout_height="128dp"
-
+            android:gravity="bottom"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 

@@ -3,6 +3,7 @@ package com.nullpointexecutioners.buzzfilms.activities;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -103,13 +104,12 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 refreshContainer.setRefreshing(true);
-                setupUsersList();
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setupUsersList();
-//                    }
-//                }, 700);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupUsersList();
+                    }
+                }, 1000);
             }
         });
     }
@@ -212,7 +212,12 @@ public class AdminActivity extends AppCompatActivity {
 
                         userRef.updateChildren(updateValues); //Update Firebase with new user status
                         refreshContainer.setRefreshing(true);
-                        setupUsersList();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                setupUsersList();
+                            }
+                        }, 1000);
                     }
                 })
                 .build();
