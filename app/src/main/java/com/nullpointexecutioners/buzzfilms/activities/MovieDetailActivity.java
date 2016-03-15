@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +38,7 @@ import com.nullpointexecutioners.buzzfilms.Review;
 import com.nullpointexecutioners.buzzfilms.adapters.ReviewAdapter;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -45,12 +47,14 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.Bind;
+import butterknife.BindInt;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
+    @Bind(android.R.id.content) View thisActivity;
     @Bind(R.id.movie_critic_score) TextView movieCriticScore;
     @Bind(R.id.movie_critic_score_icon) IconicsImageView movieCriticScoreIcon;
     @Bind(R.id.movie_detail_toolbar) Toolbar toolbar;
@@ -63,6 +67,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Bind(R.id.review_fab) FloatingActionButton floatingActionButton;
     @Bind(R.id.toolbar_layout) CollapsingToolbarLayout collapsingToolbarLayout;
     @Bind(R.id.user_reviews_button) Button userReviewsButton;
+    @BindInt(R.color.accent) int accentColor;
+    @BindInt(R.color.primary_text_light) int primaryTextLightColor;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.leave_review_title) String leaveReviewTitle;
     @BindString(R.string.neat) String neat;
@@ -187,6 +193,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 userReviewRef.child("username").setValue(CURRENT_USER);
                                 userReviewRef.child("major").setValue(MAJOR);
                                 userReviewRef.child("rating").setValue(rating);
+                                ViewHelper.makeSnackbar(thisActivity, getString(R.string.review_submitted), Snackbar.LENGTH_LONG,
+                                        accentColor, primaryTextLightColor).show();
+
                             }
                             @Override
                             public void onCancelled(FirebaseError firebaseError) {
@@ -255,6 +264,14 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
 
         reviewsDialog.show(); //finally show the dialog
+    }
+
+    /**
+     * Expands the poster when user clicks on it
+     */
+    @OnClick(R.id.movie_poster)
+    public void showFullMoviePoster() {
+        startActivity(new Intent(MovieDetailActivity.this, MoviePosterActivity.class).putExtra("posterURL", posterURL).putExtra("color", movieColor));
     }
 
     /**

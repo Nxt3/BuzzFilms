@@ -34,6 +34,9 @@ public class SessionManager {
     //Major
     public static final String KEY_MAJOR = "major";
 
+    //is an Admin
+    public static final String IS_ADMIN = "isAdmin";
+
     final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
 
     /**
@@ -62,7 +65,7 @@ public class SessionManager {
      * @param username to store in SharedPrefs
      * @param email to store in SharedPrefs
      */
-    public void createLoginSession(String username, String name, String email, String major) {
+    public void createLoginSession(String username, String name, String email, String major, boolean isAdmin) {
         /*Store each value into SharedPrefs*/
         editor.putBoolean(IS_LOGIN, true);
         editor.putString(KEY_USERNAME, username);
@@ -73,6 +76,8 @@ public class SessionManager {
         } else {
             editor.putString(KEY_MAJOR, major);
         }
+
+        editor.putBoolean(IS_ADMIN, isAdmin);
 
         //Commit changes to SharedPrefs
         editor.apply();
@@ -105,6 +110,15 @@ public class SessionManager {
      */
     public boolean checkLogin() {
         return pref.getBoolean(IS_LOGIN, false);
+    }
+
+    /**
+     * Checks if current user is an Admin
+     * If false, the user won't have access to Admin functions
+     * @return true or false depending if the user is an Admin
+     */
+    public boolean checkAdmin() {
+        return pref.getBoolean(IS_ADMIN, false);
     }
 
     /**

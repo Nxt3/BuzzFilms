@@ -20,6 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -41,6 +44,7 @@ import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -67,17 +71,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
     @Bind(R.id.major_recommendations) LinearLayout majorRecommendations;
+    @Bind(R.id.progress_major_posters) ProgressBar progressMajorPosters;
+    @Bind(R.id.progress_rating_posters) ProgressBar progressRatingsPosters;
     @Bind(R.id.rating_recommendations) LinearLayout ratingRecommendations;
+    @Bind(R.id.rating_section_text) TextView ratingSelectionText;
+    @Bind(R.id.rating_seekbar) SeekBar ratingSeekbar;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
+    @BindString(R.string.admin) String admin;
     @BindString(R.string.dashboard) String dashboard;
+    @BindString(R.string.filter_by_rating) String filterByRating;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
     @BindString(R.string.settings) String settings;
+    @BindString(R.string.stars) String stars;
 
     Drawer mNavDrawer;
     final private Firebase mReviewRef = new Firebase("https://buzz-films.firebaseio.com/reviews");
     private Hashtable<String, String> majorPosters = new Hashtable<>();
     private Hashtable<String, String> ratingPosters = new Hashtable<>();
+    private int mRatingFilter = 3; //default is three star ratings
     private SessionManager mSession;
     private String mMajor;
     private String mMovieID;
@@ -85,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
     final private int PROFILE = 1;
     final private int DASHBOARD = 2;
     final private int RECENT_RELEASES = 3;
-    final private int SETTINGS = 4;
+    final private int ADMIN = 4;
+    final private int SETTINGS = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,12 +111,29 @@ public class MainActivity extends AppCompatActivity {
         refreshRecommendations();
         initToolbar();
         createNavDrawer();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        createNavDrawer();
+        ratingSeekbar.setProgress(2); //default is three star ratings
+        ratingSelectionText.setText(filterByRating);
+        ratingSelectionText.append(", " + mRatingFilter + " " + stars);
+
+        ratingSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mRatingFilter = progress + 1;
+                ratingSelectionText.setText(filterByRating);
+                ratingSelectionText.append(", " + mRatingFilter + " " + stars);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mRatingFilter = seekBar.getProgress() + 1;
+                setupRatingRecommendations(mRatingFilter);
+            }
+        });
     }
 
     @Override
@@ -145,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupMajorRecommendations() {
         majorPosters.clear();
         majorRecommendations.removeAllViews();
+        progressMajorPosters.setVisibility(View.VISIBLE);
 
         mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -183,9 +214,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Gets movies that have been rated highly by other users
      */
-    private void setupRatingRecommendations() {
+    private void setupRatingRecommendations(final int ratingFilter) {
         ratingPosters.clear();
         ratingRecommendations.removeAllViews();
+        progressRatingsPosters.setVisibility(View.VISIBLE);
 
         mReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -200,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
                         ratingAverage += childB.child("rating").getValue(Double.class);
                     }
                     ratingAverage /= childA.getChildrenCount() - 2;
-                    //If the average rating is >= 4, we'll add it to the recommendations
-                    if (ratingAverage >= 4.0) {
+                    //If the average rating is >= ratingFilter, we'll add it to the recommendations
+                    if (ratingAverage >= ratingFilter) {
                         String posterURL = childA.child("posterURL").getValue(String.class);
                         String movieId = childA.child("movieId").getValue(String.class);
                         ratingPosters.put(movieId, posterURL);
@@ -247,12 +279,23 @@ public class MainActivity extends AppCompatActivity {
     public View insertImage(LinearLayout layout, String id, String url) {
         layout.setGravity(Gravity.CENTER);
 
-        ImageView imageView = new ImageView(getApplicationContext());
+        final ImageView imageView = new ImageView(getApplicationContext());
         imageView.setTag(id); //store the movieId per ImageView
         setupOnImageClick(imageView); //setup what to do when we click on one of the posters
         imageView.setPadding(8, 8, 8, 8);
 
-        Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView);
+        Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                progressMajorPosters.setVisibility(View.GONE);
+                progressRatingsPosters.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
         layout.addView(imageView);
         return layout;
     }
@@ -280,8 +323,7 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(profile).withIcon(GoogleMaterial.Icon.gmd_person).withIdentifier(PROFILE).withSelectable(false),
                         new PrimaryDrawerItem().withName(dashboard).withIcon(GoogleMaterial.Icon.gmd_dashboard).withIdentifier(DASHBOARD),
-                        new PrimaryDrawerItem().withName(recentReleases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false),
-                        new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false))
+                        new PrimaryDrawerItem().withName(recentReleases).withIcon(GoogleMaterial.Icon.gmd_local_movies).withIdentifier(RECENT_RELEASES).withSelectable(false))
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -303,6 +345,12 @@ public class MainActivity extends AppCompatActivity {
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     return true;
+                                case ADMIN:
+                                    mNavDrawer.closeDrawer();
+                                    intent = new Intent(MainActivity.this, AdminActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    return true;
                                 case SETTINGS:
                                     //TODO, handle Settings
                                     return false;
@@ -312,6 +360,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).build();
         mNavDrawer.setSelection(DASHBOARD);
+        if (mSession.checkAdmin()) { //if the user is an Admin, we need the Admin drawer item
+            mNavDrawer.addItem(new PrimaryDrawerItem().withName(admin).withIcon(GoogleMaterial.Icon.gmd_face).withIdentifier(ADMIN).withSelectable(false));
+        }
+        mNavDrawer.addItem(new SecondaryDrawerItem().withName(settings).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(SETTINGS).withSelectable(false));
     }
 
     /**
@@ -328,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
      * Refreshes the posters that are displayed for recommendations
      */
     private void refreshRecommendations() {
-        setupRatingRecommendations();
+        setupRatingRecommendations(mRatingFilter);
         setupMajorRecommendations();
     }
 

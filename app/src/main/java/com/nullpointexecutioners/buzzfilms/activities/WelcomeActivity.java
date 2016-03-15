@@ -33,6 +33,8 @@ import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
 import com.nullpointexecutioners.buzzfilms.helpers.ViewHelper;
 
+import java.util.HashMap;
+
 import butterknife.Bind;
 import butterknife.BindInt;
 import butterknife.BindString;
@@ -44,26 +46,32 @@ import butterknife.OnClick;
  */
 public class WelcomeActivity extends AppCompatActivity {
 
+    @Bind(android.R.id.content) View thisActivity;
     @Bind(R.id.login_button) Button mLoginButton;
     @Bind(R.id.login_password) EditText mLoginPasswordInput;
     @Bind(R.id.login_username) EditText mLoginUsernameInput;
-    @Bind(android.R.id.content) View thisActivity;
     @BindInt(R.color.accent) int accentColor;
     @BindInt(R.color.primary_text_light) int primaryTextLightColor;
+    @BindString(R.string.account_banned_content) String bannedContent;
+    @BindString(R.string.account_banned_title) String bannedTitle;
+    @BindString(R.string.account_locked_content) String lockedContent;
+    @BindString(R.string.account_locked_title) String lockedTitle;
     @BindString(R.string.auth_progress_dialog_content) String authProgressDialogContent;
     @BindString(R.string.auth_progress_dialog_title) String authProgressDialogTitle;
     @BindString(R.string.cancel) String cancel;
     @BindString(R.string.network_not_available) String invalidEmail;
     @BindString(R.string.network_not_available) String networkNotAvailable;
+    @BindString(R.string.okay) String okay;
     @BindString(R.string.register) String register;
     @BindString(R.string.register_dialog_title) String registerDialogTitle;
     @BindString(R.string.register_username_taken) String usernameTaken;
 
+    final Firebase mUserRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private boolean onlyOnce; //we only want to LOCK an account once, as to avoid DB calls
+    private int mNumOfAttempts = 0;
     private MaterialDialog mAuthProgressDialog;
-
     private SessionManager mSession;
-
-    final Firebase mRef = new Firebase("https://buzz-films.firebaseio.com/users");
+    private volatile boolean statusOkay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,33 +143,54 @@ public class WelcomeActivity extends AppCompatActivity {
         /*Show progress dialog when we try to login*/
         mAuthProgressDialog.show();
         if (NetworkHelper.isInternetAvailable()) {
-            mRef.authWithPassword(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
+            mUserRef.authWithPassword(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     getUserInfoForLogin(USERNAME);
-                    /*This delay of 500ms must be present or else we run into issues with setting the
-                    * navdrawer info in the MainActivity. Makes sense. ¯\_(ツ)_/¯
-                    */
+
+                    //We need to delay this code from running...
                     new Handler().postDelayed(new Runnable() {
+                        @Override
                         public void run() {
-                            mAuthProgressDialog.dismiss();
-                            //We successfully logged in, go to MainActivity
-                            Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(loginIntent);
-                            finish(); //We're done with logging in
+                            if (statusOkay) {
+                                mAuthProgressDialog.dismiss();
+                                //We successfully logged in, go to MainActivity
+                                Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(loginIntent);
+                                finish(); //We're done with logging in
+                            } else {
+                                mAuthProgressDialog.dismiss();
+                            }
                         }
-                    }, 500);
+                    }, 700);
                 }
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     //Invalid login credentials
-                    Log.e("authenticateLogin", firebaseError.toString());
+//                    Log.e("authenticateLogin", firebaseError.toString());
                     mAuthProgressDialog.dismiss();
-                    ViewHelper.makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
-                            accentColor, primaryTextLightColor).show();
+                    if (mNumOfAttempts != 3) {
+                        ViewHelper.makeSnackbar(thisActivity, getString(R.string.invalid_login), Snackbar.LENGTH_LONG,
+                                accentColor, primaryTextLightColor).show();
+                        ++mNumOfAttempts;
+                    }
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mLoginPasswordInput.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                    //if the user attempts three invalid passwords to login... lock their account
+                    if (firebaseError.getCode() == FirebaseError.INVALID_PASSWORD) {
+                        if (mNumOfAttempts == 3 && !onlyOnce) {
+                            statusOkay = false;
+                            onlyOnce = true;
+
+                            Firebase userRef = mUserRef.child(USERNAME);
+                            HashMap<String, Object> updateValues = new HashMap<>();
+                            updateValues.put("status", "LOCKED");
+                            userRef.updateChildren(updateValues); //Lock user account
+                        }
+                        statusCheck("LOCKED");
+                    }
                 }
             });
         } else {
@@ -203,7 +232,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             PASSWORD = registerPasswordInput.getText().toString();
 
                             if (NetworkHelper.isInternetAvailable()) {
-                                mRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                                mUserRef.child(USERNAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() != null) {
@@ -213,13 +242,13 @@ public class WelcomeActivity extends AppCompatActivity {
                                         } else {
                                             registerDialog.dismiss();
                                             mAuthProgressDialog.show();
-                                            mRef.createUser(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
+                                            mUserRef.createUser(StringHelper.setUserWithDummyDomain(USERNAME), PASSWORD, new Firebase.ResultHandler() {
                                                 @Override
                                                 public void onSuccess() {
                                                     //User was created successfully--so take them to the MainActivity
                                                     mAuthProgressDialog.dismiss();
                                                     registerUser(USERNAME, NAME, EMAIL);
-                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL, Major.NONE.toString());
+                                                    mSession.createLoginSession(USERNAME, NAME, EMAIL, Major.NONE.toString(), false);
 
                                                     //Go to the MainActivity
                                                     Intent loginIntent = new Intent(WelcomeActivity.this, MainActivity.class);
@@ -309,12 +338,15 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param username to register
      */
     private void registerUser(String username, String name, String email) {
-        Firebase userRef = mRef.child(username);
+        Firebase userRef = mUserRef.child(username);
         userRef.child("username").setValue(username);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
         userRef.child("major").setValue(Major.NONE);
         userRef.child("interests").setValue("");
+        userRef.child("is_admin").setValue(false); //users who register from the app can't be an Admin
+        //Making a user an Admin requires editing the User at the Firebase level
+        userRef.child("status").setValue("ACTIVE");
     }
 
     /**
@@ -324,17 +356,61 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private void getUserInfoForLogin(String username) {
         final String USERNAME = username;
-        mRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+        mUserRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String NAME = dataSnapshot.child("name").getValue(String.class);
                 final String EMAIL = dataSnapshot.child("email").getValue(String.class);
                 final String MAJOR = dataSnapshot.child("major").getValue(String.class);
-                mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR);
+                boolean isAdmin = false;
+                if (dataSnapshot.child("is_admin").getValue() != null) {
+                    isAdmin = dataSnapshot.child("is_admin").getValue(Boolean.class);
+                }
+                String status;
+                if (dataSnapshot.child("status").getValue() != null) {
+                    status = dataSnapshot.child("status").getValue(String.class);
+                } else {
+                    status = "ACTIVE";
+                }
+
+                statusOkay = statusCheck(status);
+
+                if (statusOkay) {
+                    mSession.createLoginSession(USERNAME, NAME, EMAIL, MAJOR, isAdmin);
+                }
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+    }
+
+    /**
+     * Shows a dialog for when the user's account is either LOCKED or BANNED
+     * @param status of user attempting to login
+     * @return true or false if the status would allow the user to login
+     */
+    private boolean statusCheck(String status) {
+        switch (status) {
+            case ("ACTIVE"):
+                return true;
+            case ("LOCKED"):
+                final MaterialDialog lockedDialog = new MaterialDialog.Builder(WelcomeActivity.this)
+                        .title(lockedTitle)
+                        .content(lockedContent)
+                        .positiveText(okay)
+                        .build();
+                lockedDialog.show();
+                return false;
+            case ("BANNED"):
+                final MaterialDialog bannedDialog = new MaterialDialog.Builder(WelcomeActivity.this)
+                        .title(bannedTitle)
+                        .content(bannedContent)
+                        .positiveText(okay)
+                        .build();
+                bannedDialog.show();
+                return false;
+        }
+        return false;
     }
 }
