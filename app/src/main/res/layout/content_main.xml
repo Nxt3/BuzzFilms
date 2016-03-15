@@ -47,6 +47,7 @@
         android:padding="16dp"
         android:text="@string/ratings_recommendations_section_title"/>
 
+
     <HorizontalScrollView
         android:layout_below="@id/rating_section_text"
         android:layout_width="match_parent"
