@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -41,6 +42,7 @@ import com.nullpointexecutioners.buzzfilms.R;
 import com.nullpointexecutioners.buzzfilms.helpers.RecentSuggestionsProvider;
 import com.nullpointexecutioners.buzzfilms.helpers.SessionManager;
 import com.nullpointexecutioners.buzzfilms.helpers.StringHelper;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -67,12 +69,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.dashboard_toolbar) Toolbar toolbar;
     @Bind(R.id.major_recommendations) LinearLayout majorRecommendations;
+    @Bind(R.id.progress_major_posters) ProgressBar progressMajorPosters;
+    @Bind(R.id.progress_rating_posters) ProgressBar progressRatingsPosters;
     @Bind(R.id.rating_recommendations) LinearLayout ratingRecommendations;
     @BindDrawable(R.drawable.rare_pepe_avatar) Drawable mProfileDrawerIcon;
+    @BindString(R.string.admin) String admin;
     @BindString(R.string.dashboard) String dashboard;
     @BindString(R.string.profile) String profile;
     @BindString(R.string.recent_releases) String recentReleases;
-    @BindString(R.string.admin) String admin;
     @BindString(R.string.settings) String settings;
 
     Drawer mNavDrawer;
@@ -99,12 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
         refreshRecommendations();
         initToolbar();
-        createNavDrawer();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         createNavDrawer();
     }
 
@@ -249,12 +247,23 @@ public class MainActivity extends AppCompatActivity {
     public View insertImage(LinearLayout layout, String id, String url) {
         layout.setGravity(Gravity.CENTER);
 
-        ImageView imageView = new ImageView(getApplicationContext());
+        final ImageView imageView = new ImageView(getApplicationContext());
         imageView.setTag(id); //store the movieId per ImageView
         setupOnImageClick(imageView); //setup what to do when we click on one of the posters
         imageView.setPadding(8, 8, 8, 8);
 
-        Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView);
+        Picasso.with(this).load(url).resize(900, 800).centerInside().into(imageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                progressMajorPosters.setVisibility(View.GONE);
+                progressRatingsPosters.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
         layout.addView(imageView);
         return layout;
     }
@@ -339,7 +348,9 @@ public class MainActivity extends AppCompatActivity {
      * Refreshes the posters that are displayed for recommendations
      */
     private void refreshRecommendations() {
+        progressMajorPosters.setVisibility(View.VISIBLE);
         setupRatingRecommendations();
+        progressRatingsPosters.setVisibility(View.VISIBLE);
         setupMajorRecommendations();
     }
 
