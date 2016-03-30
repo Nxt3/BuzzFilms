@@ -8,8 +8,8 @@ android {
         applicationId "com.nullpointexecutioners.buzzfilms"
         minSdkVersion 23
         targetSdkVersion 23
-        versionCode 6
-        versionName "1.6" //bump this up per milestone
+        versionCode 7
+        versionName "2.0" //bump this up per milestone
     }
     buildTypes {
         release {

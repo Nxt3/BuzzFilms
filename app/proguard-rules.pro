@@ -33,11 +33,20 @@
 -keepnames class com.fasterxml.jackson.** { *; }
 -keepnames class javax.servlet.** { *; }
 -keepnames class org.ietf.jgss.** { *; }
--dontwarn org.apache.**
 -dontwarn org.w3c.dom.**
+-dontwarn org.joda.time.**
+-dontwarn org.shaded.apache.**
+-dontwarn org.ietf.jgss.**
+-dontwarn com.firebase.**
+-dontnote com.firebase.client.core.GaePlatform
 
 # Rules for Iconics
 -keep class .R
 -keep class **.R$* {
     <fields>;
 }
+
+-keep class !com.nullpointexecutioners.buzzfilms.** { *; }
+-keep class com.nullpointexecutioners.buzzfilms.** { *; }
+
+-dontwarn okio.**
